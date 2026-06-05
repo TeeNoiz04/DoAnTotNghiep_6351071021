@@ -1,0 +1,205 @@
+<!--
+  Subtable Usage Template for Advanced Data Table Component
+
+  This template demonstrates how to use the subtable feature to display
+  hierarchical data with parent-child relationships.
+-->
+
+<!-- Basic Subtable Example -->
+<app-advanced-data-table
+  [data]="orders"
+  [enableSubtable]="true"
+  [enableErrorHandling]="true"
+  (rowExpansion)="onRowExpansion($event)">
+  <!-- Parent table columns -->
+  <app-table-column field="orderNumber" header="Order #" width="120px"> </app-table-column>
+
+  <app-table-column field="customerName" header="Customer" width="200px"> </app-table-column>
+
+  <app-table-column field="orderDate" header="Order Date" width="120px"> </app-table-column>
+
+  <app-table-column field="totalAmount" header="Total" width="120px" textAlign="end" [formatter]="formatCurrency">
+  </app-table-column>
+
+  <app-table-column field="status" header="Status" width="100px" componentType="status"> </app-table-column>
+
+  <!-- Subtable definition (ONLY ONE allowed per table) -->
+  <app-subtable-columns
+    dataField="items"
+    [showRowNumber]="true"
+    [striped]="true"
+    noDataMessage="No items in this order">
+    <app-table-column field="productCode" header="Product Code" width="120px"> </app-table-column>
+
+    <app-table-column field="productName" header="Product Name" width="250px"> </app-table-column>
+
+    <app-table-column field="quantity" header="Qty" width="80px" textAlign="end"> </app-table-column>
+
+    <app-table-column field="unitPrice" header="Unit Price" width="100px" textAlign="end" [formatter]="formatCurrency">
+    </app-table-column>
+
+    <app-table-column
+      field="lineTotal"
+      header="Line Total"
+      width="120px"
+      textAlign="end"
+      [formatter]="formatCurrency"
+      [sum]="true">
+    </app-table-column>
+  </app-subtable-columns>
+</app-advanced-data-table>
+
+<!-- Advanced Example with Conditional Expansion -->
+<app-advanced-data-table [data]="projects" [enableSubtable]="true" (rowExpansion)="onRowExpansion($event)">
+  <!-- Parent columns -->
+  <app-table-column field="projectName" header="Project" width="200px"></app-table-column>
+  <app-table-column field="projectManager" header="Manager" width="150px"></app-table-column>
+  <app-table-column field="budget" header="Budget" width="120px" [formatter]="formatCurrency"></app-table-column>
+
+  <!-- Subtable with custom expandable condition -->
+  <app-subtable-columns
+    dataField="tasks"
+    [expandableCondition]="canExpandProject"
+    [showRowNumber]="true"
+    [showSummary]="true"
+    [striped]="true"
+    cssClass="custom-subtable"
+    noDataMessage="No tasks assigned">
+    <app-table-column field="taskName" header="Task" width="200px"></app-table-column>
+    <app-table-column field="assignee" header="Assignee" width="120px"></app-table-column>
+    <app-table-column field="status" header="Status" width="100px" componentType="status"></app-table-column>
+    <app-table-column field="hoursSpent" header="Hours" width="80px" textAlign="end" [sum]="true"> </app-table-column>
+  </app-subtable-columns>
+</app-advanced-data-table>
+
+<!-- Example with Column Groups in Subtable -->
+<app-advanced-data-table [data]="invoices" [enableSubtable]="true">
+  <!-- Parent columns -->
+  <app-table-column field="invoiceNumber" header="Invoice #" width="120px"></app-table-column>
+  <app-table-column field="customer" header="Customer" width="200px"></app-table-column>
+  <app-table-column field="invoiceDate" header="Date" width="120px"></app-table-column>
+
+  <!-- Subtable with column groups -->
+  <app-subtable-columns dataField="lineItems" [showRowNumber]="true" noDataMessage="No line items">
+    <!-- Item Information Group -->
+    <app-table-column-group name="Item Information">
+      <app-table-column field="itemCode" header="Code" width="100px"></app-table-column>
+      <app-table-column field="description" header="Description" width="200px"></app-table-column>
+    </app-table-column-group>
+
+    <!-- Pricing Group -->
+    <app-table-column-group name="Pricing">
+      <app-table-column field="quantity" header="Qty" width="60px" textAlign="end"></app-table-column>
+      <app-table-column
+        field="unitPrice"
+        header="Unit Price"
+        width="100px"
+        textAlign="end"
+        [formatter]="formatCurrency"></app-table-column>
+      <app-table-column field="discount" header="Discount" width="80px" textAlign="end"></app-table-column>
+      <app-table-column
+        field="total"
+        header="Total"
+        width="120px"
+        textAlign="end"
+        [formatter]="formatCurrency"
+        [sum]="true"></app-table-column>
+    </app-table-column-group>
+  </app-subtable-columns>
+</app-advanced-data-table>
+
+<!-- TypeScript Component Example -->
+<!--
+import { Component } from '@angular/core';
+import { RowExpansionEvent } from '@app/shared/components/advanced-data-table';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.component.html',
+})
+export class ExampleComponent {
+  orders = [
+    {
+      orderNumber: 'ORD-001',
+      customerName: 'John Doe',
+      orderDate: '2024-01-15',
+      totalAmount: 1500.00,
+      status: 'Completed',
+      items: [
+        { productCode: 'PROD-A', productName: 'Product A', quantity: 2, unitPrice: 500, lineTotal: 1000 },
+        { productCode: 'PROD-B', productName: 'Product B', quantity: 1, unitPrice: 500, lineTotal: 500 },
+      ]
+    },
+    {
+      orderNumber: 'ORD-002',
+      customerName: 'Jane Smith',
+      orderDate: '2024-01-16',
+      totalAmount: 750.00,
+      status: 'Pending',
+      hasErrors: true,
+      errors: ['Payment method required', 'Shipping address incomplete'],
+      items: [
+        { productCode: 'PROD-C', productName: 'Product C', quantity: 3, unitPrice: 250, lineTotal: 750 },
+      ]
+    }
+  ];
+
+  formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(value);
+  }
+
+  onRowExpansion(event: RowExpansionEvent): void {
+    console.log('Row expansion:', event);
+    // event.row - the row data
+    // event.expanded - true if expanding, false if collapsing
+    // event.type - 'error' or 'subtable'
+  }
+
+  canExpandProject(row: any): boolean {
+    // Custom logic to determine if row can be expanded
+    // For example: only show tasks if project has tasks and is active
+    return row.tasks && row.tasks.length > 0 && row.status === 'Active';
+  }
+}
+-->
+
+<!-- Data Structure Example -->
+<!--
+interface Order {
+  orderNumber: string;
+  customerName: string;
+  orderDate: string;
+  totalAmount: number;
+  status: string;
+  // Child data array
+  items: OrderItem[];
+  // Optional error handling
+  hasErrors?: boolean;
+  errors?: string[];
+}
+
+interface OrderItem {
+  productCode: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+-->
+
+<!-- Important Notes -->
+<!--
+1. ONLY ONE <app-subtable-columns> directive is allowed per table
+2. Errors take priority over subtables - if a row has errors, error display takes precedence
+3. Subtables support most column types: status, template, auditInfo, etc.
+4. Input/editable columns are displayed as read-only in subtables
+5. Action columns are not recommended in subtables
+6. Subtable columns can use formatters, validators, and custom templates
+7. Row numbers in subtables are auto-generated when showRowNumber="true"
+8. Summary rows in subtables work independently from parent table summaries
+9. The dataField property should point to an array property in the parent row
+10. Use expandableCondition for custom logic to determine if a row can expand
+-->

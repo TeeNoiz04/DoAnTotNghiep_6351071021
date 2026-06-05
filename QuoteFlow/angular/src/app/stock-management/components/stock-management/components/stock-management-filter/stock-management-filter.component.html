@@ -1,0 +1,138 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form [formGroup]="service.searchForm" class="form-container">
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label">Stock</label>
+          <ng-select
+            [items]="stockCategoryOptions"
+            formControlName="stockCategoryId"
+            bindLabel="displayName"
+            bindValue="id"
+            appendTo="body"
+            [clearable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Supplier</label>
+          <ng-select
+            [items]="supplierOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            appendTo="body"
+            formControlName="supplierCode"
+            [clearable]="true"
+            (change)="onSupplierChange($event)">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Supplier BU</label>
+          <ng-select
+            [items]="supplierBUOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            appendTo="body"
+            formControlName="supplierBUCode"
+            [clearable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Material Type</label>
+          <ng-select
+            [items]="materialTypeOptions"
+            formControlName="materialType"
+            bindLabel="displayName"
+            appendTo="body"
+            bindValue="displayCode"
+            clearable="true">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="row-2-custom">
+        <div class="col">
+          <label class="form-label with-icon">
+            <span>Material Code <strong>(%)</strong></span>
+            <i
+              class="fa fa-info-circle"
+              placement="top"
+              container="body"
+              ngbTooltip="Items must be separated by line break (Shift + Enter)"></i>
+          </label>
+          <textarea
+            appTrim
+            class="form-control custom-textarea"
+            id="golfaCode"
+            formControlName="golfaCode"
+            appAutoResize></textarea>
+        </div>
+        <div class="col">
+          <label class="form-label with-icon">
+            <span>Model <strong>(%)</strong></span>
+            <i
+              class="fa fa-info-circle"
+              placement="top"
+              container="body"
+              ngbTooltip="Items must be separated by line break (Shift + Enter)"></i>
+          </label>
+          <textarea
+            appTrim
+            class="form-control custom-textarea"
+            id="model"
+            formControlName="model"
+            appAutoResize></textarea>
+        </div>
+      </div>
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label">Status</label>
+          <ng-select
+            [items]="statusOptions"
+            formControlName="status"
+            bindLabel="label"
+            bindValue="value"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Material Group</label>
+          <ng-select
+            [items]="materialGroupOptions"
+            formControlName="materialGroup"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Stock Qty greater than</label>
+          <input
+            appTrim
+            autocomplete="off"
+            type="number"
+            class="form-control"
+            formControlName="greaterStockQty"
+            min="0" />
+        </div>
+        <div class="col">
+          <label class="form-label">On-Order Stock greater than</label>
+          <input
+            appTrim
+            autocomplete="off"
+            type="number"
+            class="form-control"
+            formControlName="greaterOnOrderStockQty"
+            min="0" />
+        </div>
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

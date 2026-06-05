@@ -1,0 +1,160 @@
+<abp-modal
+  appEscCloseModal
+  [busy]="service.isBusy"
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="buyer" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <ul ngbNav #nav="ngbNav" class="mt-0">
+        <li ngbNavItem>
+          <!-- <a ngbNavLink>
+            {{ '::Buyer' | abpLocalization }}
+          </a> -->
+          <ng-template ngbNavContent>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label label-required" for="discriptionCategory"> Description Category </label>
+                <ng-select
+                  [items]="buyerTypeOptions"
+                  bindLabel="displayName"
+                  bindValue="id"
+                  formControlName="buyerTypeId"
+                  [clearable]="false"
+                  [searchable]="false"
+                  (change)="buyerTypeChange($event)">
+                </ng-select>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label label-required" for="appliedPrice"> Applied Price </label>
+                <div class="checklist-container">
+                  <ng-select
+                    id="buyer-price-column"
+                    formControlName="appliedPrice"
+                    [items]="service.getAppliedPriceFromOptions"
+                    bindLabel="label"
+                    bindValue="value"
+                    [clearable]="false"
+                    [searchable]="false"
+                    [appendTo]="'body'">
+                  </ng-select>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label label-required" for="buyerCode"> Buyer Code </label>
+                <input autocomplete="off" id="buyerCode" formControlName="buyerCode" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="shortName"> Short Name </label>
+                <input autocomplete="off" id="shortName" formControlName="shortName" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="fullName"> Full Name </label>
+                <input autocomplete="off" id="fullName" formControlName="fullName" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label label-required" for="taxCode"> Tax Code </label>
+                <input autocomplete="off" id="taxCode" formControlName="taxCode" class="form-control" />
+                <div *ngIf="service.form.get('taxCode')?.invalid && service.form.get('taxCode')?.touched">
+                  <small class="text-danger">
+                    {{ service.form.get('taxCode')?.errors?.['taxCode']?.message }}
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="address"> Address </label>
+                <input autocomplete="off" id="address" formControlName="address" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="contactPerson"> Contact Person </label>
+                <input autocomplete="off" id="contactPerson" formControlName="contactPerson" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="contactEmail"> Contact Email </label>
+                <input autocomplete="off" id="contactEmail" formControlName="contactEmail" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="contactPhoneNumber"> Contact Phone Number </label>
+                <input
+                  autocomplete="off"
+                  id="contactPhoneNumber"
+                  formControlName="contactPhoneNumber"
+                  class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="paymentTermCode"> Payment Term Code </label>
+                <input autocomplete="off" id="paymentTermCode" formControlName="paymentTermCode" class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="paymentTermDescription"> Payment Term Description </label>
+                <input
+                  autocomplete="off"
+                  id="paymentTermDescription"
+                  formControlName="paymentTermDescription"
+                  class="form-control" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="creditLimit"> Credit Limit </label>
+                <app-input-number
+                  id="creditLimit"
+                  formControlName="creditLimit"
+                  [allowDecimal]="true"></app-input-number>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2">
+                <label class="form-label" for="creditExposure"> Credit Exposure </label>
+                <!-- <input id="creditExposure" type="number" formControlName="creditExposure" class="form-control" /> -->
+                <app-input-number id="creditExposure" formControlName="creditExposure" [allowDecimal]="true">
+                </app-input-number>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-2" style="display: flex; align-items: flex-end">
+                <div class="checklist-container">
+                  <mat-slide-toggle id="isDeactive" formControlName="deactive"> Deactive </mat-slide-toggle>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                <label for="toDate" class="form-label">Note</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="buyer">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

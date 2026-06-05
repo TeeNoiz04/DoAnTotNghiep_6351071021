@@ -1,0 +1,758 @@
+<!-- Error Alert -->
+<div *ngIf="enableErrorHandling && hasAnyErrors()" class="alert alert-danger mb-1 p-1">
+  <h5 class="alert-heading">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Validation Errors Found
+  </h5>
+  <p class="mb-0">
+    There are {{ countErrorRows() }} {{ countErrorRows() > 1 ? 'rows' : 'row' }} with validation errors. Please review
+    and fix them before proceeding.
+  </p>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="loading" class="d-flex justify-content-center align-items-center" [style.height]="height">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Top Pagination -->
+<div *ngIf="!loading" class="mb-2">
+  <div
+    *ngIf="shouldShowPaginationTop()"
+    class="pagination-container d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center" *ngIf="showPageSizeSelector">
+      <label class="form-label me-2 mb-0">Items per page:</label>
+      <ng-select
+        [(ngModel)]="pageSize"
+        (ngModelChange)="onPageSizeChanged()"
+        [items]="pageSizeOptions"
+        clearable="false">
+      </ng-select>
+    </div>
+    <div class="text-muted" *ngIf="showItemsInfo">
+      Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalItems) }} of
+      {{ totalItems }} items
+    </div>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [(page)]="currentPage"
+      [pageSize]="pageSize"
+      [maxSize]="7"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      [directionLinks]="true"
+      (pageChange)="onPageChanged($event)">
+    </ngb-pagination>
+  </div>
+</div>
+
+<!-- Table Container -->
+<div
+  *ngIf="!loading"
+  class="advanced-table-container"
+  [class.edge-scroller-enabled]="enableEdgeScroller"
+  [style.height]="height"
+  [style.maxHeight]="maxHeight"
+  #tableContainer
+  [class.striped]="striped"
+  [class.bordered]="bordered"
+  [class.hover]="hover"
+  [class.condensed]="condensed"
+  (mouseenter)="onContainerMouseEnter()"
+  (mouseleave)="onContainerMouseLeave()"
+  (mousemove)="onContainerMouseMove($event)">
+  <!-- Edge Scroller Navigation Buttons -->
+  <div *ngIf="enableEdgeScroller" class="edge-scroller-buttons">
+    <!-- Previous Button -->
+    <button
+      *ngIf="showPrevButton"
+      class="edge-scroll-btn edge-scroll-btn-prev"
+      [style.top.px]="getButtonYPosition()"
+      (click)="scrollPrev()"
+      type="button">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <!-- Next Button -->
+    <button
+      *ngIf="showNextButton"
+      class="edge-scroll-btn edge-scroll-btn-next"
+      [style.top.px]="getButtonYPosition()"
+      (click)="scrollNext()"
+      type="button">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="table-responsive" (scroll)="onTableScroll()">
+    <table class="table table-bordered table-striped mb-0">
+      <thead>
+        <!-- Group Header Row -->
+        <tr class="group-header-row" *ngIf="showGroupHeaders && processedColumnGroups.length > 1">
+          <th *ngFor="let group of processedColumnGroups" [attr.colspan]="getColumnSpan(group)" [ngClass]="group.class">
+            {{ group.name }}
+          </th>
+        </tr>
+
+        <!-- Column Header Row -->
+        <tr>
+          <th
+            *ngFor="let col of allColumns; let i = index"
+            [style.minWidth]="col.minWidth || col.width || 'auto'"
+            [style.width]="col.width || 'auto'"
+            [style.maxWidth]="col.maxWidth || col.width || 'none'"
+            [ngClass]="getHeaderClass(col)"
+            [attr.data-field]="col.field">
+            <!-- Selection Column Header -->
+            <ng-container
+              *ngIf="col.field === '__selection' && enableSelection && selectionType !== 'single'; else normalHeader">
+              <div class="form-check d-flex justify-content-center align-items-center">
+                <input
+                  *ngIf="hasSelectableRows()"
+                  class="form-check-input"
+                  type="checkbox"
+                  [checked]="isAllSelected()"
+                  [indeterminate]="isPartiallySelected()"
+                  (change)="toggleAllSelection()"
+                  id="selectAll" />
+              </div>
+            </ng-container>
+
+            <!-- Normal Header -->
+            <ng-template #normalHeader>
+              <span class="header-content">
+                {{ col.header }}
+                <i
+                  *ngIf="col.sortable"
+                  class="bi ms-1"
+                  [class.bi-chevron-up]="sortColumn === col.field && sortDirection === 'asc'"
+                  [class.bi-chevron-down]="sortColumn === col.field && sortDirection === 'desc'"
+                  [class.bi-chevron-expand]="sortColumn !== col.field"
+                  (click)="sortChange.emit({ field: col.field, direction: sortDirection === 'asc' ? 'desc' : 'asc' })">
+                </i>
+              </span>
+            </ng-template>
+          </th>
+        </tr>
+
+        <!-- Summary Row -->
+        <tr class="summary-row" *ngIf="showSummary">
+          <th *ngFor="let col of allColumns" [ngClass]="getCellClass(col, null)">
+            {{ getSummaryValue(col) }}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- Data Rows -->
+        <ng-container *ngFor="let row of getDisplayData(); let i = index; trackBy: trackByFn">
+          <tr
+            [ngClass]="getRowClass(row)"
+            [class.summary-first-row]="disableFirstRow && i === 0"
+            [class.clickable]="(enableErrorHandling && row[hasErrorsField]) || (enableSubtable && canShowSubtable(row))"
+            (click)="onRowClickHandler($event, row)">
+            <td
+              *ngFor="let col of allColumns; let j = index"
+              [ngClass]="getCellClass(col, row)"
+              [attr.data-column-field]="col.field"
+              [style.minWidth]="col.minWidth || col.width || 'auto'"
+              [style.width]="col.width || 'auto'"
+              [style.maxWidth]="col.maxWidth || col.width || 'none'">
+              <!-- Component-based cells -->
+              <ng-container *ngIf="col.componentType || col.editable; else textContent">
+                <ng-container [ngSwitch]="col.componentType || (col.editable ? 'input' : null)">
+                  <!-- Status Component -->
+                  <ng-container *ngSwitchCase="'status'">
+                    <app-status-label *ngIf="getCellValue(col, row, i)" [status]="getCellValue(col, row, i)">
+                    </app-status-label>
+                  </ng-container>
+
+                  <!-- Checkbox Component -->
+                  <ng-container *ngSwitchCase="'checkbox'">
+                    <div class="form-check d-flex justify-content-center align-items-center">
+                      <input
+                        *ngIf="isRowSelectable(row)"
+                        class="form-check-input"
+                        type="checkbox"
+                        [checked]="isSelected(row)"
+                        (change)="toggleSelection(row, $event)"
+                        [id]="'checkbox-' + i + '-' + j"
+                        (click)="$event.stopPropagation()" />
+                    </div>
+                  </ng-container>
+
+                  <!-- Action Component -->
+                  <ng-container *ngSwitchCase="'action'"
+                    ><!-- Action Component -->
+                    <div class="d-flex gap-1 action-buttons" [ngClass]="'justify-content-' + col.textAlign">
+                      <ng-container *ngIf="!(disableFirstRow && i === 0)">
+                        <!-- History Button -->
+                        <button
+                          *ngIf="col.showHistory"
+                          class="btn btn-link p-0"
+                          (click)="onHistoryClick(row, $event)"
+                          ngbTooltip="History"
+                          placement="top"
+                          container="body">
+                          <i class="bi bi-clock-history text-muted icon-hover-history"></i>
+                        </button>
+
+                        <!-- Edit Inline Button -->
+                        <button
+                          *ngIf="col.showEdit && (!col.showEditFn || col.showEditFn(row)) && !isEditing(row)"
+                          class="btn btn-link p-0"
+                          (click)="onActionClick('edit', row, col, $event)"
+                          ngbTooltip="Edit"
+                          placement="top"
+                          container="body">
+                          <i class="bi bi-pencil text-primary icon-hover-edit"></i>
+                        </button>
+
+                        <!-- Edit Modal Button -->
+                        <button
+                          *ngIf="col.showEditModal && (!col.showEditFn || col.showEditFn(row))"
+                          class="btn btn-link p-0"
+                          (click)="onActionClick('editModal', row, col, $event)"
+                          placement="top"
+                          container="body">
+                          <i class="bi bi-pencil text-primary icon-hover-edit"></i>
+                        </button>
+
+                        <!-- Save Button -->
+                        <button
+                          *ngIf="col.showEdit && isEditing(row)"
+                          class="btn btn-link p-0"
+                          [disabled]="isSaving(row)"
+                          (click)="onActionClick('save', row, col, $event)"
+                          ngbTooltip="Save"
+                          placement="top"
+                          container="body">
+                          <i *ngIf="!isSaving(row)" class="fa fa-save text-success icon-hover-save"></i>
+                          <span
+                            *ngIf="isSaving(row)"
+                            class="spinner-border-icon text-success"
+                            role="status"
+                            aria-hidden="true"></span>
+                        </button>
+
+                        <!-- Cancel Button -->
+                        <button
+                          *ngIf="col.showEdit && isEditing(row)"
+                          class="btn btn-link p-0"
+                          [disabled]="isSaving(row)"
+                          (click)="onActionClick('cancel', row, col, $event)"
+                          ngbTooltip="Cancel"
+                          placement="top"
+                          container="body">
+                          <i class="fa fa-close text-secondary icon-hover-cancel"></i>
+                        </button>
+
+                        <!-- Delete Button -->
+                        <button
+                          *ngIf="col.showDelete"
+                          class="btn btn-link p-0"
+                          (click)="onActionClick('delete', row, col, $event)"
+                          ngbTooltip="Delete"
+                          placement="top"
+                          container="body">
+                          <i class="bi bi-trash text-danger icon-hover-delete"></i>
+                        </button>
+
+                        <!-- Custom Actions -->
+                        <button
+                          *ngFor="let action of col.customActions"
+                          class="btn btn-link p-0"
+                          (click)="onActionClick(action.id, row, col, $event)"
+                          [ngbTooltip]="action.tooltip"
+                          placement="top"
+                          container="body"
+                          [ngClass]="action.cssClass"
+                          [disabled]="action.disabled ? action.disabled(row) : false"
+                          [hidden]="action.visible ? !action.visible(row) : false">
+                          <i [ngClass]="action.icon"></i>
+                        </button>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+
+                  <!-- Clickable Cell -->
+                  <ng-container *ngSwitchCase="'clickCell'">
+                    <ng-container *ngIf="disableFirstRow && i === 0; else clickableCellContent">
+                      <span [ngClass]="getTextClass(col, row)" [innerHTML]="formatCellValue(col, row, i)"></span>
+                    </ng-container>
+                    <ng-template #clickableCellContent>
+                      <span class="clickable-cell" (click)="onCellClick(col, row)" [ngClass]="getTextClass(col, row)">
+                        <ng-container *ngIf="col.showEllipsis; else fullText">
+                          <span
+                            class="text-truncate d-inline-block position-relative"
+                            role="button"
+                            [style.maxWidth]="getReducedWidth(col.width)"
+                            triggers="click"
+                            placement="auto"
+                            container="body"
+                            popoverClass="preserve-whitespace"
+                            [innerHTML]="formatCellValue(col, row, i)">
+                          </span>
+                        </ng-container>
+                        <ng-template #fullText>
+                          <span [innerHTML]="formatCellValue(col, row, i)"></span>
+                        </ng-template>
+                      </span>
+                    </ng-template>
+                  </ng-container>
+
+                  <!-- Clickable Cell on Icon -->
+                  <ng-container *ngSwitchCase="'clickCellIcon'">
+                    <ng-container *ngIf="disableFirstRow && i === 0; else clickableCellIconContent">
+                      <span [ngClass]="getTextClass(col, row)" [innerHTML]="formatCellValue(col, row, i)"></span>
+                    </ng-container>
+                    <ng-template #clickableCellIconContent>
+                      <span class="clickable-cell" (click)="onCellClick(col, row)" [ngClass]="getTextClass(col, row)">
+                        <ng-container *ngIf="col.showEllipsis; else fullText">
+                          <span
+                            class="text-truncate d-inline-block position-relative"
+                            role="button"
+                            [style.maxWidth]="getReducedWidth(col.width)"
+                            triggers="click"
+                            placement="auto"
+                            container="body"
+                            popoverClass="preserve-whitespace"
+                            [innerHTML]="formatCellValue(col, row, i)">
+                          </span>
+                        </ng-container>
+                        <ng-template #fullText>
+                          <span [ngClass]="col.iconClass"></span>
+                        </ng-template>
+                      </span>
+                    </ng-template>
+                  </ng-container>
+
+                  <!-- Input Component -->
+                  <ng-container *ngSwitchCase="'input'">
+                    <ng-container *ngIf="col.alwaysShowInput || (col.editable && isEditing(row)); else readOnlyValue">
+                      <!-- Always show input: direct binding to row property -->
+                      <ng-container *ngIf="col.alwaysShowInput; else editableInput">
+                        <input
+                          *ngIf="col.inputType === 'number'; else alwaysTextInput"
+                          type="number"
+                          autocomplete="off"
+                          class="form-control form-control-sm"
+                          [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                          [(ngModel)]="row[col.field]"
+                          min="0"
+                          step="1" />
+
+                        <ng-template #alwaysTextInput>
+                          <textarea
+                            *ngIf="col.inputType === 'textarea'; else alwaysRegularInput"
+                            class="form-control form-control-sm"
+                            [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                            [(ngModel)]="row[col.field]"
+                            rows="3"
+                            [style.resize]="'vertical'">
+                          </textarea>
+
+                          <ng-template #alwaysRegularInput>
+                            <input
+                              autocomplete="off"
+                              [type]="col.inputType || 'text'"
+                              class="form-control form-control-sm"
+                              [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                              [(ngModel)]="row[col.field]" />
+                          </ng-template>
+                        </ng-template>
+                      </ng-container>
+
+                      <!-- Regular editable input: use editingValues -->
+                      <ng-template #editableInput>
+                        <input
+                          *ngIf="col.inputType === 'number'; else textInput"
+                          type="number"
+                          autocomplete="off"
+                          class="form-control form-control-sm"
+                          [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                          [ngModel]="getCellValue(col, row, i)"
+                          (ngModelChange)="updateCellValue(col, row, $event)"
+                          min="0"
+                          step="1" />
+
+                        <ng-template #textInput>
+                          <textarea
+                            *ngIf="col.inputType === 'textarea'; else regularInput"
+                            class="form-control form-control-sm"
+                            [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                            [ngModel]="getCellValue(col, row, i)"
+                            (ngModelChange)="updateCellValue(col, row, $event)"
+                            rows="3"
+                            [style.resize]="'vertical'">
+                          </textarea>
+
+                          <ng-template #regularInput>
+                            <input
+                              autocomplete="off"
+                              [type]="col.inputType || 'text'"
+                              class="form-control form-control-sm"
+                              [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                              [ngModel]="getCellValue(col, row, i)"
+                              (ngModelChange)="updateCellValue(col, row, $event)" />
+                          </ng-template>
+                        </ng-template>
+                      </ng-template>
+                    </ng-container>
+
+                    <ng-template #readOnlyValue>
+                      <ng-container *ngIf="col.showEllipsis; else fullText">
+                        <span
+                          class="text-truncate d-inline-block position-relative"
+                          role="button"
+                          [style.maxWidth]="getReducedWidth(col.width)"
+                          [ngbPopover]="col.showEllipsis ? formatCellValue(col, row, i) : null"
+                          [popoverTitle]="col.header"
+                          triggers="click"
+                          placement="auto"
+                          container="body"
+                          [closeDelay]="0"
+                          [openDelay]="0"
+                          popoverClass="preserve-whitespace"
+                          [ngClass]="getTextClass(col, row)"
+                          [innerHTML]="formatCellValue(col, row, i)">
+                        </span>
+                        <!-- NEW: Warning Tooltip Icon -->
+                        <i
+                          *ngIf="shouldShowWarningTooltip(col, row)"
+                          [ngClass]="[getWarningTooltipIcon(col), getWarningTooltipIconClass(col)]"
+                          class="ms-1"
+                          [ngbTooltip]="getWarningTooltipMessage(col, row)"
+                          placement="top"
+                          container="body"
+                          style="cursor: help; font-size: 0.875rem">
+                        </i>
+                      </ng-container>
+                      <ng-template #fullText>
+                        <span [ngClass]="getTextClass(col, row)" [innerHTML]="formatCellValue(col, row, i)"></span>
+                        <!-- NEW: Warning Tooltip Icon -->
+                        <i
+                          *ngIf="shouldShowWarningTooltip(col, row)"
+                          [ngClass]="[getWarningTooltipIcon(col), getWarningTooltipIconClass(col)]"
+                          class="ms-1"
+                          [ngbTooltip]="getWarningTooltipMessage(col, row)"
+                          placement="top"
+                          container="body"
+                          style="cursor: help; font-size: 0.875rem">
+                        </i>
+                      </ng-template>
+                    </ng-template>
+                  </ng-container>
+
+                  <!-- Template Component (for custom templates) -->
+                  <ng-container *ngSwitchCase="'template'">
+                    <ng-container
+                      *ngTemplateOutlet="getColumnTemplate(col, 'cell'); context: getCellTemplateContext(col, row, i)">
+                    </ng-container>
+                  </ng-container>
+
+                  <!-- Audit Info Component -->
+                  <ng-container *ngSwitchCase="'auditInfo'">
+                    <ng-container *ngIf="!(disableFirstRow && i === 0)">
+                      <app-audit-info-column
+                        [creationTime]="row[col.creationTimeField || 'creationTime']"
+                        [creatorName]="row[col.creatorNameField || 'creatorUsername']"
+                        [lastModificationTime]="row[col.lastModificationTimeField || 'lastModificationTime']"
+                        [lastModifierName]="row[col.lastModifierNameField || 'lastModifierName']">
+                      </app-audit-info-column>
+                    </ng-container>
+                  </ng-container>
+
+                  <!-- Unknown Component Type -->
+                  <div *ngSwitchDefault class="text-muted">Unknown component type: {{ col.componentType }}</div>
+                </ng-container>
+              </ng-container>
+
+              <!-- Text Content (default) -->
+              <ng-template #textContent>
+                <ng-container *ngIf="col.alwaysShowInput || (col.editable && isEditing(row)); else readOnlyText">
+                  <!-- Always show input: direct binding to row property -->
+                  <ng-container *ngIf="col.alwaysShowInput; else editableTextInput">
+                    <input
+                      *ngIf="col.inputType === 'number'; else alwaysTextInputFallback"
+                      type="number"
+                      autocomplete="off"
+                      class="form-control form-control-sm"
+                      [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                      [(ngModel)]="row[col.field]"
+                      min="0"
+                      step="1" />
+
+                    <ng-template #alwaysTextInputFallback>
+                      <textarea
+                        *ngIf="col.inputType === 'textarea'; else alwaysRegularInputFallback"
+                        class="form-control form-control-sm"
+                        [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                        [(ngModel)]="row[col.field]"
+                        rows="3"
+                        [style.resize]="'vertical'">
+                      </textarea>
+
+                      <ng-template #alwaysRegularInputFallback>
+                        <input
+                          autocomplete="off"
+                          [type]="col.inputType || 'text'"
+                          class="form-control form-control-sm"
+                          [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                          [(ngModel)]="row[col.field]" />
+                      </ng-template>
+                    </ng-template>
+                  </ng-container>
+
+                  <!-- Regular editable input: use editingValues -->
+                  <ng-template #editableTextInput>
+                    <input
+                      *ngIf="col.inputType === 'number'; else textInputFallback"
+                      type="number"
+                      autocomplete="off"
+                      class="form-control form-control-sm"
+                      [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                      [ngModel]="getCellValue(col, row, i)"
+                      (ngModelChange)="updateCellValue(col, row, $event)"
+                      min="0"
+                      step="1" />
+
+                    <ng-template #textInputFallback>
+                      <textarea
+                        *ngIf="col.inputType === 'textarea'; else regularInputFallback"
+                        class="form-control form-control-sm"
+                        [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                        [ngModel]="getCellValue(col, row, i)"
+                        (ngModelChange)="updateCellValue(col, row, $event)"
+                        rows="3"
+                        [style.resize]="'vertical'">
+                      </textarea>
+
+                      <ng-template #regularInputFallback>
+                        <input
+                          autocomplete="off"
+                          [type]="col.inputType || 'text'"
+                          class="form-control form-control-sm"
+                          [ngClass]="col.textAlign ? 'text-' + col.textAlign : ''"
+                          [ngModel]="getCellValue(col, row, i)"
+                          (ngModelChange)="updateCellValue(col, row, $event)" />
+                      </ng-template>
+                    </ng-template>
+                  </ng-template>
+                </ng-container>
+
+                <ng-template #readOnlyText>
+                  <ng-container *ngIf="col.showEllipsis; else fullTextDefault">
+                    <span
+                      class="text-truncate d-inline-block position-relative"
+                      role="button"
+                      [style.maxWidth]="getReducedWidth(col.width)"
+                      [ngbPopover]="col.showEllipsis ? formatCellValue(col, row, i) : null"
+                      [popoverTitle]="col.header"
+                      triggers="click"
+                      placement="auto"
+                      container="body"
+                      [closeDelay]="0"
+                      [openDelay]="0"
+                      popoverClass="preserve-whitespace"
+                      [ngClass]="getTextClass(col, row)"
+                      [innerHTML]="formatCellValue(col, row, i)">
+                    </span>
+                    <!-- NEW: Warning Tooltip Icon -->
+                    <i
+                      *ngIf="shouldShowWarningTooltip(col, row)"
+                      [ngClass]="[getWarningTooltipIcon(col), getWarningTooltipIconClass(col)]"
+                      class="ms-1"
+                      [ngbTooltip]="getWarningTooltipMessage(col, row)"
+                      placement="top"
+                      container="body"
+                      style="cursor: help; font-size: 0.875rem">
+                    </i>
+                  </ng-container>
+                  <ng-template #fullTextDefault>
+                    <span [ngClass]="getTextClass(col, row)" [innerHTML]="formatCellValue(col, row, i)"></span>
+                    <!-- NEW: Warning Tooltip Icon -->
+                    <i
+                      *ngIf="shouldShowWarningTooltip(col, row)"
+                      [ngClass]="[getWarningTooltipIcon(col), getWarningTooltipIconClass(col)]"
+                      class="ms-1"
+                      [ngbTooltip]="getWarningTooltipMessage(col, row)"
+                      placement="top"
+                      container="body"
+                      style="cursor: help; font-size: 0.875rem">
+                    </i>
+                  </ng-template>
+                </ng-template>
+              </ng-template>
+            </td>
+          </tr>
+
+          <!-- Error Details Row -->
+          <tr
+            *ngIf="enableErrorHandling && row[hasErrorsField] && isRowExpandedAs(row, 'error')"
+            class="error-details-row">
+            <td [attr.colspan]="allColumns.length" class="error-details p-0">
+              <div class="error-container p-2">
+                <div class="error-header mb-2">
+                  <span class="badge bg-danger me-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Validation Errors
+                  </span>
+                </div>
+                <ul class="error-list m-0 ps-4">
+                  <li *ngFor="let error of row[errorField]" class="error-item">
+                    {{ error }}
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Subtable Row -->
+          <tr *ngIf="enableSubtable && canShowSubtable(row) && isRowExpandedAs(row, 'subtable')" class="subtable-row">
+            <td [attr.colspan]="allColumns.length" class="subtable-container p-0">
+              <div class="subtable-wrapper" [ngClass]="subtableConfig?.cssClass">
+                <table class="table mb-0" [class.table-striped]="subtableConfig?.striped" [class.table-sm]="true">
+                  <thead>
+                    <tr>
+                      <th
+                        *ngFor="let col of getSubtableColumns()"
+                        [style.width]="col.width || 'auto'"
+                        [style.minWidth]="col.minWidth || col.width || 'auto'"
+                        [style.maxWidth]="col.maxWidth || col.width || 'none'"
+                        [ngClass]="getHeaderClass(col)">
+                        {{ col.header }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let childRow of getSubtableData(row); let childIndex = index; trackBy: trackByFn">
+                      <td
+                        *ngFor="let col of getSubtableColumns()"
+                        [ngClass]="getCellClass(col, childRow)"
+                        [style.width]="col.width || 'auto'"
+                        [style.minWidth]="col.minWidth || col.width || 'auto'"
+                        [style.maxWidth]="col.maxWidth || col.width || 'none'">
+                        <!-- Reuse existing cell rendering logic -->
+                        <ng-container *ngIf="col.componentType || col.editable; else subtableTextContent">
+                          <ng-container [ngSwitch]="col.componentType || (col.editable ? 'input' : null)">
+                            <!-- Status Component -->
+                            <ng-container *ngSwitchCase="'status'">
+                              <ng-container *ngIf="!(disableFirstRow && i === 0)">
+                                <app-status-label
+                                  *ngIf="getCellValue(col, row, i)"
+                                  [status]="getCellValue(col, row, i)">
+                                </app-status-label>
+                              </ng-container>
+                            </ng-container>
+
+                            <!-- Input Component (read-only in subtable) -->
+                            <ng-container *ngSwitchCase="'input'">
+                              <span [ngClass]="getTextClass(col, childRow)">
+                                {{ formatCellValue(col, childRow, childIndex) }}
+                              </span>
+                            </ng-container>
+
+                            <!-- Template Component -->
+                            <ng-container *ngSwitchCase="'template'">
+                              <ng-container
+                                *ngTemplateOutlet="
+                                  getColumnTemplate(col, 'cell');
+                                  context: getCellTemplateContext(col, childRow, childIndex)
+                                ">
+                              </ng-container>
+                            </ng-container>
+
+                            <!-- Audit Info Component -->
+                            <ng-container *ngSwitchCase="'auditInfo'">
+                              <app-audit-info-column
+                                [creationTime]="childRow[col.creationTimeField || 'creationTime']"
+                                [creatorName]="childRow[col.creatorNameField || 'creatorUsername']"
+                                [lastModificationTime]="
+                                  childRow[col.lastModificationTimeField || 'lastModificationTime']
+                                "
+                                [lastModifierName]="childRow[col.lastModifierNameField || 'lastModifierUsername']">
+                              </app-audit-info-column>
+                            </ng-container>
+
+                            <!-- Default: text -->
+                            <span *ngSwitchDefault [ngClass]="getTextClass(col, childRow)">
+                              {{ formatCellValue(col, childRow, childIndex) }}
+                            </span>
+                          </ng-container>
+                        </ng-container>
+
+                        <ng-template #subtableTextContent>
+                          <span [ngClass]="getTextClass(col, childRow)">
+                            {{ formatCellValue(col, childRow, childIndex) }}
+                          </span>
+                        </ng-template>
+                      </td>
+                    </tr>
+
+                    <!-- No data row -->
+                    <tr *ngIf="getSubtableData(row).length === 0">
+                      <td [attr.colspan]="getSubtableColumns().length" class="text-center text-muted p-2">
+                        {{ subtableConfig?.noDataMessage || 'No items' }}
+                      </td>
+                    </tr>
+                  </tbody>
+
+                  <!-- Summary row if enabled -->
+                  <tfoot *ngIf="subtableConfig?.showSummary">
+                    <tr class="table-secondary">
+                      <td *ngFor="let col of getSubtableColumns()" [ngClass]="getCellClass(col)">
+                        {{ getSummaryValue(col) }}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <!-- No Data Row -->
+        <tr *ngIf="!getDisplayData() || getDisplayData().length === 0">
+          <td [attr.colspan]="allColumns.length" class="text-center p-3 text-muted">
+            <i class="bi bi-inbox me-2"></i>{{ noDataMessage }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bottom Pagination -->
+<div
+  *ngIf="shouldShowPaginationBottom()"
+  class="pagination-container d-flex justify-content-between align-items-center mt-3">
+  <div class="d-flex align-items-center" *ngIf="showPageSizeSelector">
+    <label class="form-label me-2 mb-0">Items per page:</label>
+    <ng-select [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChanged()" [items]="pageSizeOptions" clearable="false">
+    </ng-select>
+  </div>
+  <div class="text-muted" *ngIf="showItemsInfo">
+    Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, totalItems) }} of
+    {{ totalItems }} items
+  </div>
+  <ngb-pagination
+    [collectionSize]="totalItems"
+    [(page)]="currentPage"
+    [pageSize]="pageSize"
+    [maxSize]="7"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    [directionLinks]="true"
+    (pageChange)="onPageChanged($event)">
+  </ngb-pagination>
+</div>
+
+<!-- History Modal -->
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="currentApprovalHistories"
+  [title]="historyModalTitle"
+  (disappear)="closeHistoryModal()">
+</app-history-modal>

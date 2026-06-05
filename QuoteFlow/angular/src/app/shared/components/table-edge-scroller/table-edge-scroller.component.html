@@ -1,0 +1,32 @@
+<div class="table-edge-scroller-wrapper" (mousemove)="onWrapperMouseMove($event)">
+  <button
+    *ngIf="canScrollPrev && showPrevButton"
+    class="scroll-nav-button prev-button"
+    [class]="config.navButtonClass || ''"
+    type="button"
+    (click)="scrollPrev()"
+    [style.top.px]="getButtonYPosition()"
+    aria-label="Scroll previous">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+
+  <div class="table-edge-scroller" #scrollContainer (scroll)="onScroll()" (mousemove)="onContainerMouseMove($event)">
+    <ng-content></ng-content>
+
+    <div class="edge-indicators">
+      <div class="edge left" [style.width.px]="config.edgeSize"></div>
+      <div class="edge right" [style.width.px]="config.edgeSize"></div>
+    </div>
+  </div>
+
+  <button
+    *ngIf="canScrollNext && showNextButton"
+    class="scroll-nav-button next-button"
+    [class]="config.navButtonClass || ''"
+    type="button"
+    (click)="scrollNext()"
+    [style.top.px]="getButtonYPosition()"
+    aria-label="Scroll next">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>

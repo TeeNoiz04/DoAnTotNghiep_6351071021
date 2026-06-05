@@ -1,0 +1,178 @@
+<div class="card mb-0 card-custom">
+  <div class="card-body">
+    <form [formGroup]="projectForm" class="form-container">
+      <div class="m-0">
+        <div class="row g-2 mt-0">
+          <div class="col-12 col-md-3 mt-0">
+            <div>
+              <label class="form-label" for="country">Country</label>
+              <input
+                autocomplete="off"
+                id="country"
+                class="form-control"
+                formControlName="country"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-0">
+            <div>
+              <label class="form-label" for="province">City/Province</label>
+              <input
+                autocomplete="off"
+                id="province"
+                class="form-control"
+                formControlName="province"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <div class="col-12 col-md-6 mt-0">
+            <div>
+              <label class="form-label" for="detailedAddress">Detailed Address</label>
+              <input
+                autocomplete="off"
+                id="detailedAddress"
+                class="form-control"
+                formControlName="detailedAddress"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <!-- <div [ngClass]="getColumnClass()" *ngIf="columnsPerRow === 4">
+            <div class="summary-information-container" *ngIf="useServiceData">
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="service.showSummaryInformation()">
+                Summary Information
+              </a>
+            </div>
+          </div> -->
+        </div>
+
+        <div class="row g-2 mt-0">
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="projectTypeFilter">Project Type</label>
+              <input
+                autocomplete="off"
+                id="projectTypeFilter"
+                class="form-control"
+                formControlName="projectType"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <!-- <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="euIndustry">E/U Industry</label>
+              <input
+                autocomplete="off"
+                id="euIndustry"
+                class="form-control"
+                formControlName="euIndustry"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div> -->
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="decisionRight">Decision Right</label>
+              <input
+                autocomplete="off"
+                id="decisionRight"
+                class="form-control"
+                formControlName="decisionRight"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div>
+              <label class="form-label" for="application">Application</label>
+              <input
+                autocomplete="off"
+                id="application"
+                class="form-control"
+                formControlName="application"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-2 mt-0">
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="competitorBrand">Competitor Brand</label>
+              <input
+                autocomplete="off"
+                id="competitorBrand"
+                class="form-control"
+                formControlName="competitorBrand"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="priceGap">Price Gap with Competitor</label>
+              <input
+                autocomplete="off"
+                id="priceGap"
+                class="form-control"
+                formControlName="priceGap"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div>
+              <label class="form-label" for="upcomingPotentialProjects">Upcoming Potential Projects</label>
+              <input
+                autocomplete="off"
+                id="upcomingPotentialProjects"
+                class="form-control"
+                formControlName="upcomingPotentialProjects"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+        </div>
+        <div class="row g-2 mt-0">
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="poPlannedDate">PO Planned Date</label>
+              <input
+                autocomplete="off"
+                id="poPlannedDate"
+                class="form-control"
+                [value]="
+                  projectForm.get('poPlannedDate')?.value && projectForm.get('poPlannedDate')?.value !== null
+                    ? (projectForm.get('poPlannedDate')?.value | date: 'dd/MM/yyyy')
+                    : ''
+                "
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+
+          <div class="col-12 col-md-3">
+            <div>
+              <label class="form-label" for="deliveryDate">Delivery Date</label>
+              <input
+                autocomplete="off"
+                id="deliveryDate"
+                class="form-control"
+                [value]="
+                  projectForm.get('deliveryDate')?.value
+                    ? (projectForm.get('deliveryDate')?.value | date: 'dd/MM/yyyy')
+                    : ''
+                "
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <div>
+              <label class="form-label" for="otherInformation">Other Projects Information</label>
+              <input
+                autocomplete="off"
+                id="otherInformation"
+                class="form-control"
+                formControlName="otherInformation"
+                [readonly]="isFormReadonly" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

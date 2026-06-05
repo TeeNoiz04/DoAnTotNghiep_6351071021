@@ -1,0 +1,74 @@
+@switch (columnType) {
+  @case ('int') {
+    <div class="text-cell-container text-end">
+      <span [innerHTML]="formatter(value, entry) | appNumberFormat: 0"> </span>
+    </div>
+  }
+  @case ('decimal') {
+    <div class="text-cell-container text-end">
+      <span [innerHTML]="formatter(value, entry) | appNumberFormat"> </span>
+    </div>
+  }
+  @case ('date') {
+    <div class="text-cell-container">
+      <span [innerHTML]="formatter(value, entry) | appDate: dateFormat"> </span>
+    </div>
+  }
+  @case ('status') {
+    <div class="d-flex align-items-center">
+      <app-status-label [status]="value"></app-status-label>
+    </div>
+  }
+  @case ('action') {
+    <div class="d-flex align-items-center">
+      <app-action-label [action]="value" (actionClicked)="onActionClicked($event)"></app-action-label>
+      <ng-container *ngIf="isSubmitted">
+        <i
+          class="fa fa-eye text-primary ms-2"
+          style="cursor: pointer"
+          ngbTooltip="View detail"
+          placement="top"
+          (click)="onViewMoreClicked()">
+        </i>
+      </ng-container>
+    </div>
+  }
+  @case ('error') {
+    <div class="d-flex gap-2 align-items-center">
+      <span class="cell-content {{ cssClass }}" [innerHTML]="formatter(value, entry)"> </span>
+      <div *ngIf="getTooltipContent(value, entry)" class="text-center" [ngbTooltip]="getTooltipContent(value, entry)">
+        <i class="bi bi-exclamation-triangle-fill text-danger"></i>
+      </div>
+    </div>
+  }
+  @case ('wrapText') {
+    <div class="d-flex align-items-center">
+      <div class="text-center w-100">
+        <span class="cell-wrap-text" [innerHTML]="formatter(value, entry)"></span>
+      </div>
+    </div>
+  }
+  @case ('ellipsis') {
+    <div
+      class="d-flex align-items-center"
+      [ngbTooltip]="formatter(value, entry)"
+      placement="top"
+      container="body"
+      tooltipClass="ellipsis-tooltip">
+      <div class="text-center">
+        <span class="cell-ellipsis" [innerHTML]="formatter(value, entry)"></span>
+      </div>
+    </div>
+  }
+  @case ('bool') {
+    <div class="text-cell-container text-center">
+      <span *ngIf="value === true || value === 'true'">&#10003;</span>
+      <span *ngIf="value !== true && value !== 'true'"></span>
+    </div>
+  }
+  @default {
+    <div class="text-cell-container">
+      <span class="cell-content {{ cssClass }}" [innerHTML]="formatter(value, entry)"> </span>
+    </div>
+  }
+}

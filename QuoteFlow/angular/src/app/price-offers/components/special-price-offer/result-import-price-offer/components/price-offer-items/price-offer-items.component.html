@@ -1,0 +1,274 @@
+<app-advanced-data-table
+  [data]="data"
+  [height]="height"
+  [showGroupHeaders]="false"
+  [showSummary]="false"
+  [autoCalculateSummary]="false"
+  [enableErrorHandling]="true"
+  [errorField]="'errors'"
+  [hasErrorsField]="'hasErrors'"
+  [rowIndexField]="'rowIndex'">
+  <!-- Add More Items Mode Columns -->
+  <ng-container *ngIf="isAddMoreItemsMode">
+    <!-- Item Information Group -->
+    <app-table-column-group name="" cssClass="group-header item-group">
+      <!-- Status Column -->
+      <app-table-column
+        field="rowData.status"
+        header=""
+        headerClass="text-center"
+        width="90px"
+        textAlign="center"
+        [fixed]="true"
+        componentType="status">
+      </app-table-column>
+
+      <!-- Row Number Column -->
+      <app-table-column
+        field="rowData.no"
+        header="No."
+        headerClass="text-center"
+        width="40px"
+        textAlign="center"
+        [fixed]="true">
+      </app-table-column>
+
+      <!-- Material Code Column -->
+      <app-table-column
+        field="rowData.golfaCode"
+        header="Material Code"
+        headerClass="text-center"
+        width="120px"
+        [fixed]="true">
+      </app-table-column>
+
+      <!-- Model Name Column -->
+      <app-table-column field="rowData.modelName" header="Model Name" headerClass="text-center" width="180px">
+      </app-table-column>
+
+      <!-- Special Spec 1 Column -->
+      <app-table-column
+        field="rowData.specialSpec1"
+        header="Spec 1"
+        headerClass="text-center"
+        width="140px"
+        textAlign="center">
+      </app-table-column>
+
+      <!-- Quantity Column -->
+      <app-table-column field="rowData.qty" header="Qty" headerClass="text-center" width="35px" textAlign="end">
+      </app-table-column>
+    </app-table-column-group>
+
+    <!-- Pricing Group -->
+    <app-table-column-group name="" cssClass="group-header price-group">
+      <!-- Standard Price Column -->
+      <app-table-column
+        field="rowData.standardPrice"
+        header="Standard Price"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- Standard Amount Column -->
+      <app-table-column
+        field="rowData.standardAmount"
+        header="Standard Amount"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [summaryValue]="summaryData?.totalStandardAmount"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- Buyer Price Column -->
+      <app-table-column
+        field="rowData.buyerPrice"
+        header="Buyer Price"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- Requested Amount Column -->
+      <app-table-column
+        field="rowData.requestedAmount"
+        header="Requested Amount"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [summaryValue]="summaryData?.totalRequestedAmount"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- Requested Discount Ratio Column -->
+      <app-table-column
+        field="rowData.requestedDiscountRatio"
+        header="Requested Discount"
+        headerClass="text-center"
+        width="100px"
+        textAlign="end"
+        [summaryValue]="summaryData?.totalRequestedDiscountAmount"
+        [formatter]="formatDiscountRatio">
+      </app-table-column>
+
+      <!-- Price To Customer Column -->
+      <app-table-column
+        field="rowData.priceToCustomer"
+        header="Price To Customer"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- MEVN Offer Price Column -->
+      <app-table-column
+        field="rowData.mevnOfferPrice"
+        header="MEVN Offer Price"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        textClass="text-warning fw-bold"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- MEVN Offer Amount Column -->
+      <app-table-column
+        field="rowData.mevnOfferAmount"
+        header="MEVN Offer Amount"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        textClass="text-warning fw-bold"
+        [summaryValue]="summaryData?.totalMEVNOfferAmount"
+        [formatter]="formatCurrency">
+      </app-table-column>
+    </app-table-column-group>
+
+    <!-- Competitor Information Group -->
+    <app-table-column-group name="" cssClass="group-header competitor-group">
+      <!-- Competitor Brand Column -->
+      <app-table-column
+        field="rowData.competitorBrand"
+        header="Competitor Brand"
+        headerClass="text-center"
+        width="140px"
+        textAlign="center">
+      </app-table-column>
+
+      <!-- Competitor Model Column -->
+      <app-table-column
+        field="rowData.competitorModel"
+        header="Competitor Model"
+        headerClass="text-center"
+        width="160px"
+        textAlign="center">
+      </app-table-column>
+
+      <!-- Competitor Price Column -->
+      <app-table-column
+        field="rowData.competitorPrice"
+        header="Competitor Price"
+        headerClass="text-center"
+        width="110px"
+        maxWidth="110px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+    </app-table-column-group>
+  </ng-container>
+
+  <!-- Update Item Properties Mode Columns -->
+  <ng-container *ngIf="isUpdateItemPropertiesMode">
+    <!-- Status Group -->
+    <app-table-column-group name="" cssClass="group-header status-group">
+      <!-- Status Column -->
+      <app-table-column
+        field="rowData.status"
+        header=""
+        headerClass="text-center"
+        width="90px"
+        textAlign="center"
+        [fixed]="true"
+        componentType="status">
+      </app-table-column>
+
+      <!-- Row Number Column -->
+      <app-table-column
+        field="rowData.no"
+        header="No."
+        headerClass="text-center"
+        width="40px"
+        textAlign="center"
+        [fixed]="true">
+      </app-table-column>
+    </app-table-column-group>
+
+    <!-- Current Information Group -->
+    <app-table-column-group name="" cssClass="group-header current-info-group bg-light">
+      <!-- Material Code Column -->
+      <app-table-column
+        field="rowData.golfaCode"
+        header="Material Code"
+        headerClass="text-center"
+        width="120px"
+        [fixed]="true">
+      </app-table-column>
+
+      <!-- Model Name Column -->
+      <app-table-column field="rowData.modelName" header="Model" headerClass="text-center" width="180px" [fixed]="true">
+      </app-table-column>
+
+      <!-- Sale Offer Price Column -->
+      <app-table-column
+        field="rowData.saleOfferPrice"
+        header="Sale Offer Price"
+        headerClass="text-center"
+        width="100px"
+        maxWidth="100px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+    </app-table-column-group>
+
+    <!-- Update Information Group -->
+    <app-table-column-group name="" cssClass="group-header update-info-group bg-primary text-white">
+      <!-- Quantity Column -->
+      <app-table-column field="rowData.qty" header="Qty" headerClass="text-center" width="35px" textAlign="end">
+      </app-table-column>
+
+      <!-- Landed Cost Column -->
+      <app-table-column
+        field="rowData.landingCost"
+        header="Landed Cost"
+        headerClass="text-center"
+        width="100px"
+        maxWidth="100px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+
+      <!-- New Sale Offer Price Column -->
+      <app-table-column
+        field="rowData.newSaleOfferPrice"
+        header="Sale Offer Price"
+        headerClass="text-center"
+        width="100px"
+        maxWidth="100px"
+        textAlign="end"
+        [formatter]="formatCurrency">
+      </app-table-column>
+    </app-table-column-group>
+  </ng-container>
+</app-advanced-data-table>

@@ -1,0 +1,35 @@
+.card-custom {
+  .card-body {
+    padding: 0;
+  }
+}
+.form-container {
+  padding: 0;
+  .ng-select .ng-select-container {
+    height: 38px;
+  }
+
+  .form-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .summary-information-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-bottom: 6px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+.card-body-custom {
+  padding: 12px;
+}

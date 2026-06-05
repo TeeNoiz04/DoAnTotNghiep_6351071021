@@ -1,0 +1,86 @@
+import { Directive, OnInit, inject } from '@angular/core';
+
+import { ListService, PermissionService, TrackByService } from '@abp/ng.core';
+
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppPermissions } from '@app/app.permissions';
+import { DEFAULT_PAGE_SIZE } from '@app/shared/constants';
+import { TitleService } from '@app/shared/services/title/title.service';
+import { LookupService } from '@proxy/general-lookups';
+import { WorkflowConfigurationDto } from '@proxy/workflow-configurations';
+import { WorkflowConfigurationDetailViewService } from '../../services/workflow-configuration-detail.service';
+import { WorkflowConfigurationViewService } from '../../services/workflow-configuration.service';
+
+export const ChildTabDependencies = [];
+
+export const ChildComponentDependencies = [];
+
+@Directive()
+export abstract class AbstractAssetManagementComponent implements OnInit {
+  public readonly list = inject(ListService);
+  public readonly track = inject(TrackByService);
+  public readonly service = inject(WorkflowConfigurationViewService);
+  public readonly serviceDetail = inject(WorkflowConfigurationDetailViewService);
+  public readonly permissionService = inject(PermissionService);
+  public readonly titleService = inject(TitleService);
+  public readonly router = inject(Router);
+  public readonly route = inject(ActivatedRoute);
+  public readonly serviceLookup = inject(LookupService);
+
+  protected title = '::FATA Workflow Configuration';
+  protected isActionButtonVisible: boolean | null = null;
+  assetTypeOptions = [
+    { label: 'FATA Lending', value: 'Asset.Lending' },
+    { label: 'FATA Liquidation', value: 'Asset.Liquidation' },
+    { label: 'FATA Transfer Location', value: 'Asset.Transfer.Location' },
+    { label: 'FATA Transfer PIC', value: 'Asset.Transfer.PIC' },
+  ];
+  levelOptions: { label: string; value: number }[] = [];
+  conditionOptions: { label: string; value: string }[] = [];
+  AppPermissions = AppPermissions;
+  ngOnInit(): void {
+    this.titleService.setTitle('FATA Workflow Configuration');
+    this.list.maxResultCount = DEFAULT_PAGE_SIZE;
+    this.service.filters.workflowType = this.assetTypeOptions?.[0]?.value;
+    this.service.hookToQuery();
+    this.getLevel(this.service.filters.workflowType);
+    this.getCondition(this.service.filters.workflowType);
+  }
+
+  onLoad() {
+    this.list.get();
+  }
+
+  clearFilters() {
+    this.service.clearFilters();
+    this.service.filters.workflowType = this.assetTypeOptions?.[0]?.value;
+  }
+
+  update(record: WorkflowConfigurationDto) {
+    this.serviceDetail.update(record);
+  }
+  onChangeWorkflowType(event: any) {
+    this.levelOptions = [];
+    this.conditionOptions = [];
+    this.service.filters.workflowLevel = null;
+    this.service.filters.condition = null;
+    this.getLevel(event?.value);
+    this.getCondition(event?.value);
+  }
+  getLevel(type: string) {
+    this.serviceLookup.getLevelLookupWorkflow(type).subscribe(res => {
+      this.levelOptions = res.items.map(item => ({
+        label: 'Level ' + item,
+        value: item,
+      }));
+    });
+  }
+  getCondition(type: string) {
+    this.serviceLookup.getConditionLookupWorkflow(type).subscribe(res => {
+      this.conditionOptions = res.items.map(item => ({
+        label: item,
+        value: item,
+      }));
+    });
+  }
+}

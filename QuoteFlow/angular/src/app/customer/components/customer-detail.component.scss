@@ -1,0 +1,10 @@
+::ng-deep .ae-picker-options {
+  z-index: 99999999 !important;
+}
+
+/* ...existing code... */
+::ng-deep .angular-editor-dropdown,
+.angular-editor-toolbar .ae-picker {
+  z-index: 9999999 !important; /* Bootstrap modal default is 1050 */
+}
+/* ...existing code... */

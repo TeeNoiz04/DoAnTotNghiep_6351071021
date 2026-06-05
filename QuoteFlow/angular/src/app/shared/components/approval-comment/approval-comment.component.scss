@@ -1,0 +1,33 @@
+.custom-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.label-required::after {
+  content: "*";
+  color: #dc3545;
+  margin-left: 4px;
+}
+
+// GKR Status styling
+.alert {
+  margin-bottom: 5px;
+}
+
+.gkr-status-alert {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.25rem;
+
+  .gkr-status-content {
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+}
+
+::ng-deep .form-check-input {
+  border: 1px solid #6c676a !important;
+}

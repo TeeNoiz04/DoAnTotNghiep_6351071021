@@ -1,0 +1,217 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [options]="{ centered: true, size: 'lg', backdrop: 'static' }"
+  (disappear)="onCancel()">
+  <ng-template #abpHeader>
+    <h4 class="modal-title">Edit Special Input Price</h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="editForm" (ngSubmit)="onSave()" [skipValidation]="true">
+      <div class="row">
+        <!-- Account No -->
+        <div class="col-md-6 mb-3">
+          <label for="accountNo" class="form-label label-required"> Account No </label>
+          <input
+            autocomplete="off"
+            type="text"
+            id="accountNo"
+            class="form-control bg-light"
+            formControlName="accountNo"
+            readonly
+            [class.is-invalid]="hasFieldError('accountNo')" />
+          <div class="invalid-feedback" *ngIf="hasFieldError('accountNo')">
+            {{ getFieldError('accountNo') }}
+          </div>
+        </div>
+
+        <!-- Customer Name -->
+        <div class="col-md-6 mb-3">
+          <label for="customerName" class="form-label label-required"> Customer Name </label>
+          <input
+            autocomplete="off"
+            type="text"
+            id="customerName"
+            class="form-control"
+            formControlName="customerName"
+            [class.is-invalid]="hasFieldError('customerName')" />
+          <div class="invalid-feedback" *ngIf="hasFieldError('customerName')">
+            {{ getFieldError('customerName') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Project Name -->
+        <div class="col-md-12 mb-3">
+          <label for="projectName" class="form-label label-required"> Project Name </label>
+          <input
+            autocomplete="off"
+            type="text"
+            id="projectName"
+            class="form-control"
+            formControlName="projectName"
+            [class.is-invalid]="hasFieldError('projectName')" />
+          <div class="invalid-feedback" *ngIf="hasFieldError('projectName')">
+            {{ getFieldError('projectName') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Material Type -->
+        <div class="col-md-6 mb-3">
+          <label for="materialType" class="form-label label-required">Material Type</label>
+          <ng-select
+            [items]="materialTypes$ | async"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            placeholder="Select Material Type"
+            formControlName="materialType"
+            [clearable]="true"
+            [class.is-invalid]="hasFieldError('materialType')"
+            (change)="onMaterialTypeChange($event)">
+          </ng-select>
+          <div class="invalid-feedback" *ngIf="hasFieldError('materialType')">
+            {{ getFieldError('materialType') }}
+          </div>
+        </div>
+
+        <!-- Supplier -->
+        <div class="col-md-6 mb-3">
+          <label for="supplierId" class="form-label label-required">Supplier</label>
+          <ng-select
+            [items]="filteredSuppliers$ | async"
+            bindLabel="displayName"
+            bindValue="id"
+            placeholder="Select Supplier"
+            formControlName="supplierId"
+            [clearable]="true"
+            [disabled]="!ctrls.materialType.value"
+            [class.is-invalid]="hasFieldError('supplierId')"
+            (change)="onSupplierChange($event)">
+          </ng-select>
+          <div class="invalid-feedback" *ngIf="hasFieldError('supplierId')">
+            {{ getFieldError('supplierId') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Supplier BU -->
+        <div class="col-md-6 mb-3">
+          <label for="supplierBUId" class="form-label label-required">Supplier BU</label>
+          <ng-select
+            [items]="filteredSupplierBUs$ | async"
+            bindLabel="displayCode"
+            bindValue="id"
+            placeholder="Select Supplier BU"
+            formControlName="supplierBUId"
+            [clearable]="true"
+            [disabled]="!ctrls.supplierId.value || !ctrls.materialType.value"
+            [class.is-invalid]="hasFieldError('supplierBUId')"
+            (change)="onSupplierBUChange($event)">
+          </ng-select>
+          <div class="invalid-feedback" *ngIf="hasFieldError('supplierBUId')">
+            {{ getFieldError('supplierBUId') }}
+          </div>
+        </div>
+
+        <!-- Currency -->
+        <div class="col-md-6 mb-3">
+          <label for="currency" class="form-label">Currency</label>
+          <input
+            autocomplete="off"
+            type="text"
+            id="currency"
+            class="form-control"
+            formControlName="currency"
+            placeholder="Currency"
+            readonly />
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Valid From -->
+        <div class="col-md-6 mb-3">
+          <label for="validFrom" class="form-label label-required">Valid From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="validFrom"
+              class="form-control"
+              name="validFrom"
+              #validFromInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="validFrom"
+              [class.is-invalid]="hasFieldError('validFrom')"
+              (click)="validFromInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="validFromInput?.toggle()" type="button"></button>
+          </div>
+          <div class="invalid-feedback" *ngIf="hasFieldError('validFrom')">
+            {{ getFieldError('validFrom') }}
+          </div>
+        </div>
+
+        <!-- Valid To -->
+        <div class="col-md-6 mb-3">
+          <label for="validTo" class="form-label label-required">Valid To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="validTo"
+              class="form-control"
+              name="validTo"
+              #validToInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="validTo"
+              [class.is-invalid]="
+                hasFieldError('validTo') || (editForm.errors?.['dateRangeInvalid'] && ctrls.validTo.touched)
+              "
+              (click)="validToInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="validToInput?.toggle()" type="button"></button>
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="hasFieldError('validTo') || (editForm.errors?.['dateRangeInvalid'] && ctrls.validTo.touched)">
+            {{ getFieldError('validTo') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Note -->
+        <div class="col-md-12 mb-3">
+          <label for="note" class="form-label"> Note </label>
+          <textarea
+            id="note"
+            class="form-control"
+            formControlName="note"
+            [class.is-invalid]="hasFieldError('note')"
+            rows="3">
+          </textarea>
+        </div>
+      </div>
+
+      <!-- Hidden fields for future use -->
+      <div style="display: none">
+        <input autocomplete="off" formControlName="status" type="text" />
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary me-2" (click)="onCancel()" [disabled]="busy">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="onSave()" [disabled]="busy || !isFormValid()">
+      <span *ngIf="busy" class="spinner-border spinner-border-sm me-1"></span>
+      Save
+    </button>
+  </ng-template>
+</abp-modal>

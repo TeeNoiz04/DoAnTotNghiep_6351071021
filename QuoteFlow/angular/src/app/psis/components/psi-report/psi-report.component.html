@@ -1,0 +1,354 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover"
+        [disabled]="service.isExportToExcelBusy">
+        <i *ngIf="service.isExportToExcelBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isExportToExcelBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-psi-report-filter #psiReportFilter></app-psi-report-filter>
+
+  <div class="card">
+    <div class="card-body p-0">
+      <app-table-edge-scroller>
+        <div class="psi-report-wrapper">
+          <table class="table psi-report-table mb-0">
+            <!-- Header Row 1: Months -->
+            <thead class="table-header-sticky">
+              <tr class="header-row-1">
+                <th rowspan="2" class="frozen-col col-material-group">Material Group</th>
+                <th rowspan="2" class="frozen-col col-description">Description</th>
+                <th colspan="2" class="month-header">Apr</th>
+                <th colspan="2" class="month-header">May</th>
+                <th colspan="2" class="month-header">Jun</th>
+                <th colspan="2" class="month-header">Jul</th>
+                <th colspan="2" class="month-header">Aug</th>
+                <th colspan="2" class="month-header">Sep</th>
+                <th colspan="2" class="month-header">Oct</th>
+                <th colspan="2" class="month-header">Nov</th>
+                <th colspan="2" class="month-header">Dec</th>
+                <th colspan="2" class="month-header">Jan</th>
+                <th colspan="2" class="month-header">Feb</th>
+                <th colspan="2" class="month-header">Mar</th>
+              </tr>
+              <!-- Header Row 2: Plan/Result -->
+              <tr class="header-row-2">
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+                <th class="plan-header">Plan</th>
+                <th class="result-header">Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="hasData">
+                <!-- Total FA Rows -->
+                <ng-container *ngIf="totalRow">
+                  <!-- Row: Total FA - PO issue -->
+                  <tr class="total-row">
+                    <td rowspan="4" class="frozen-col col-material-group text-center align-middle font-weight-bold">
+                      {{ totalLabel }}
+                    </td>
+                    <td class="frozen-col col-description font-weight-bold">PO issue</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.poIssue?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Total FA - Arrive to WH -->
+                  <tr class="total-row">
+                    <td class="frozen-col col-description font-weight-bold">Arrive to WH</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">
+                      {{ totalRow.arriveToWH?.planSeptember | number: '1.0-0' }}
+                    </td>
+                    <td class="text-end font-weight-bold">
+                      {{ totalRow.arriveToWH?.resultSeptember | number: '1.0-0' }}
+                    </td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">
+                      {{ totalRow.arriveToWH?.resultOctober | number: '1.0-0' }}
+                    </td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">
+                      {{ totalRow.arriveToWH?.resultNovember | number: '1.0-0' }}
+                    </td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">
+                      {{ totalRow.arriveToWH?.resultDecember | number: '1.0-0' }}
+                    </td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.arriveToWH?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Total FA - Sales -->
+                  <tr class="total-row">
+                    <td class="frozen-col col-description font-weight-bold">Sales</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.sales?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Total FA - Stock -->
+                  <tr class="total-row total-stock-row">
+                    <td class="frozen-col col-description font-weight-bold">Stock</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end font-weight-bold">{{ totalRow.stock?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+                </ng-container>
+
+                <!-- Regular Material Group Data Rows -->
+                <ng-container *ngFor="let row of groupedData; trackBy: trackByMaterialGroup">
+                  <!-- Row: PO issue -->
+                  <tr class="data-row">
+                    <td rowspan="4" class="frozen-col col-material-group text-center align-middle">
+                      {{ row.materialGroupPSI }}
+                    </td>
+                    <td class="frozen-col col-description">PO issue</td>
+                    <td class="text-end">{{ row.poIssue?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.poIssue?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Arrive to WH -->
+                  <tr class="data-row">
+                    <td class="frozen-col col-description">Arrive to WH</td>
+                    <td class="text-end">{{ row.arriveToWH?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.arriveToWH?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Sales -->
+                  <tr class="data-row">
+                    <td class="frozen-col col-description">Sales</td>
+                    <td class="text-end">{{ row.sales?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.sales?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+
+                  <!-- Row: Stock -->
+                  <tr class="data-row stock-row">
+                    <td class="frozen-col col-description">Stock</td>
+                    <td class="text-end">{{ row.stock?.planApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultApril | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultMay | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultJune | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultJuly | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultAugust | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultSeptember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultOctober | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultNovember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultDecember | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultJan | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultFeb | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.planMarch | number: '1.0-0' }}</td>
+                    <td class="text-end">{{ row.stock?.resultMarch | number: '1.0-0' }}</td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+
+              <ng-container *ngIf="!hasData">
+                <tr>
+                  <td colspan="26" class="text-center py-5">
+                    <div class="empty-state">
+                      <i class="bi bi-search fs-1 text-muted mb-2"></i>
+                      <p class="text-muted mb-0">No data found. Please select filters and click Search.</p>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>

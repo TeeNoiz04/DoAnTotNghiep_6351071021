@@ -1,0 +1,43 @@
+<button class="btn btn-primary" type="button" (click)="showModifyModal()">
+  <i class="bi bi-pencil-square"></i>
+  <span class="ms-1">Modify</span>
+</button>
+
+<!-- Modify modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="openModifyModal"
+  [busy]="isModifyModalBusy"
+  [options]="options">
+  <ng-template #abpHeader>
+    <h3>Confirmation</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="d-flex flex-column">
+      <div>
+        <p>Are you sure you want to modify this request?</p>
+      </div>
+      <div class="mb-2">
+        <label class="form-label label-required">Reason</label>
+        <textarea
+          class="form-control"
+          id="reason"
+          [(ngModel)]="modifyReason"
+          [required]="true"
+          appAutoResize></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-success" type="button" (click)="onSubmitModifyRequest()">
+      <i class="bi bi-check-circle"></i>
+      <span class="ms-1">Save</span>
+    </button>
+    <button class="btn btn-secondary" type="button" (click)="onCloseModifyModal()">
+      <i class="bi bi-x-circle"></i>
+      <span class="ms-1">No</span>
+    </button>
+  </ng-template>
+</abp-modal>

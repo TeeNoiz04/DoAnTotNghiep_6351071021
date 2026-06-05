@@ -1,0 +1,24 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showApprovalList"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    size: 'lg',
+  }">
+  <ng-template #abpHeader>
+    <h3>Approver</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="mb-3">
+      <app-data-table [itemEdit]="false" [itemRemove]="false" [records]="approvers">
+        <app-header title="Username" name="userName" [className]="'w-40'"></app-header>
+        <app-header title="Full Name" name="fullName" [className]="'w-50'"></app-header>
+
+        <app-column value="username"></app-column>
+        <app-column value="fullName"></app-column>
+      </app-data-table>
+    </div>
+  </ng-template>
+</abp-modal>

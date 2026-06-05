@@ -1,0 +1,39 @@
+<!-- <app-material-items-table
+  [data]="data"
+  [columnGroups]="columnGroups"
+  [height]="height"
+  [enableErrorHandling]="true"
+  (rowClick)="onRowClick($event)">
+</app-material-items-table> -->
+<app-advanced-data-table
+  [data]="data"
+  [height]="height"
+  [showGroupHeaders]="true"
+  [showRowNumber]="false"
+  [showSummary]="false"
+  [enableErrorHandling]="true"
+  [errorField]="'errors'"
+  [hasErrorsField]="'hasErrors'"
+  [rowIndexField]="'rowIndex'"
+  [enableClientSidePagination]="true"
+  [pageSize]="100"
+  [showPageSizeSelector]="true"
+  [pageSizeOptions]="[50, 100, 200, 300]"
+  [showItemsInfo]="true"
+  [paginationPosition]="'bottom'"
+  (rowClick)="onRowClick($event)">
+  <ng-container *ngFor="let group of columnGroups">
+    <app-table-column-group [name]="group.name" [cssClass]="group.class">
+      <ng-container *ngFor="let col of group.columns">
+        <app-table-column
+          [field]="col.field"
+          [header]="col.header"
+          [width]="col.width"
+          [class]="col.class"
+          [textAlign]="col.textAlign"
+          [formatter]="col.formatter">
+        </app-table-column>
+      </ng-container>
+    </app-table-column-group>
+  </ng-container>
+</app-advanced-data-table>

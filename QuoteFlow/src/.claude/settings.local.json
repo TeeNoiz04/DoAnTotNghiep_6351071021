@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(dotnet build:*)",
+      "Bash(mkdir:*)",
+      "WebSearch"
+    ],
+    "deny": [],
+    "additionalDirectories": [
+      "C:\\Users\\kien.nguyen\\Documents\\GitHub\\MEVN.FA.WF2025"
+    ]
+  }
+}

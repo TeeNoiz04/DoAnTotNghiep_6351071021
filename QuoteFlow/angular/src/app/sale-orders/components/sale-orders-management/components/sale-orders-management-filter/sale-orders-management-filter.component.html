@@ -1,0 +1,225 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form [formGroup]="service.searchForm" class="form-container">
+      <div class="row-4-custom">
+        <!-- <div class="col">
+          <label class="form-label" for="formDate">Date From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="formDate"
+              class="form-control"
+              name="formDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="orderDateMin"
+              (click)="minFromDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div> -->
+        <!-- <div class="col">
+          <label class="form-label" for="toDate">Date To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              format="dd/MM/yyyy"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="orderDateMax"
+              (click)="minToDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div> -->
+        <div class="col">
+          <label class="form-label" for="soNoFilter"> SO No </label>
+          <input appTrim autocomplete="off" id="soNoFilter" class="form-control" formControlName="soNo" />
+        </div>
+        <div class="col">
+          <label class="form-label" for="sosapNoFilter"> SO SAP No </label>
+          <input appTrim autocomplete="off" id="sosapNoFilter" class="form-control" formControlName="sosapNo" />
+        </div>
+        <div class="col">
+          <label class="form-label" for="dpoNoFilter"> DPO No </label>
+          <input appTrim autocomplete="off" id="dpoNoFilter" class="form-control" formControlName="dpoNo" />
+        </div>
+        <div class="col">
+          <label class="form-label" for="invoiceNoFilter"> Invoice No (%) </label>
+          <input appTrim autocomplete="off" id="invoiceNoFilter" class="form-control" formControlName="invoiceNo" />
+        </div>
+      </div>
+
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label" for="golfaCodeFilter"> Material Code </label>
+          <input appTrim autocomplete="off" id="golfaCodeFilter" class="form-control" formControlName="materialCode" />
+        </div>
+
+        <div class="col">
+          <label class="form-label" for="model"> Model (%) </label>
+          <input appTrim autocomplete="off" id="model" class="form-control" formControlName="model" />
+        </div>
+
+        <div class="col">
+          <label class="form-label" for="buyerFilter">Buyer Type</label>
+          <ng-select
+            [items]="service?.buyerTypeOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            name="buyerFilter"
+            formControlName="buyerType"
+            appendTo="body"
+            [clearable]="true"
+            [searchable]="true"
+            (change)="service.onChangeBuyerType($event)">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label" for="buyerFilter">Buyer</label>
+          <ng-select
+            [items]="service?.buyerOptions"
+            bindLabel="displayCode"
+            bindValue="id"
+            name="buyerFilter"
+            formControlName="buyerId"
+            appendTo="body"
+            [clearable]="true"
+            [searchable]="true">
+          </ng-select>
+        </div>
+      </div>
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label" for="soDateFrom">SO Date From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="soDateFrom"
+              class="form-control"
+              name="soDateFrom"
+              #soDateFrom="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="soDateFrom"
+              (click)="soDateFrom.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="soDateFrom?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="soDateTo">SO Date To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="soDateTo"
+              class="form-control"
+              name="soDateTo"
+              format="dd/MM/yyyy"
+              #soDateTo="ngbDatepicker"
+              ngbDatepicker
+              formControlName="soDateTo"
+              (click)="soDateTo.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="soDateTo?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="vatDateFrom">VAT Invoice Date From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="vatDateFrom"
+              class="form-control"
+              name="vatDateFrom"
+              #vatDateFrom="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="vatDateFrom"
+              (click)="vatDateFrom.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="vatDateFrom?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="vatDateTo">VAT Invoice Date To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="vatDateTo"
+              class="form-control"
+              name="vatDateTo"
+              format="dd/MM/yyyy"
+              #vatDateTo="ngbDatepicker"
+              ngbDatepicker
+              formControlName="vatDateTo"
+              (click)="vatDateTo.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="vatDateTo?.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label" for="statusFilter">Status</label>
+          <ng-select
+            id="statusFilter"
+            [items]="service.statusOptions"
+            bindLabel="label"
+            name="statusFilter"
+            formControlName="statusCode"
+            bindValue="value"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label" for="materialType">Material Type</label>
+          <ng-select
+            [items]="service?.materialTypeOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            name="materialType"
+            formControlName="materialType"
+            appendTo="body"
+            [clearable]="true"
+            [searchable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label" for="materialGroup">Material Group</label>
+          <ng-select
+            [items]="service?.materialGroupOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            name="materialGroup"
+            formControlName="materialGroup"
+            appendTo="body"
+            [clearable]="true"
+            [searchable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label" for="tax-code"> Customer Tax Code </label>
+          <input appTrim autocomplete="off" id="tax-code" class="form-control" formControlName="taxCode" />
+        </div>
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

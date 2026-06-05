@@ -1,0 +1,347 @@
+// will remove this file in the future
+.big-header {
+  text-align: left;
+  margin-top: 20px !important;
+  font-weight: bold;
+  color: #212529;
+}
+
+.separator {
+  border: 0.1rem solid black !important;
+  margin: 0;
+  margin-top: 1px;
+  margin-bottom: 5px;
+  opacity: 0.4 !important;
+}
+
+.separator-procurement {
+  border: 1px solid black !important;
+  margin: 0;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+// end of file
+
+.print-content {
+  h4.big-header {
+    color: black;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 3px;
+    margin: 0 !important;
+    text-align: center;
+  }
+
+  h5.big-header {
+    color: black;
+    font-size: 11px;
+    font-weight: 600;
+    padding-bottom: 3px;
+    margin: 0 !important;
+  }
+
+  .small-header {
+    color: black;
+    font-size: 11px;
+    font-weight: 600;
+    padding-bottom: 5px;
+    margin: 0 !important;
+    font-style: italic;
+  }
+
+  .big-header-status {
+    color: black;
+  }
+
+  .request-detail-container {
+    padding-bottom: 3px;
+  }
+
+  .table > :not(caption) > * > * {
+    padding: 0 0 3px 0 !important;
+  }
+
+  table {
+    margin-bottom: 5px !important;
+  }
+
+  table th {
+    font-size: 11px !important;
+    color: black;
+    font-weight: 600 !important;
+    padding-bottom: 0 !important;
+    text-transform: none;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) td {
+    color: black !important;
+    background-color: white !important;
+  }
+  .table-striped tbody tr:nth-of-type(even) td {
+    color: black !important;
+    background-color: white !important;
+  }
+
+  table td {
+    font-size: 11px !important;
+    color: black !important;
+    font-weight: 500 !important;
+    padding: 3px 5px 3px 0 !important;
+  }
+
+  .table-underline {
+    td {
+      position: relative;
+      &::after {
+        content: "";
+        width: calc(100% - 20px);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-bottom: 1.5px dashed #dddddd;
+      }
+    }
+  }
+
+  .table .paddingLeft-10 {
+    padding-left: 10px !important;
+  }
+
+  .amount {
+    &-label {
+      font-size: 11px !important;
+      color: black;
+      font-weight: 400 !important;
+    }
+    &-sublabel {
+      font-size: 11px !important;
+      color: black;
+      font-weight: 400 !important;
+    }
+    &-value {
+      font-size: 11px !important;
+      color: black;
+      font-weight: 500 !important;
+    }
+  }
+
+  .separator,
+  .separator-procurement {
+    border: 0.5px solid black !important;
+    margin: 1px 0 3px 0 !important;
+    break-before: avoid;
+    break-after: avoid;
+    opacity: 0.5;
+  }
+}
+
+.equal-col-table {
+  width: 100%;
+  border-collapse: collapse;
+  display: table;
+
+  &.col-2 {
+    .table-cell {
+      width: 50%;
+    }
+  }
+
+  &.col-3 {
+    .table-cell {
+      width: 33.333%;
+    }
+  }
+
+  &.col-4 {
+    .table-cell {
+      width: 25%;
+    }
+  }
+
+  &.col-5 {
+    .table-cell {
+      width: 20%;
+    }
+  }
+
+  &.col-asymmetric {
+    .table-cell {
+      &:first-child {
+        width: 50%;
+      }
+
+      &:not(:first-child) {
+        width: 25%;
+      }
+    }
+  }
+
+  .table-header {
+    display: flex;
+    .table-cell {
+      padding: 3px 0 0 0;
+      color: black;
+      font-size: 11px;
+    }
+  }
+
+  .table-row {
+    display: flex;
+
+    .table-cell {
+      padding: 0 0 3px 0;
+      color: black;
+      font-size: 11px;
+      position: relative;
+      &::after {
+        content: "";
+        width: calc(100% - 20px);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-bottom: 1px dashed #dddddd;
+      }
+    }
+    .table-cell-empty {
+      &::after {
+        content: none;
+      }
+    }
+    .text-hint-container {
+      position: relative;
+      margin-bottom: 17px;
+      .text-hint {
+        position: absolute;
+        left: 0;
+        font-size: 11px;
+        bottom: -17px;
+        &-center {
+          text-align: center;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .table-cell {
+    flex: 1;
+    min-height: 11px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .table-cell.nested-columns {
+    padding: 0 !important;
+
+    .nested-row {
+      display: flex;
+      width: 100%;
+
+      .nested-cell {
+        flex: 1;
+        padding: 0 0 3px 0;
+      }
+    }
+  }
+
+  .span-2 {
+    flex: 2;
+  }
+
+  .span-3 {
+    flex: 3;
+  }
+}
+
+:host ::ng-deep {
+  .print-content {
+    h4.big-header,
+    h5.big-header {
+      page-break-after: avoid;
+    }
+
+    tr {
+      page-break-inside: avoid;
+    }
+    table {
+      page-break-inside: auto;
+    }
+
+    .section-heading {
+      page-break-after: avoid;
+    }
+
+    .force-page-break {
+      page-break-before: always;
+    }
+
+    td,
+    th {
+      word-wrap: break-word;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      font-size: 11px !important;
+    }
+  }
+}
+
+// print modal
+.pdf-preview-modal-fullscreen {
+  .modal-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    height: 100vh !important;
+
+    .modal-content {
+      height: 100vh !important;
+      border: none !important;
+      border-radius: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    .modal-body {
+      overflow: hidden !important;
+      padding: 0 !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .pdf-preview-modal-fullscreen {
+    .modal-footer {
+      flex-direction: column-reverse;
+
+      > div {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  .equal-col-table {
+    &.responsive {
+      .table-header,
+      .table-row {
+        flex-direction: column;
+
+        .table-cell {
+          width: 100% !important;
+          display: flex;
+
+          &::before {
+            content: attr(data-label);
+            font-weight: 600;
+            width: 40%;
+            margin-right: 5%;
+          }
+        }
+      }
+
+      .table-header {
+        display: none;
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+.import-form {
+  padding: 1rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.form-label.required::after {
+  content: " *";
+  color: #dc3545;
+}
+
+.input-group .btn {
+  border-left: 0;
+}
+
+.input-group .btn:hover {
+  background-color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+  color: white;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.alert {
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #842029;
+  border-left: 4px solid #dc3545;
+}
+
+.alert-info {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: #055160;
+  border-left: 4px solid #0dcaf0;
+}
+
+.invalid-feedback {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+.form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+// Enhanced spacing and visual hierarchy
+.row {
+  margin-bottom: 0;
+}
+
+.col-md-4:not(:last-child),
+.col-md-6:not(:last-child) {
+  padding-right: 1.5rem;
+}
+
+@media (max-width: 767.98px) {
+  .col-md-4:not(:last-child),
+  .col-md-6:not(:last-child) {
+    padding-right: 0.75rem;
+    margin-bottom: 1rem;
+  }
+}

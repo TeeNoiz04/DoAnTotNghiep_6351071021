@@ -1,0 +1,102 @@
+<div class="discussion-box" [class.open]="isOpen">
+  <div class="floating-close-btn" [class.visible]="isOpen" (click)="close()">
+    <i class="bi bi-chevron-right"></i>
+  </div>
+  <div class="discussion-box-header">
+    <h5>Discussion - {{ dpoCode }}</h5>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-sm btn-outline-primary" (click)="refreshMessages()" [disabled]="isLoading">
+        <i class="bi bi-arrow-clockwise"></i>
+      </button>
+      <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+    </div>
+  </div>
+
+  <div class="discussion-box-body">
+    <div class="messages-list" #messagesContainer (scroll)="onScroll($event)">
+      <div *ngIf="isLoadingMore" class="text-center p-3">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+          <span class="visually-hidden">Loading more...</span>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading && currentPage === 0" class="text-center p-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && messages.length === 0" class="text-center p-3">
+        <p class="text-muted">No messages yet</p>
+      </div>
+
+      <app-message-item
+        *ngFor="let message of messages; trackBy: trackByMessageId"
+        [message]="message"
+        (replyToSender)="onReplyToSender($event)">
+      </app-message-item>
+    </div>
+  </div>
+
+  <div class="message-input-container">
+    <form [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+      <div class="mb-1">
+        <i class="bi bi-arrow-down-short"></i>
+        <small class="text-muted recipients-text"> Leave blank to send to assigned Sales PIC </small>
+        <i class="bi bi-arrow-down-short"></i>
+      </div>
+      <div class="mb-2">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-chip-grid #chipGrid>
+            <mat-chip-row
+              matChipRemove
+              container="body"
+              ngbTooltip="Click to remove"
+              placement="top"
+              *ngFor="let email of emailChips"
+              (removed)="removeEmail(email)">
+              {{ email }}
+              <!-- <button matChipRemove [attr.aria-label]="'Remove ' + email">
+                <mat-icon>x</mat-icon>
+              </button> -->
+            </mat-chip-row>
+          </mat-chip-grid>
+          <input
+            #emailInput
+            placeholder="Enter email or username"
+            [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+            (matChipInputTokenEnd)="addEmail($event)"
+            (input)="onInputChange(emailInput.value)"
+            (blur)="onInputBlur()"
+            triggers="focus"
+            placement="bottom"
+            container="body"
+            autocomplete="off" />
+        </mat-form-field>
+        <div class="suggestions" *ngIf="showSuggestions">
+          <div *ngIf="isLoading" class="suggestion-item">Loading...</div>
+          <div class="suggestion-item" *ngFor="let user of filteredUsers" (mousedown)="selectUser(user)">
+            {{ user.userName }} ({{ user.fullName }})
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <textarea
+          class="form-control"
+          formControlName="content"
+          placeholder="Type your message here..."
+          rows="3"></textarea>
+        <button class="btn btn-primary" type="submit" [disabled]="messageForm.invalid">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+      <div
+        *ngIf="messageForm.get('content')?.invalid && messageForm.get('content')?.touched"
+        class="text-danger small mt-1">
+        Message is required
+      </div>
+    </form>
+  </div>
+</div>

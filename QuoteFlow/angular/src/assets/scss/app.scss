@@ -1,0 +1,28 @@
+//Core files
+@import "./node_modules/bootstrap/scss/functions";
+@import "./node_modules/bootstrap/scss/variables";
+@import "variables";
+@import "./node_modules/bootstrap/scss/mixins.scss";
+
+// Structure
+@import "custom/structure/page-head";
+
+// Components
+@import "custom/components/tables";
+@import "custom/components/buttons";
+@import "custom/components/type";
+@import "custom/components/dropdown";
+@import "custom/components/inputs";
+@import "custom/components/advance-filter";
+@import "custom/components/filters";
+@import "custom/components/checkbox";
+@import "custom/components/modal";
+@import "custom/components/slide_toggle";
+@import "custom/components/sidebar";
+@import "custom/components/toast";
+@import "custom/components/print";
+@import "custom/components/card";
+@import "custom/components/row_custom";
+
+// Plugins
+@import "custom/plugins/select2";

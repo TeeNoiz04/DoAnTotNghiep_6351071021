@@ -1,0 +1,77 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'lg',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+  }"
+  (disappear)="closeDialog()">
+  <ng-template #abpHeader>
+    <h3 class="d-flex align-items-center">
+      <i class="bi bi-plus-circle-fill me-2 text-info"></i>
+      Extra Fee
+      <span class="ms-2 badge bg-info">{{ selectedItemsCount }} items</span>
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="form" [skipValidation]="true">
+      <div class="mb-2">
+        <div>
+          <label for="extraFeeAmount" class="form-label label-required"> Extra Fee Amount (VND) </label>
+          <app-input-number
+            id="extraFeeAmount"
+            formControlName="extraFee"
+            [allowNegative]="true"
+            [ngClass]="{
+              'is-invalid': form.get('extraFee').invalid && form.get('extraFee').touched,
+            }">
+          </app-input-number>
+          <div *ngIf="form.get('extraFee').invalid && form.get('extraFee').touched" class="invalid-feedback">
+            <span *ngIf="form.get('extraFee').errors?.required">Extra Fee Amount is required</span>
+          </div>
+        </div>
+        <!-- <div *ngIf="!isValidExtraFee" class="invalid-feedback d-block">
+        Please enter a valid extra fee amount (0 or greater).
+      </div>
+      <div *ngIf="isValidExtraFee && extraFee.trim().length > 0" class="form-text">
+        Total extra fee: {{ getNumericExtraFee() * selectedItemsCount | number: '1.0-0' }} ({{
+          selectedItemsCount
+        }}
+        items × {{ getNumericExtraFee() | number: '1.0-0' }})
+      </div> -->
+      </div>
+
+      <div>
+        <label for="note" class="form-label"> Note </label>
+        <textarea
+          class="form-control custom-textarea"
+          id="note"
+          formControlName="note"
+          appAutoResize
+          [ngClass]="{ 'is-invalid': form.get('note').invalid && form.get('note').touched }"></textarea>
+        <div *ngIf="form.get('note').invalid && form.get('note').touched" class="invalid-feedback">
+          <span *ngIf="form.get('note').errors?.maxlength">Note cannot exceed 500 characters</span>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="closeDialog()">
+      <i class="bi bi-x-circle me-1"></i>
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isBusy || form?.invalid || hasAnyFinalizedItems"
+      (click)="onSubmit()">
+      <i class="bi bi-plus-circle me-1"></i>
+      Add Extra Fee
+    </button>
+  </ng-template>
+</abp-modal>

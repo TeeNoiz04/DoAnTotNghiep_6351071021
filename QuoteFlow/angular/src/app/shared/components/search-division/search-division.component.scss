@@ -1,0 +1,120 @@
+.search-division {
+  &.full-years-available {
+    gap: 10px;
+    &.multi-actions {
+      .search-container {
+        grid-template-columns: 120px 1fr;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+      }
+    }
+    .search-container {
+      grid-template-columns: 120px 1fr 120px;
+      .full-year-column {
+        display: flex;
+      }
+    }
+    &.relayout {
+      .search-container {
+        grid-template-columns: 1fr;
+        padding: 0;
+
+        .row {
+          padding: 0;
+        }
+      }
+    }
+  }
+  &.hidden-full-years {
+    .search-container {
+      grid-template-columns: 1fr !important;
+      .full-year-column {
+        display: none;
+      }
+    }
+  }
+  &.multi-actions {
+    .search-container {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    abp-validation-error {
+      display: none;
+    }
+  }
+  .search-container {
+    display: grid;
+    grid-template-columns: 1fr 120px;
+    .full-year-column {
+      display: none;
+      width: 120px;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+    }
+    .right-column {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0;
+      margin: 0;
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+    }
+
+    .action-column {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap: 10px;
+      width: 100%;
+      button {
+        width: 120px;
+      }
+    }
+  }
+  .row-actions-container {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    .left-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+    .right-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.label-required:after {
+  content: "*";
+  color: #ff0000;
+  position: relative;
+  top: 0;
+  left: 3px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

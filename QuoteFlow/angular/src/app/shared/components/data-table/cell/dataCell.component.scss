@@ -1,0 +1,74 @@
+.action-link {
+  text-decoration: none;
+  cursor: pointer;
+  color: #355dff !important;
+  background-color: transparent;
+
+  &:hover {
+    color: #355dff !important;
+    text-decoration: none;
+  }
+}
+
+.link-cell {
+  cursor: pointer;
+  color: #355dff;
+  font-weight: normal !important;
+  text-decoration: none;
+
+  &:hover {
+    color: #355dff !important;
+  }
+}
+
+.no-link-cell {
+  cursor: auto !important;
+  font-weight: normal !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.action-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: left;
+  height: 40px;
+}
+
+.cell-ellipsis {
+  max-width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  display: block;
+}
+
+.cell-wrap-text {
+  white-space: normal;
+  word-wrap: break-word;
+  display: block;
+  text-align: left;
+  min-height: 1.2em;
+  max-width: 250px;
+}
+
+.cell-mw-75 {
+  max-width: 75%;
+}
+
+.w-100 {
+  max-width: unset !important;
+}
+
+.click-cell.text-end {
+  justify-content: flex-end;
+}

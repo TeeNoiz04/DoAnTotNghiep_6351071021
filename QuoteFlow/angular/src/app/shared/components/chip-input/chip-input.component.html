@@ -1,0 +1,29 @@
+<div class="chip-input-container">
+  <label class="form-label" [attr.for]="inputId">{{ label }}</label>
+  <div class="chip-input-wrapper">
+    <input
+      #chipInput
+      [id]="inputId"
+      type="text"
+      class="form-control chip-input"
+      (keydown)="onKeyDown($event)"
+      [ngbTooltip]="inputTooltip"
+      triggers="focus"
+      placement="bottom"
+      container="body"
+      autocomplete="off"
+      [disabled]="disabled" />
+  </div>
+  <div class="chips-container mt-1" *ngIf="chips.length > 0">
+    <span
+      class="chip-item"
+      *ngFor="let chip of chips"
+      ngbTooltip="Click to remove"
+      placement="top"
+      container="body"
+      (click)="removeChip(chip)">
+      {{ chip }}
+      <span class="chip-remove">&times;</span>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,232 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h3>On Order Stock Available Detail</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading lock on order stock...</span>
+    </div>
+
+    <!-- DPO Detail Metadata -->
+    <div *ngIf="dpoDetail" class="mb-1">
+      <div class="card border-0 bg-light">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-1">
+              <small class="text-muted">No:</small>
+              <div class="fw-semibold">{{ dpoDetail.rowNo || 'N/A' }}</div>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Material Code:</small>
+              <div class="fw-semibold">{{ dpoDetail.golfaCode || 'N/A' }}</div>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">Model Name:</small>
+              <div class="fw-semibold">{{ dpoDetail.model || 'N/A' }}</div>
+            </div>
+            <div class="col-md-2">
+              <small class="text-muted">Need Order:</small>
+              <div
+                class="fw-semibold"
+                [ngClass]="{
+                  'text-danger': dpoDetail.needDelivery > 0 && dpoDetail.needDelivery < dpoDetail.onOrderStockAvailable,
+                }">
+                {{ formatQuantity(dpoDetail.needDelivery) }}
+              </div>
+            </div>
+            <div class="col-md-3">
+              <small class="text-muted">On Order Stock:</small>
+              <div
+                class="fw-semibold"
+                [ngClass]="{
+                  'text-danger':
+                    dpoDetail.onOrderStockAvailable > 0 && dpoDetail.needDelivery > dpoDetail.onOrderStockAvailable,
+                }">
+                {{ formatQuantity(dpoDetail.onOrderStockAvailable) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1 mt-2">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading lock on order stock data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="lockOnOrderStockData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false"
+            [enableErrorHandling]="true"
+            [errorField]="'errors'"
+            [hasErrorsField]="'hasErrors'"
+            [rowIndexField]="'rowIndex'"
+            (rowClick)="onRowClick($event)">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group
+              name="Lock On Order Stock Information"
+              cssClass="group-header lock-on-order-stock-group">
+              <!-- PO No Column -->
+              <app-table-column field="poNo" header="PO No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- Available Qty Column -->
+              <app-table-column
+                field="qtyAvailable"
+                header="Available Qty"
+                width="120px"
+                textAlign="end"
+                [editable]="!isItemFinalized"
+                inputType="number"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- PO Date Column -->
+              <app-table-column field="poDate" header="PO Date" width="100px" [formatter]="formatDate">
+              </app-table-column>
+
+              <!-- Machine Number Column -->
+              <app-table-column field="machineNumber" header="Machine Number" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- STC Reply Column -->
+              <app-table-column field="stcReply" header="Supplier Reply" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Locked Column -->
+              <app-table-column
+                field="locked"
+                header="Locked"
+                width="80px"
+                textAlign="end"
+                [editable]="!isItemFinalized"
+                inputType="number"
+                [alwaysShowInput]="!isItemFinalized"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- Note Column -->
+              <app-table-column
+                field="note"
+                header="Note"
+                width="200px"
+                textAlign="center"
+                [editable]="!isItemFinalized"
+                [alwaysShowInput]="!isItemFinalized"
+                inputType="text">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div class="navigation-buttons navigation-footer-left">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm me-1"
+          [disabled]="isBusy || !hasPreviousDetail"
+          (click)="onPreviousDetail()"
+          title="Previous Detail">
+          <i class="bi bi-arrow-left-circle"></i>
+          <span class="ms-1">Previous</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [disabled]="isBusy || !hasNextDetail"
+          (click)="onNextDetail()"
+          title="Next Detail">
+          <span class="me-1">Next</span>
+          <i class="bi bi-arrow-right-circle"></i>
+        </button>
+      </div>
+
+      <!-- Action buttons on the right -->
+      <div class="action-buttons">
+        <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">
+          <i class="bi bi-x-circle me-1"></i>
+          Close
+        </button>
+        <button
+          *abpPermission="AppPermissions.MovingOrders.DPOs.LockOnOrderStock"
+          type="button"
+          class="btn btn-warning"
+          [disabled]="isBusy || isItemFinalized || !dpo?.flags?.canLockOnOrder"
+          (click)="onSubmit()">
+          <i class="bi bi-lock me-1"></i>
+          Lock
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</abp-modal>
+
+<!-- Keyboard Navigation Hints - Choose your preferred approach -->
+
+<!-- Approach 1: Minimalist floating tooltip (Recommended for production) -->
+<!-- <app-keyboard-navigation-hint
+  *ngIf="visible && (hasNextDetail || hasPreviousDetail)"
+  modalId="dpo-lock-on-order-stock-modal"
+  [config]="keyboardHintConfig"
+  displayStyle="minimal">
+</app-keyboard-navigation-hint> -->
+
+<!-- Approach 2: Card-style with detailed view -->
+<!-- Uncomment this and comment out Approach 1 to test -->
+<!-- 
+<app-keyboard-navigation-hint
+  *ngIf="visible && (hasNextDetail || hasPreviousDetail)"
+  modalId="dpo-lock-on-order-stock-modal"
+  [config]="keyboardHintConfig"
+  displayStyle="card">
+</app-keyboard-navigation-hint>
+-->
+
+<!-- Approach 3: Interactive toggle button -->
+<!-- Uncomment this and comment out Approach 1 to test -->
+<!-- 
+<app-keyboard-navigation-hint
+  *ngIf="visible && (hasNextDetail || hasPreviousDetail)"
+  modalId="dpo-lock-on-order-stock-modal"
+  [config]="keyboardHintConfig"
+  displayStyle="interactive">
+</app-keyboard-navigation-hint>
+-->
+
+<!-- Approach 4: Bottom notification bar -->
+<!-- Uncomment this and comment out Approach 1 to test -->
+
+<app-keyboard-navigation-hint
+  *ngIf="visible && (hasNextDetail || hasPreviousDetail)"
+  modalId="dpo-lock-on-order-stock-modal"
+  [config]="keyboardHintConfig"
+  displayStyle="notification">
+</app-keyboard-navigation-hint>

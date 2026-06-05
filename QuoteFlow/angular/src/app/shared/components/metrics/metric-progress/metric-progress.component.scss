@@ -1,0 +1,59 @@
+// Status color variables
+$status-good: #198754;
+$status-warning: #fd7e14;
+$status-exceeded: #dc3545;
+
+// Status classes for text elements
+.status-good {
+  color: $status-good !important;
+}
+
+.status-good.progress-bar {
+  background-color: $status-good !important;
+}
+
+.status-warning {
+  color: $status-warning !important;
+}
+
+.status-warning.progress-bar {
+  background-color: $status-warning !important;
+}
+
+.status-exceeded {
+  color: $status-exceeded !important;
+}
+
+.status-exceeded.progress-bar {
+  background-color: $status-exceeded !important;
+}
+
+.progress {
+  height: 4px;
+}
+
+// Tooltip styling
+:host ::ng-deep .metric-progress-tooltip {
+  font-size: 0.875rem;
+  border-collapse: collapse;
+  width: 100%;
+
+  td {
+    padding: 2px 8px 2px 0;
+    white-space: nowrap;
+
+    &:first-child {
+      color: #6c757d;
+      min-width: 120px;
+    }
+
+    &:last-child {
+      font-weight: 500;
+      text-align: right;
+    }
+  }
+
+  tr:not(:last-child) td {
+    border-bottom: 1px solid #e9ecef;
+  }
+}

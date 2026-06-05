@@ -1,0 +1,90 @@
+<app-advanced-data-table
+  [data]="tableData"
+  [height]="height"
+  [maxHeight]="maxHeight"
+  [showGroupHeaders]="false"
+  [showRowNumber]="false"
+  [showSummary]="false"
+  [enableErrorHandling]="false"
+  [enableSubtable]="true"
+  [enableClientSidePagination]="true"
+  [pageSize]="50"
+  [paginationPosition]="'bottom'"
+  [enableSelection]="enableSelection"
+  [selectionType]="'single'"
+  (selectionChange)="onSelectionChange($event)"
+  (cellClick)="onCellClick($event)"
+  (rowExpansion)="onRowExpansion($event)">
+  <!-- GKR No (DPO No) -->
+  <app-table-column field="dpoNo" header="GKR No" width="150px" [fixed]="true" [componentType]="'clickCell'" />
+
+  <!-- Material Type (Material Type) with color formatting -->
+  <app-table-column field="materialType" header="Mat. Type" width="50px" [fixed]="true" textAlign="center" />
+
+  <!-- Buyer (Buyer Type - Buyer Short Name) -->
+  <app-table-column field="buyerShortName" header="Buyer" width="200px" [formatter]="formatBuyer" />
+
+  <!-- Confirm Date (Order Date) -->
+  <app-table-column field="orderDate" header="Confirm Date" width="130px" [formatter]="formatDate" />
+
+  <!-- Expiration Date -->
+  <app-table-column field="expirationDate" header="Exp. Date" width="130px" [formatter]="formatDate" />
+
+  <!-- Total Amount -->
+  <app-table-column
+    field="totalAmount"
+    header="Total Amount"
+    width="130px"
+    textAlign="end"
+    [formatter]="formatNumber" />
+
+  <!-- Remark with ellipsis -->
+  <app-table-column field="remark" header="GKR Note" width="200px" [showEllipsis]="true" />
+
+  <!-- Linked DPO Note -->
+  <app-table-column
+    *ngIf="showLinkedNote"
+    field="linkedNote"
+    header="Allocation Note"
+    width="200px"
+    [showEllipsis]="true" />
+
+  <!-- Subtable for GKR Allocation Details -->
+  <app-subtable-columns
+    dataField="allocationDetails"
+    [expandableCondition]="canExpandRow"
+    [showRowNumber]="true"
+    [showSummary]="false"
+    [striped]="true"
+    noDataMessage="No allocation details available">
+    <!-- Material Code Column -->
+    <app-table-column field="golfaCode" header="Material Code" width="120px" [fixed]="true" />
+
+    <!-- Model Column -->
+    <app-table-column field="model" header="Model" width="130px" />
+
+    <!-- GKR Quantity Column -->
+    <app-table-column field="gkrQty" header="GKR Qty" width="60px" textAlign="end" [formatter]="formatNumber" />
+
+    <!-- Kept Quantity Column -->
+    <app-table-column field="keptQty" header="Kept Qty" width="60px" textAlign="end" [formatter]="formatNumber" />
+
+    <!-- Order Quantity Column -->
+    <app-table-column
+      field="orderQty"
+      header="Order Qty"
+      width="60px"
+      textAlign="end"
+      [formatter]="formatNumber"
+      [sum]="true" />
+
+    <!--Take Quantity Column-->
+    <app-table-column field="takeQty" header="Take Qty" width="60px" textAlign="end" [formatter]="formatNumber" />
+
+    <!-- Release Quantity Column -->
+    <app-table-column field="releaseQty" header="Release Qty" width="60px" textAlign="end" [formatter]="formatNumber" />
+
+    <!-- Note Column -->
+    <app-table-column field="note" header="Note" width="250px" [showEllipsis]="true" />
+  </app-subtable-columns>
+</app-advanced-data-table>

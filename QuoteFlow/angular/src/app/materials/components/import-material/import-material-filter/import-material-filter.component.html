@@ -1,0 +1,81 @@
+@if (service.filters; as filters) {
+  <app-expandable-panel-v2
+    headerText="Search With Filters"
+    panelId="search_info"
+    [defaultCollapsed]="false"
+    icon="bi bi-search"
+    [isDisabled]="false"
+    class="mb-3">
+    <div class="filter-area">
+      <form class="form-container">
+        <div class="row-4-custom">
+          <div class="col">
+            <div>
+              <label class="form-label" for="importTypeFilter">
+                {{ '::Import Type' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="importTypeOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.importType"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col">
+            <div>
+              <label class="form-label" for="statusFilter">
+                {{ '::Approval Status' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="statusOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.approvalStatus"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col">
+            <div>
+              <label class="form-label" for="golfa">
+                {{ '::Material Code' | abpLocalization }}
+              </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="golfa"
+                class="form-control"
+                [(ngModel)]="filters.golfaCode"
+                [ngModelOptions]="{ standalone: true }" />
+            </div>
+          </div>
+
+          <div class="col">
+            <div>
+              <label class="form-label" for="model">
+                {{ '::Model' | abpLocalization }}
+              </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="model"
+                class="form-control"
+                [(ngModel)]="filters.model"
+                [ngModelOptions]="{ standalone: true }" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </app-expandable-panel-v2>
+}

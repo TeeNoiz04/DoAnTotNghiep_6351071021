@@ -1,0 +1,37 @@
+// mat-slide-toggle.scss
+
+@use "@angular/material" as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+$my-slide-toggle-overrides: (
+  track-outline-color: red,
+  disabled-unselected-track-outline-color: red,
+  track-shape: 20px,
+  handle-shape: 50%,
+);
+
+// This will globally override slide toggle variables
+@include mat.slide-toggle-overrides($my-slide-toggle-overrides);
+.mdc-switch__track {
+  // border-radius: 20px !important;
+}
+
+.mdc-switch--selected:enabled .mdc-switch__handle::after {
+  background: #007bff !important;
+}
+.mdc-switch--selected .mdc-switch__track::after {
+  background: rgba(0, 123, 255, 0.5) !important;
+}
+
+.mdc-switch.mdc-switch--disabled .mdc-switch__track::after {
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+.mdc-switch--disabled.mdc-switch .mdc-switch__track {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+.mdc-switch.mdc-switch--disabled {
+  cursor: not-allowed !important;
+}

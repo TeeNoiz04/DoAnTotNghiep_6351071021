@@ -1,0 +1,243 @@
+/* status-label.component.css */
+.status-label {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: capitalize;
+  white-space: nowrap;
+  /* Prevent text from wrapping */
+  overflow: hidden;
+  /* Hide overflow */
+  text-overflow: ellipsis;
+  /* Add ellipsis for overflowed text */
+  max-width: 100%;
+  /* Ensure the label doesn't stretch too much */
+  height: 100%;
+  color: white;
+}
+
+.text-status {
+  font-size: 11px;
+  // transition: all 0.2s ease;
+
+  // &:hover[role='button'] {
+  //   opacity: 0.85;
+  //   transform: scale(1.05);
+  //   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  // }
+}
+
+.action-approved {
+  background-color: #34c759;
+  /* Same as status-approved */
+  color: white;
+}
+
+.action-rejected {
+  background-color: #ff3b30;
+  /* Same as status-rejected */
+  color: white;
+}
+
+.action-cancelled {
+  background-color: #ff6b6b;
+  /* Same as status-cancelled */
+  color: white;
+}
+
+.action-submitted {
+  background-color: #007aff;
+  /* Same as status-submitted */
+  color: white;
+}
+
+.action-closed {
+  background-color: #6c757d;
+  /* Same as status-closed */
+  color: white;
+}
+
+.action-reopen {
+  background-color: #6fdd8b; /* xanh dịu */
+  color: #1f2937; /* xám đậm */
+  // font-weight: 600;
+}
+
+.action-confirmed-close {
+  background-color: #344fc7; 
+  color: white;
+}
+// [HistoryActions.ImportSAPData]: 'action-import-sap-data',
+//   [HistoryActions.ImportIUChanges]: 'action-import-iu-changes',
+//   [HistoryActions.ConfirmedDelivery]: 'action-confirmed-delivery',
+
+.action-import-sap-data {
+  background-color: #ffd966; /* vàng dịu */
+  color: #1f2937;
+  // font-weight: 600;
+}
+.action-import-iu-change {
+  background-color: #eb8322; /* vàng dịu */
+  color: #1f252c;
+  // font-weight: 600;
+}
+.action-confirmed-delivery {
+  background-color: #344fc7;
+  /* Green - positive */
+  color: white;
+}
+.action-updated {
+  background-color: #ffd966; /* vàng dịu */
+  color: #1f2937;
+  // font-weight: 600;
+}
+
+.action-completed-settlement {
+  background-color: #c7a012;
+  /* Same as status-insettlement */
+  color: white;
+}
+
+.action-confirming-purchasing {
+  background-color: #5ac8fa;
+  /* Same as status-confirming-purchasing */
+  color: white;
+}
+
+.action-af-adjusted {
+  background-color: #4a90e2;
+  /* Same as status-af-review */
+  color: white;
+}
+
+.action-modified {
+  background-color: #ff9500;
+  /* Same as status-inprogress - represents an active user modification */
+  color: white;
+}
+
+.action-assigned {
+  background-color: #007aff;
+  /* Same as status-submitted - represents a confirmed assignment */
+  color: white;
+}
+
+.action-unassigned {
+  background-color: #ff3b30;
+  /* Same as status-rejected - represents removal of an assigned person */
+  color: white;
+}
+
+.action-returned {
+  background-color: #e5bb14;
+  /* Same as status-returning - represents the start of the return approval process */
+  color: white;
+}
+
+.action-resolve {
+  background-color: #5ac8fa;
+  /* Light green - indicates approved first round */
+  color: white;
+  /* Waiting for requester action */
+}
+
+.action-confirm-claim {
+  background-color: #4a90e2;
+  /* Darker orange - related to but distinct from in-progress */
+  color: white;
+  /* Indicates second round approval process in progress */
+}
+
+.action-resolve-reset {
+  background-color: #f1bc00;
+  /* Medium blue - review stage */
+  color: white;
+}
+
+.action-system-update {
+  background-color: #63493d;
+  /* Blue - indicates system update */
+  color: white;
+}
+
+.action-submitted-as-win {
+  background-color: #28a745;
+  /* Green - indicates a successful submission */
+  color: white;
+}
+
+.action-submitted-as-lost {
+  background-color: #dc3545;
+  /* Red - indicates a lost submission */
+  color: white;
+}
+
+.action-submitted-more-items {
+  background-color: #17a2b8;
+  /* Teal - indicates submission of additional items */
+  color: white;
+}
+
+.action-landing-cost-updated {
+  background-color: #ffc107;
+  /* Yellow - indicates landing cost update */
+  color: white;
+}
+
+.action-special-input-price-assigned {
+  background-color: #6610f2;
+  /* Purple - indicates special input price assignment */
+  color: white;
+}
+
+.action-quantity-merged {
+  background-color: #fd7e14;
+  /* Orange - indicates quantity merging */
+  color: white;
+}
+
+.action-message-sent {
+  background-color: #6f42c1;
+  /* Indigo - indicates a message has been sent */
+  color: white;
+}
+.action-confirmed-lock-stock {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+.action-confirmed-lock-on-order {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+.action-confirmed {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+.action-default {
+  background-color: #ff6b6b;
+  color: white;
+}
+.action-wait-for-return {
+  background-color: #1cb22f;
+  /* Green - positive */
+  color: white;
+}
+.action-return {
+  background-color: #f1bc00;
+  /* Orange - indicates return action */
+  color: white;
+}
+.action-confirm-close {
+  background-color: #34c759;
+  color: white;
+}
+.action-wait-for-close {
+  background-color: #1cb22f;
+  /* Green - positive */
+  color: white;
+}

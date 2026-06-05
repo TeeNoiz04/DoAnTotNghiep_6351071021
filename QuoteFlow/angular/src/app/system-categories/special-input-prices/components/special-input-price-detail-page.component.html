@@ -1,0 +1,223 @@
+<abp-page [title]="'Special Input Price Detail' | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        class="btn btn-secondary"
+        type="button"
+        (click)="navigateBack()"
+        placement="bottom"
+        ngbTooltip="Back"
+        triggers="hover">
+        <i class="bi bi-arrow-left-circle me-1"></i>
+        <span class="btn-text">Back</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && specialInputPrice">
+    <!-- Basic Information Card -->
+    <app-expandable-panel-v2
+      panelId="detail_info"
+      [defaultCollapsed]="false"
+      headerText="Special Input Price Information"
+      icon="bi bi-info-circle"
+      class="mb-3"
+      [isDisabled]="false">
+      <!-- Row 1: Account No, Account Name, Project Name -->
+      <div class="row mb-2">
+        <div class="col-md-4">
+          <label class="form-label">Account No</label>
+          <input autocomplete="off" type="text" class="form-control" [value]="specialInputPrice.accountNo" readonly />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Account Name</label>
+          <input autocomplete="off" type="text" class="form-control" [value]="specialInputPrice.accountName" readonly />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Project Name</label>
+          <input autocomplete="off" type="text" class="form-control" [value]="specialInputPrice.projectName" readonly />
+        </div>
+      </div>
+
+      <!-- Row 2: Valid From, Valid To, Total Amount -->
+      <div class="row mb-2">
+        <div class="col-md-4">
+          <label class="form-label">Valid From</label>
+          <input
+            autocomplete="off"
+            type="text"
+            class="form-control"
+            [value]="specialInputPrice.validFrom | date: 'dd/MM/yyyy'"
+            readonly />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Valid To</label>
+          <input
+            autocomplete="off"
+            type="text"
+            class="form-control"
+            [value]="specialInputPrice.validTo | date: 'dd/MM/yyyy'"
+            readonly />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Total Amount</label>
+          <input
+            autocomplete="off"
+            type="text"
+            class="form-control text-danger fw-bold"
+            [value]="specialInputPrice.totalAmount | number: '1.2-2'"
+            readonly />
+        </div>
+      </div>
+
+      <!-- Note Row -->
+      <div class="row" *ngIf="specialInputPrice.note">
+        <div class="col-12">
+          <label class="form-label">Note</label>
+          <textarea class="form-control" rows="3" [value]="specialInputPrice.note" readonly></textarea>
+        </div>
+      </div>
+    </app-expandable-panel-v2>
+
+    <!-- Details Card -->
+    <app-expandable-panel-v2
+      headerText="Price Details"
+      panelId="price_details"
+      [defaultCollapsed]="false"
+      icon="bi bi-list-ul"
+      [badgeCount]="filteredDetails?.length || 0"
+      [isDisabled]="false"
+      class="mt-3">
+      <!-- Search Bar -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              autocomplete="off"
+              type="text"
+              class="form-control"
+              placeholder="Search in: Material Code, Model, Standard Price, Special Input Price"
+              [(ngModel)]="searchText" />
+            <button
+              *ngIf="searchText"
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="clearSearch()"
+              title="Clear search">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Table -->
+      <app-advanced-data-table
+        [data]="filteredDetails"
+        [height]="'500px'"
+        [enableClientSidePagination]="true"
+        [pageSize]="100"
+        [pageSizeOptions]="[50, 100, 200, 300]"
+        [showPageSizeSelector]="true"
+        [paginationPosition]="'bottom'"
+        [showGroupHeaders]="true"
+        [showSummary]="false"
+        [enableSelection]="false">
+        <!-- Material Information Group -->
+        <app-table-column-group name="Material Information" cssClass="group-header material-group">
+          <!-- Material Code Column -->
+          <app-table-column field="materialCode" header="Material Code" width="120px" [fixed]="true" />
+
+          <!-- Model Name Column -->
+          <app-table-column field="model" header="Model Name" width="150px" [fixed]="true"> </app-table-column>
+        </app-table-column-group>
+
+        <!-- Quantity Information Group -->
+        <app-table-column-group name="Quantity Information" cssClass="group-header quantity-group">
+          <!-- Limit Quantity Column -->
+          <app-table-column
+            field="limitQty"
+            header="Limit Quantity"
+            width="120px"
+            textAlign="end"
+            [formatter]="formatNumber" />
+
+          <!-- Used Quantity Column -->
+          <app-table-column
+            field="used"
+            header="Used Quantity"
+            width="120px"
+            textAlign="end"
+            [formatter]="formatNumber" />
+
+          <!-- Remaining Quantity Column -->
+          <app-table-column
+            field="remainingQuantity"
+            header="Remaining Quantity"
+            width="140px"
+            textAlign="end"
+            [computed]="true"
+            [formatter]="formatNumber">
+            <ng-template #computeTemplate let-row="row">
+              {{ formatNumber(row.limitQty - row.used) }}
+            </ng-template>
+          </app-table-column>
+        </app-table-column-group>
+
+        <!-- Pricing Information Group -->
+        <app-table-column-group name="Pricing Information" cssClass="group-header pricing-group">
+          <!-- Standard Input Price Column -->
+          <app-table-column
+            field="standard"
+            header="Standard Input Price"
+            width="150px"
+            textAlign="end"
+            [formatter]="formatCurrency" />
+
+          <!-- Special Input Price Column -->
+          <app-table-column
+            field="inputPrice"
+            header="Special Input Price"
+            width="150px"
+            textAlign="end"
+            [formatter]="formatSpecialPrice" />
+
+          <!-- Special Landed Cost Column -->
+          <app-table-column
+            field="landedCost"
+            header="Special Landed Cost"
+            width="150px"
+            textAlign="end"
+            [formatter]="formatCurrency" />
+        </app-table-column-group>
+
+        <!-- Date Information Group -->
+        <app-table-column-group name="Date Information" cssClass="group-header date-group">
+          <!-- Registered Date Column -->
+          <app-table-column field="creationTime" header="Registered Date" width="130px" [formatter]="formatDate" />
+
+          <!-- Valid To Column -->
+          <!-- <app-table-column field="validTo" header="Valid To" width="130px" [formatter]="formatDate"/> -->
+        </app-table-column-group>
+      </app-advanced-data-table>
+    </app-expandable-panel-v2>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !specialInputPrice" class="text-center py-4">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      Special Input Price not found or failed to load.
+    </div>
+  </div>
+</abp-page>

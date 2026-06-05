@@ -1,0 +1,156 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="visible"
+  [busy]="busy"
+  [options]="modalOptions"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h3>{{ actionTitle }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <!-- GKR Status Section (only show for Confirm Lock Stock when available GKRs exist) -->
+    <div *ngIf="showGkrStatus && hasAvailableGkrs" class="mb-1">
+      <div class="d-flex justify-content-center">
+        <div
+          class="alert gkr-status-alert"
+          [ngClass]="{
+            'alert-success': gkrAllocations?.length > 0,
+            'alert-danger': gkrAllocations?.length === 0,
+          }"
+          role="alert">
+          <div class="gkr-status-content" *ngIf="gkrAllocations?.length > 0">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            {{ gkrAllocations.length }} GKR{{ gkrAllocations.length > 1 ? 's' : '' }} ALLOCATED ✓
+          </div>
+          <div class="gkr-status-content" *ngIf="gkrAllocations?.length === 0">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            NO GKRs ALLOCATED
+          </div>
+        </div>
+      </div>
+
+      <!-- GKR Details Table (if allocated) -->
+      <div *ngIf="gkrAllocations?.length > 0" class="mb-1">
+        <label class="form-label fw-bold mb-1">Allocated GKRs:</label>
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm mb-0">
+            <thead>
+              <tr>
+                <th>GKR No</th>
+                <th>Material Type</th>
+                <th>Buyer</th>
+                <th>Total Amount</th>
+                <th>Remark</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let gkr of gkrAllocations">
+                <td>{{ gkr.dpoNo }}</td>
+                <td>{{ gkr.materialType }}</td>
+                <td>{{ gkr.buyerShortName }}</td>
+                <td class="text-end">{{ gkr.totalAmount | number: '1.0-2' }}</td>
+                <td>{{ gkr.remark }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Warning Message -->
+      <div class="alert alert-warning py-2 mb-2" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        <strong>After confirming:</strong> You <strong>CANNOT</strong> allocate GKRs anymore. Stock will be locked.
+      </div>
+
+      <!-- Required Acknowledgment Checkbox -->
+      <div class="form-check mb-0">
+        <input class="form-check-input" type="checkbox" id="acknowledgeGkrStatus" [(ngModel)]="acknowledgeGkrStatus" />
+        <label class="form-check-label ms-1 fw-bold" for="acknowledgeGkrStatus">
+          I understand and want to continue
+        </label>
+      </div>
+    </div>
+
+    <div class="mb-1" *ngIf="showDateTime">
+      <div class="col-4">
+        <label class="form-label label-required" for="formDate">Confirm Date</label>
+        <div class="input-group">
+          <input
+            autocomplete="off"
+            id="formDate"
+            class="form-control"
+            name="formDate"
+            #minFromDateInput="ngbDatepicker"
+            ngbDatepicker
+            format="dd/MM/yyyy"
+            [(ngModel)]="dateTimeValue"
+            (click)="minFromDateInput.toggle()"
+            container="body" />
+          <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="mb-2">
+        <label class="form-label" [ngClass]="{ 'label-required': requireComment }">Comment</label>
+        <textarea
+          class="form-control custom-textarea"
+          id="approval-comment"
+          [(ngModel)]="commentText"
+          [required]="requireComment"
+          appAutoResize
+          [rows]="3"></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-secondary" type="button" (click)="closeModal()">
+      <i class="bi bi-x-circle"></i>
+      <span class="ms-1">Cancel</span>
+    </button>
+
+    <ng-container [ngSwitch]="currentAction">
+      <button
+        *ngSwitchCase="actionEnum.Approved"
+        class="btn btn-primary"
+        type="button"
+        (click)="submitComment()"
+        [disabled]="requireComment && !commentText.trim()">
+        <i class="bi bi-check-circle"></i>
+        <span class="ms-1">Approve</span>
+      </button>
+
+      <button
+        *ngSwitchCase="actionEnum.Rejected"
+        class="btn btn-danger"
+        type="button"
+        (click)="submitComment()"
+        [disabled]="requireComment && !commentText.trim()">
+        <i class="bi bi-slash-circle"></i>
+        <span class="ms-1">Reject</span>
+      </button>
+
+      <button
+        *ngSwitchCase="actionEnum.Closed"
+        class="btn btn-info"
+        type="button"
+        (click)="submitComment()"
+        [disabled]="requireComment && !commentText.trim()">
+        <i class="bi bi-x-octagon"></i>
+        <span class="ms-1">Close</span>
+      </button>
+
+      <button
+        *ngSwitchDefault
+        class="btn btn-primary"
+        type="button"
+        (click)="submitComment()"
+        [disabled]="disableSubmitAction()">
+        <i class="bi bi-check-circle"></i>
+        <span class="ms-1">Submit</span>
+      </button>
+    </ng-container>
+  </ng-template>
+</abp-modal>

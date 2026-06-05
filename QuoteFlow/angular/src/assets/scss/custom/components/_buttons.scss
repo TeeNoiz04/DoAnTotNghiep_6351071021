@@ -1,0 +1,133 @@
+//
+// buttons.scss
+//
+
+.btn {
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-padding-y: 0.45rem;
+  --bs-btn-font-size: 0.8125rem;
+  --bs-btn-font-weight: 400;
+  --bs-btn-line-height: 1.5;
+
+  @media (min-width: 1024px) {
+    --bs-btn-padding-x: 0.9rem;
+    --bs-btn-font-size: 0.875rem;
+  }
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  pointer-events: auto;
+
+  &:hover {
+    i {
+      color: var(--bs-btn-disabled-color) !important;
+    }
+  }
+}
+
+.btn-sm {
+  --bs-btn-padding-x: 0.45rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-font-size: 0.75rem;
+}
+
+.btn-rounded {
+  border-radius: 2em;
+}
+
+//
+// light button
+//
+.btn-light,
+.btn-white {
+  color: $gray-900;
+}
+
+//
+// Button labels
+//
+
+.btn-label {
+  margin: -0.55rem 0.9rem -0.55rem -0.9rem;
+  padding: 0.6rem 0.9rem;
+  background-color: rgba($gray-900, 0.1);
+}
+
+.btn-label-right {
+  margin: (-$btn-padding-y) (-$btn-padding-x) (-$btn-padding-y) ($btn-padding-x);
+  padding: ($btn-padding-y) ($btn-padding-x);
+  background-color: rgba($gray-900, 0.1);
+  display: inline-block;
+}
+
+//
+// Button Extra Small Size
+//
+
+.btn-xs {
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 0.15rem;
+}
+
+.top-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+
+  .button-115 {
+    min-width: 115px;
+  }
+}
+
+// Dropdown toggle button styling
+.action-dropdown-toggle-btn {
+  border: 1px solid #565d64;
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+
+  &:hover {
+    border-color: #495057;
+    background-color: #f8f9fa;
+    transform: translateY(-1px);
+    transition: all 0.2s ease-in-out;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    border-color: #495057;
+    transform: translateY(0);
+  }
+
+  // Custom caret icon
+  &::after {
+    display: none; // Hide default bootstrap caret
+  }
+
+  // Custom triangle icon
+  &::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #585858;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  // Rotate triangle when dropdown is open
+  &[aria-expanded="true"]::before {
+    transform: rotate(180deg);
+  }
+}

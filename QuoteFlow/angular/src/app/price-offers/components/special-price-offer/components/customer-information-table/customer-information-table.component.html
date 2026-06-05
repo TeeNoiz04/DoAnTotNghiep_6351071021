@@ -1,0 +1,103 @@
+<div class="card mb-0 card-custom">
+  <div class="card-body-custom">
+    <div *ngIf="enableErrorHandling && hasAnyErrors()" class="alert alert-danger mb-1 p-1">
+      <h5 class="alert-heading">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        Validation Errors Found
+      </h5>
+      <p class="mb-0">
+        There are {{ countErrorRows() }} {{ countErrorRows() > 1 ? 'customer rows' : 'customer row' }} with validation
+        errors. Please review and fix them before proceeding.
+      </p>
+    </div>
+
+    <div class="table-responsive table-af">
+      <table class="table table-bordered table-striped table-actions mb-0">
+        <thead>
+          <tr>
+            <th class="text-center" *ngIf="enableErrorHandling" style="width: 100px">Status</th>
+            <th class="text-start">Sale Channel</th>
+            <th class="text-center">Customer Tax Code</th>
+            <th class="text-center">Key Account</th>
+            <th class="text-start">Company Official Name</th>
+            <th class="text-start">Official Address</th>
+            <th class="text-start">Customer Nationality</th>
+            <th class="text-start">Customer Type</th>
+            <th class="text-start">Customer Industry</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="getDataSource().length; else noData">
+            <ng-container *ngFor="let item of getDataSource(); let i = index">
+              <tr
+                [ngClass]="{ 'has-errors': enableErrorHandling && item.hasErrors }"
+                (click)="enableErrorHandling && toggleRowExpansion(item)">
+                <td class="text-center" *ngIf="enableErrorHandling">
+                  <app-status-label
+                    *ngIf="getComponentData('status', item)"
+                    [status]="getComponentData('status', item)">
+                  </app-status-label>
+                </td>
+
+                <ng-container *ngIf="useServiceData">
+                  <td>{{ item.saleChannel }}</td>
+                  <td>{{ item.customerTaxCode }}</td>
+                  <td>{{ item.hasKeyAccount === true ? '✓' : '-' }}</td>
+                  <td>{{ item.customerName }}</td>
+                  <td>{{ item.customerAddress }}</td>
+                  <td>{{ item.customerNationality }}</td>
+                  <td>{{ item.customerType }}</td>
+                  <td>{{ item.customerIndustry }}</td>
+                </ng-container>
+
+                <ng-container *ngIf="!useServiceData">
+                  <td [ngClass]="getCellClass('saleChannel')" [innerHTML]="formatCellValue('saleChannel', item)"></td>
+                  <td
+                    [ngClass]="getCellClass('customerTaxCode')"
+                    [innerHTML]="formatCellValue('customerTaxCode', item)"></td>
+                  <td>{{ item.rowData?.hasKeyAccount === true ? '✓' : '-' }}</td>
+                  <td [ngClass]="getCellClass('customerName')" [innerHTML]="formatCellValue('customerName', item)"></td>
+                  <td
+                    [ngClass]="getCellClass('customerAddress')"
+                    [innerHTML]="formatCellValue('customerAddress', item)"></td>
+                  <td
+                    [ngClass]="getCellClass('customerNationality')"
+                    [innerHTML]="formatCellValue('customerNationality', item)"></td>
+                  <td [ngClass]="getCellClass('customerType')" [innerHTML]="formatCellValue('customerType', item)"></td>
+                  <td
+                    [ngClass]="getCellClass('customerIndustry')"
+                    [innerHTML]="formatCellValue('customerIndustry', item)"></td>
+                </ng-container>
+              </tr>
+
+              <tr
+                *ngIf="enableErrorHandling && item.hasErrors && expandedRows[item.rowIndex || i]"
+                class="error-details-row">
+                <td colspan="7" class="error-details p-0">
+                  <div class="error-container p-2">
+                    <div class="error-header mb-2">
+                      <span class="badge bg-danger me-2">
+                        <i class="bi bi-exclamation-triangle me-1"></i>Validation Errors
+                      </span>
+                    </div>
+                    <ul class="error-list m-0 ps-4">
+                      <li *ngFor="let error of item.errors" class="error-item">
+                        {{ error }}
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #noData>
+            <tr>
+              <td colspan="8" class="text-center py-3">No customer data available</td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

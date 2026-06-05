@@ -1,0 +1,115 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12.8px;
+  height: 100%;
+
+  .search-container {
+    display: grid;
+    grid-template-columns: 150px auto;
+    gap: 12px;
+  }
+
+  .refresh-action {
+    display: flex;
+    padding-top: 25px;
+  }
+
+  .chart-row {
+    flex: 1;
+    min-height: 450px;
+  }
+
+  .chart-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .chart-card-body {
+      flex: 1;
+      padding: 1rem;
+      overflow: hidden;
+      min-height: 400px;
+    }
+  }
+
+  .loading-container {
+    height: 400px;
+  }
+}
+
+.chart-container {
+  height: 300px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  h6 {
+    font-weight: 600;
+    color: #495057;
+    height: 20px;
+    margin-bottom: 10px;
+    flex-shrink: 0;
+  }
+
+  ::ng-deep app-pie-chart {
+    flex: 1;
+    height: 270px;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.no-data-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+
+  .bi-bar-chart-line {
+    opacity: 0.6;
+  }
+
+  p {
+    max-width: 80%;
+    text-align: center;
+  }
+
+  .btn-outline-primary {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.75rem;
+
+    &:hover {
+      background-color: rgba(13, 110, 253, 0.1);
+    }
+  }
+}
+
+.row {
+  .col-md-6 {
+    display: flex;
+    flex-direction: column;
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      margin-bottom: 0;
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+
+        .row {
+          flex: 1;
+
+          .col-md-6 {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+  }
+}

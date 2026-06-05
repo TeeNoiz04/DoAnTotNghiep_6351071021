@@ -1,0 +1,665 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-3">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <h1 class="content-header-title m-0">{{ title }}</h1>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0">
+          <div class="action-request text-end">
+            <button
+              class="btn btn-info"
+              type="button"
+              (click)="showHistory()"
+              placement="bottom"
+              ngbTooltip="History"
+              triggers="hover">
+              <i class="bi bi-clock-history"></i>
+              <span class="ms-1">History</span>
+            </button>
+            <button
+              class="btn btn-success"
+              type="button"
+              *ngIf="service.selected?.flags?.isApprovable"
+              (click)="performAction('Approved')"
+              placement="bottom"
+              ngbTooltip="Approved"
+              triggers="hover">
+              <i class="bi bi-check-circle"></i>
+              <span class="ms-1">Approve</span>
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              *ngIf="service.selected?.flags?.isRejectable"
+              (click)="performAction('Rejected')"
+              placement="bottom"
+              ngbTooltip="Reject"
+              triggers="hover">
+              <i class="bi bi-slash-circle"></i>
+              <span class="ms-1">Reject</span>
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              *ngIf="service.selected?.flags?.isCancellable"
+              (click)="performAction('Cancelled')"
+              placement="bottom"
+              ngbTooltip="Cancel"
+              triggers="hover">
+              <i class="bi bi-x-circle"></i>
+              <span class="ms-1">Cancel</span>
+            </button>
+            <button
+              class="btn btn-secondary"
+              type="button"
+              (click)="goBack()"
+              placement="bottom"
+              ngbTooltip="Back"
+              triggers="hover">
+              <i class="bi bi-arrow-left-circle"></i>
+              <span class="ms-1">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.form; else loadingTemplate">
+      <div class="form-details">
+        <form [formGroup]="service?.form" class="form-details">
+          <div class="card mt-0 mb-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                  <div class="mb-0">
+                    <label class="form-label" for="request-no">Request No</label>
+                    <input
+                      autocomplete="off"
+                      id="request-no"
+                      formControlName="requestNo"
+                      readonly
+                      class="form-control" />
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-2">
+                  <div class="mb-0">
+                    <label class="form-label" for="created-by">Created By</label>
+                    <input
+                      autocomplete="off"
+                      id="created-by"
+                      formControlName="creatorName"
+                      readonly
+                      class="form-control" />
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-2">
+                  <div class="mb-0">
+                    <label class="form-label" for="created-date">Created Date</label>
+                    <input
+                      autocomplete="off"
+                      id="created-date"
+                      formControlName="creationTime"
+                      readonly
+                      class="form-control" />
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-6 col-lg-2">
+                  <label class="form-label">Approval Status</label>
+                  <div class="form-control-plaintext">
+                    <app-status-label [status]="service?.selected?.status"></app-status-label>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-6 col-lg-2" *ngIf="service.selected?.currentApproverRoleName">
+                  <label class="form-label">Current Approver</label>
+                  <div class="form-control-plaintext">
+                    <a class="text-primary text-decoration-none cursor-pointer" (click)="loadApprovalList()">
+                      {{ service?.selected?.currentApproverRoleName }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                  <div class="mb-0">
+                    <label class="form-label" for="import-type">{{ '::Import Type' | abpLocalization }}</label>
+                    <input
+                      autocomplete="off"
+                      id="import-type"
+                      formControlName="importType"
+                      readonly
+                      class="form-control" />
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-9">
+                  <div class="mb-0">
+                    <label class="form-label" for="file-name">{{ '::FileName' | abpLocalization }}</label>
+                    <input autocomplete="off" id="file-name" formControlName="fileName" readonly class="form-control" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 col-md-12">
+                  <div class="mb-0">
+                    <label class="form-label" for="import-material-note">{{ '::Note' | abpLocalization }}</label>
+                    <input
+                      autocomplete="off"
+                      id="import-material-register-name"
+                      class="form-control custom-textarea"
+                      readonly
+                      formControlName="note" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="card card-enhanced mb-0">
+          <div class="card-header default-cursor d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-table me-2"></i>
+              Material Approval Request Details Items
+              <span class="ms-2 badge bg-info">{{ filteredItemsCount }} of {{ totalItemsCount }} items</span>
+            </h5>
+          </div>
+
+          <div class="card-body">
+            <div class="row mb-1">
+              <div class="col-md-4">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    autocomplete="off"
+                    class="form-control"
+                    placeholder="Search Material Code, Model Name"
+                    [(ngModel)]="searchText" />
+                </div>
+              </div>
+            </div>
+            <app-advanced-data-table
+              [data]="filteredMaterials"
+              [height]="'500px'"
+              [enableClientSidePagination]="true"
+              [pageSize]="100"
+              [pageSizeOptions]="[50, 100, 200, 300]"
+              [showPageSizeSelector]="true"
+              [paginationPosition]="'bottom'"
+              [showGroupHeaders]="false"
+              [showSummary]="false">
+              <!-- Material Information Group -->
+              <app-table-column-group name="Material Information" cssClass="group-header material-group">
+                <ng-container *ngFor="let field of columnConfigs[service?.form?.get('importType')?.value] || []">
+                  <!-- <app-table-column
+                    *ngIf="field === 'materialStatus'"
+                    field="materialStatus"
+                    header="Status"
+                    width="100px"
+                    textAlign="center"
+                    [fixed]="true"
+                    componentType="status"></app-table-column> -->
+                  <app-table-column
+                    *ngIf="field === 'no'"
+                    field="no"
+                    header="No"
+                    width="50px"
+                    textAlign="center"
+                    [fixed]="true"
+                    [formatter]="formatRowNumber"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'golfaCode'"
+                    field="golfaCode"
+                    header="Material Code"
+                    width="120px"
+                    [fixed]="true"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'model'"
+                    field="model"
+                    header="Model"
+                    width="180px"
+                    [fixed]="true"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'registrationDate'"
+                    field="registrationDate"
+                    header="Registration Date"
+                    width="180px"
+                    [formatter]="formatDateTimeDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'validFrom'"
+                    field="validFrom"
+                    header="Valid From"
+                    width="180px"
+                    [formatter]="formatDate"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'validTo'"
+                    field="validTo"
+                    header="Valid To"
+                    width="180px"
+                    [formatter]="formatDate"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'sap_Code'"
+                    field="sap_Code"
+                    header="SAP Code"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Specifications -->
+                  <app-table-column
+                    *ngIf="field === 'spec1'"
+                    field="spec1"
+                    header="Spec 1"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'spec2'"
+                    field="spec2"
+                    header="Spec 2"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'spec3'"
+                    field="spec3"
+                    header="Spec 3"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'spec4'"
+                    field="spec4"
+                    header="Spec 4"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Descriptions -->
+                  <app-table-column
+                    *ngIf="field === 'description_EN'"
+                    field="description_EN"
+                    header="Description EN"
+                    width="180px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'description_VN'"
+                    field="description_VN"
+                    header="Description VN"
+                    width="180px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Material Type & Unit -->
+                  <app-table-column
+                    *ngIf="field === 'materialType'"
+                    field="materialType"
+                    header="Material Type"
+                    width="120px"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'unit'"
+                    field="unit"
+                    header="Unit"
+                    width="80px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Material Classifications -->
+                  <app-table-column
+                    *ngIf="field === 'materialClass'"
+                    field="materialClass"
+                    header="Material Class"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'material_SEC_Classification'"
+                    field="material_SEC_Classification"
+                    header="SEC Classification"
+                    width="180px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Groups -->
+                  <app-table-column
+                    *ngIf="field === 'material_Group'"
+                    field="material_Group"
+                    header="Material Group"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'sapMatGroup'"
+                    field="sapMatGroup"
+                    header="SAP Mat Group"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <!-- <app-table-column
+                    *ngIf="field === 'product_Hierarchy'"
+                    field="product_Hierarchy"
+                    header="Product Hierarchy"
+                    width="160px"></app-table-column> -->
+                  <app-table-column
+                    *ngIf="field === 'inventoryCategory'"
+                    field="inventoryCategory"
+                    header="Inventory Category"
+                    width="160px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'warrantyTime'"
+                    field="warrantyTime"
+                    header="Warranty Time"
+                    width="160px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'currentStockWarning'"
+                    field="currentStockWarning"
+                    header="Current Stock Warning"
+                    width="180px"
+                    textAlign="end"
+                    [formatter]="formatCurrentStockWarning"></app-table-column>
+
+                  <!-- Stock -->
+                  <app-table-column
+                    *ngIf="field === 'stockWarning'"
+                    field="stockWarning"
+                    header="Updated Stock Warning"
+                    width="140px"
+                    textAlign="end"
+                    [textClass]="getTextClassForStockWarning"
+                    [formatter]="formatNumber"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'stockQty'"
+                    field="stockQty"
+                    header="Stock Qty"
+                    width="140px"
+                    [formatter]="formatNumber"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'vat'"
+                    field="vat"
+                    header="VAT"
+                    width="140px"
+                    [formatter]="formatNegative"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'cargoNote'"
+                    field="cargoNote"
+                    header="Cargo Note"
+                    width="140px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'size'"
+                    field="size"
+                    header="Size"
+                    width="140px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'weight'"
+                    field="weight"
+                    header="Weight"
+                    width="140px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'qrCode'"
+                    field="qrCode"
+                    header="QR Code"
+                    width="140px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'maxlot'"
+                    field="maxlot"
+                    header="Max Lot"
+                    width="100px"
+                    [formatter]="formatNumber"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'referenceLeadTime'"
+                    field="referenceLeadTime"
+                    header="Reference Lead Time"
+                    width="120px"
+                    textAlign="end"
+                    [formatter]="formatNumber"></app-table-column>
+
+                  <!-- Supplier -->
+                  <app-table-column
+                    *ngIf="field === 'supplierCode'"
+                    field="supplierCode"
+                    header="Supplier"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'supplierBUCode'"
+                    field="supplierBUCode"
+                    header="Supplier BU"
+                    width="150px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'factory_Text'"
+                    field="factory_Text"
+                    header="Factory"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Pricing -->
+                  <app-table-column
+                    *ngIf="field === 'input_Price'"
+                    field="input_Price"
+                    header="Input Price"
+                    width="140px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'inputCurrency'"
+                    field="inputCurrency"
+                    header="Input Currency"
+                    width="150px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'incoterms'"
+                    field="incoterms"
+                    header="INCOTERMS"
+                    width="150px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'epa'"
+                    field="epa"
+                    header="EPA"
+                    width="80px"
+                    [formatter]="formatBoolean"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'importDuty'"
+                    field="importDuty"
+                    header="Import Duty"
+                    width="120px"
+                    [formatter]="formatNegative"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'appliedExchangeRate'"
+                    field="appliedExchangeRate"
+                    header="Applied Exchange Rate"
+                    width="200px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'landedCost'"
+                    field="landedCost"
+                    header="Landed Cost (VND)"
+                    width="200px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'maxSalesOfferPrice'"
+                    field="maxSalesOfferPrice"
+                    header="Max Sales Offer Price (VND)"
+                    width="250px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'maxMangerOfferPrice'"
+                    field="maxMangerOfferPrice"
+                    header="Max Manager Offer Price (VND)"
+                    width="260px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'standard_Price'"
+                    field="standard_Price"
+                    header="Standard Price"
+                    width="200px"
+                    textAlign="end"
+                    [formatter]="formatCurrency"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'sellingPrice1'"
+                    field="sellingPrice1"
+                    header="Selling Price 1"
+                    width="150px"
+                    textAlign="end"
+                    [formatter]="formatCurrencyDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'sellingPrice2'"
+                    field="sellingPrice2"
+                    header="Selling Price 2"
+                    width="150px"
+                    textAlign="end"
+                    [formatter]="formatCurrencyDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'sellingPrice3'"
+                    field="sellingPrice3"
+                    header="Selling Price 3"
+                    width="150px"
+                    textAlign="end"
+                    [formatter]="formatCurrencyDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'sellingPrice4'"
+                    field="sellingPrice4"
+                    header="Selling Price 4"
+                    width="150px"
+                    textAlign="end"
+                    [formatter]="formatCurrencyDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'sellingPrice5'"
+                    field="sellingPrice5"
+                    header="Selling Price 5"
+                    width="150px"
+                    textAlign="end"
+                    [formatter]="formatCurrencyDelete"></app-table-column>
+                  <!--product_Hierarchy-->
+                  <app-table-column
+                    *ngIf="field === 'product_Hierarchy'"
+                    field="product_Hierarchy"
+                    header="Product Hierarchy"
+                    width="150px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'productHierarchyDescription'"
+                    field="productHierarchyDescription"
+                    header="Product Hierarchy Description"
+                    width="150px"></app-table-column>
+                  <!-- Origin & Codes -->
+                  <app-table-column
+                    *ngIf="field === 'countryOfOrigin'"
+                    field="countryOfOrigin"
+                    header="Country of Origin"
+                    width="150px"
+                    [formatter]="formatStringDelete"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'hS_Code'"
+                    field="hS_Code"
+                    header="HS Code"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'finalDPOAcceptanceDate'"
+                    field="finalDPOAcceptanceDate"
+                    header="Final DPO Acceptance Date"
+                    width="120px"
+                    [formatter]="formatDate"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'action'"
+                    field="action"
+                    header="Action"
+                    width="120px"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'actionDate'"
+                    field="actionDate"
+                    header="Action Date"
+                    width="120px"
+                    [formatter]="formatDate"></app-table-column>
+                  <app-table-column
+                    *ngIf="field === 'source'"
+                    field="source"
+                    header="Source"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'reason'"
+                    field="reason"
+                    header="Reason"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <app-table-column
+                    *ngIf="field === 'factoryRefDoc'"
+                    field="factoryRefDoc"
+                    header="Factory Ref Doc"
+                    width="120px"
+                    [formatter]="formatStringDelete"></app-table-column>
+
+                  <!-- Active -->
+                  <app-table-column
+                    *ngIf="field === 'isActive'"
+                    field="isActive"
+                    header="Active"
+                    width="80px"
+                    textAlign="center"
+                    [formatter]="formatBoolean"
+                    [formatter]="formatDate"></app-table-column>
+                </ng-container>
+              </app-table-column-group>
+            </app-advanced-data-table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card mt-0 mb-0">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading form data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>
+
+<app-approval-comment-modal
+  [(visible)]="service.isPerformActionModalOpen"
+  [busy]="service.isPerformActionModalBusy"
+  [actionTitle]="service.actionOptions"
+  [currentAction]="
+    service.actionOptions === 'Approved'
+      ? service.approvedAction
+      : service.actionOptions === 'Cancelled'
+        ? service.cancelledAction
+        : service.actionOptions === 'Rejected'
+          ? service.rejectedAction
+          : null
+  "
+  [requireComment]="service.requireComment"
+  (commentSubmitted)="service.onPerformAction($event)"
+  (cancelClicked)="service.onClosePerformAction()"></app-approval-comment-modal>
+
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="approvalHistories"
+  (disappear)="closeHistoryDialog()" />
+
+<app-approvers-modal #approversModalComponent></app-approvers-modal>

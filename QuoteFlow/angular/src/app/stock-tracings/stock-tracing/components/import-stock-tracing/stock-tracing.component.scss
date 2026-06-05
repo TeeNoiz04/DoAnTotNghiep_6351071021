@@ -1,0 +1,71 @@
+.two-line-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2; /* maximum 2 row*/
+  overflow: hidden;
+  white-space: pre-line; /* keep end line by \n */
+  word-break: break-word;
+}
+
+::ng-deep.datatable-row-detail {
+  background: transparent !important;
+}
+
+:host ::ng-deep {
+  .top-actions,
+  .action-request {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center;
+    flex-wrap: nowrap !important;
+
+    .btn,
+    .dropdown-toggle {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap !important;
+      height: 38px;
+      transition: all 0.2s ease;
+
+      i {
+        margin-right: 6px !important;
+        margin-left: 0 !important;
+      }
+    }
+  }
+
+  @media (max-width: 1300px) {
+    .header-content {
+      justify-content: flex-start !important;
+      gap: 15px !important;
+    }
+
+    .top-actions,
+    .action-request {
+      justify-content: flex-end !important;
+      flex: 1 1 auto !important;
+
+      .btn span,
+      .btn-text,
+      .ms-1 {
+        display: none !important;
+      }
+
+      .btn,
+      .dropdown-toggle {
+        width: 36px !important;
+        min-width: 36px !important;
+        padding: 0 !important;
+
+        i {
+          margin-right: 0 !important;
+        }
+
+        &::after {
+          display: none !important;
+        }
+      }
+    }
+  }
+}

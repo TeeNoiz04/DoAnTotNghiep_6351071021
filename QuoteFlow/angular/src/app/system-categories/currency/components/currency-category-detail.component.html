@@ -1,0 +1,101 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }} Currency</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form
+      [formGroup]="service.form"
+      id="system-category"
+      class="system-category-form"
+      (ngSubmit)="submitForm()"
+      [validateOnSubmit]="true">
+      <ul ngbNav #nav="ngbNav" class="mt-0">
+        <li ngbNavItem>
+          <ng-template ngbNavContent>
+            <div class="row g-2 mt-0 mb-2">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label label-required" for="system-category-code">
+                    {{ '::Code' | abpLocalization }}
+                  </label>
+                  <input
+                    autocomplete="off"
+                    id="system-category-code"
+                    formControlName="code"
+                    class="form-control"
+                    maxlength="50" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label label-required" for="system-category-description">
+                    {{ '::Description' | abpLocalization }}
+                  </label>
+                  <input
+                    autocomplete="off"
+                    id="system-category-description"
+                    formControlName="description"
+                    class="form-control"
+                    maxlength="500" />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label label-required" for="exchange-rate-value">
+                    {{ '::Value' | abpLocalization }}
+                  </label>
+                  <div validationTarget>
+                    <app-input-number
+                      id="value"
+                      formControlName="value"
+                      [allowDecimal]="true"
+                      [isInvalid]="f.value.invalid && f.value.touched"
+                      [isValid]="f.value.valid && f.value.touched">
+                    </app-input-number>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label class="form-label" for="system-category-note">
+                    {{ '::Note' | abpLocalization }}
+                  </label>
+                  <textarea
+                    id="system-category-note"
+                    formControlName="note"
+                    class="form-control"
+                    maxlength="4000"
+                    rows="4"></textarea>
+                </div>
+              </div>
+              <div *ngIf="!!service.selected" class="col-md-12">
+                <div class="form-group">
+                  <mat-slide-toggle id="isDeactive" formControlName="isDeactive"> IsDeactive </mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

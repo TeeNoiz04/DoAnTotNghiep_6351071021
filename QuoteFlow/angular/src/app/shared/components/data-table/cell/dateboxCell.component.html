@@ -1,0 +1,14 @@
+<div class="input-group datepicker" [ngClass]="cssClass">
+  <input
+    autocomplete="off"
+    class="form-control"
+    name="datebox"
+    #dateInput="ngbDatepicker"
+    ngbDatepicker
+    [ngModelOptions]="{ standalone: true }"
+    [ngModel]="entry[name]"
+    (ngModelChange)="entry[name] = $event; onModelChange($event)"
+    (click)="dateInput.toggle()"
+    container="body" />
+  <button class="btn btn-light bi bi-calendar3" (click)="dateInput.toggle()" type="button"></button>
+</div>

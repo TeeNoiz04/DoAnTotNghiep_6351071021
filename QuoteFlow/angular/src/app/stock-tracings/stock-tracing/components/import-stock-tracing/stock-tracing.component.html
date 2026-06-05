@@ -1,0 +1,210 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Import"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Import' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importStockOptions" (click)="onOpenImportStockTracing(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary button-115"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Download"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importStockOptions" (click)="onOpenDownloadStockTracing(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+  <app-stock-tracing-filter
+    [filters]="service.filters"
+    (filterChange)="onFilterChange($event)"
+    (refresh)="list.get()"
+    (clear)="clearFilters()">
+  </app-stock-tracing-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        class="bootstrap"
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list">
+        <!-- Row number column -->
+        <ngx-datatable-column [maxWidth]="50" [sortable]="false">
+          <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-cell-template>
+            {{ list.page * list.maxResultCount + rowIndex + 1 }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="" [maxWidth]="35" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div>
+              <button (click)="onDelete(row)" class="btn btn-link p-0">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::FileName' | abpLocalization }}" prop="fileName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a [routerLink]="getDetailUrl(row)" class="text-primary text-decoration-none cursor-pointer">
+              {{ row.fileName }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::ReportType' | abpLocalization }}" [maxWidth]="120" prop="reportType">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.reportType | reportType }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::From Date' | abpLocalization }}" [maxWidth]="140" prop="fromDate">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fromDate | date: 'dd/MM/YYYY' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::To Date' | abpLocalization }}" [maxWidth]="140" prop="toDate">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.toDate | date: 'dd/MM/YYYY' }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Note" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <!-- <span style="white-space: pre-line !important; display: block !important; word-break: break-word"> -->
+            <span class="two-line-clamp">
+              {{ row.note }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<abp-modal
+  [(visible)]="showImportStock"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    size: 'xl',
+    backdrop: 'static',
+  }"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>
+      {{ importStockTracingTypeSelected?.label }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-stock #importStockTracing [importMode]="importMode" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImportStockTracing"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display
+      [fileName]="resultImportDelivery?.fileName ?? resultImportInventory?.fileName ?? resultImportReceipt?.fileName"
+      [errors]="resultImportDelivery?.errors || resultImportInventory?.errors || resultImportReceipt?.errors || []">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-stock-tracing
+      [importMode]="importMode"
+      [stockTracingInformation]="stockTracingInformation"
+      [resultImport]="resultImportDelivery ?? resultImportInventory ?? resultImportReceipt" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="
+        (resultImportDelivery?.errors?.length ?? 0) > 0 ||
+        (resultImportInventory?.errors?.length ?? 0) > 0 ||
+        (resultImportReceipt?.errors?.length ?? 0) > 0 ||
+        submitting
+      "
+      (click)="onSubmitImport()">
+      <i *ngIf="submitting; else sendIcon" class="spinner-border spinner-border-sm"></i>
+      <ng-template #sendIcon>
+        <i class="bi bi-send"></i>
+      </ng-template>
+      <span class="ms-1">{{ submitting ? 'Submitting...' : 'Submit' }}</span>
+    </button>
+  </ng-template>
+</abp-modal>

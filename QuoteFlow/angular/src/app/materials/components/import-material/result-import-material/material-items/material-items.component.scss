@@ -1,0 +1,11 @@
+::ng-deep .row-warning {
+  background-color: #fff3cd !important;
+
+  &:hover {
+    background-color: #ffe69c !important;
+  }
+
+  td {
+    background-color: inherit !important;
+  }
+}

@@ -1,0 +1,249 @@
+<div class="filter-container">
+  <form [formGroup]="searchForm!" (ngSubmit)="onSearch()" *ngIf="searchForm">
+    <!-- Basic Filters Row -->
+    <div class="row mb-3">
+      <!-- Filter Text -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::FilterText' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="text"
+          class="form-control"
+          formControlName="filterText"
+          [class.is-invalid]="hasFormControlError('filterText')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('filterText')">
+          {{ getFormControlError('filterText') }}
+        </div>
+      </div>
+
+      <!-- Code -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::Code' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="text"
+          class="form-control"
+          formControlName="code"
+          [class.is-invalid]="hasFormControlError('code')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('code')">
+          {{ getFormControlError('code') }}
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::Name' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="hasFormControlError('name')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('name')">
+          {{ getFormControlError('name') }}
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::Status' | abpLocalization }}</label>
+        <select class="form-select" formControlName="status" [class.is-invalid]="hasFormControlError('status')">
+          <option value="">{{ 'YourModule::AllStatuses' | abpLocalization }}</option>
+          <option *ngFor="let status of statusOptions" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="hasFormControlError('status')">
+          {{ getFormControlError('status') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced Filters (Collapsible) -->
+    <div class="row mb-3" *ngIf="showAdvancedFilters">
+      <!-- Category -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::Category' | abpLocalization }}</label>
+        <select class="form-select" formControlName="categoryId" [class.is-invalid]="hasFormControlError('categoryId')">
+          <option value="">{{ 'YourModule::AllCategories' | abpLocalization }}</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="hasFormControlError('categoryId')">
+          {{ getFormControlError('categoryId') }}
+        </div>
+      </div>
+
+      <!-- Date From -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::DateFrom' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="date"
+          class="form-control"
+          formControlName="dateFrom"
+          [class.is-invalid]="hasFormControlError('dateFrom')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('dateFrom')">
+          {{ getFormControlError('dateFrom') }}
+        </div>
+      </div>
+
+      <!-- Date To -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::DateTo' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="date"
+          class="form-control"
+          formControlName="dateTo"
+          [class.is-invalid]="hasFormControlError('dateTo')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('dateTo')">
+          {{ getFormControlError('dateTo') }}
+        </div>
+      </div>
+
+      <!-- Min Amount -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::MinAmount' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="number"
+          class="form-control"
+          formControlName="minAmount"
+          min="0"
+          step="0.01"
+          [class.is-invalid]="hasFormControlError('minAmount')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('minAmount')">
+          {{ getFormControlError('minAmount') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Advanced Filters Row -->
+    <div class="row mb-3" *ngIf="showAdvancedFilters">
+      <!-- Max Amount -->
+      <div class="col-md-3">
+        <label class="form-label">{{ 'YourModule::MaxAmount' | abpLocalization }}</label>
+        <input
+          autocomplete="off"
+          type="number"
+          class="form-control"
+          formControlName="maxAmount"
+          min="0"
+          step="0.01"
+          [class.is-invalid]="hasFormControlError('maxAmount')" />
+        <div class="invalid-feedback" *ngIf="hasFormControlError('maxAmount')">
+          {{ getFormControlError('maxAmount') }}
+        </div>
+      </div>
+
+      <!-- Is Active -->
+      <div class="col-md-3">
+        <div class="form-check mt-4">
+          <input
+            autocomplete="off"
+            class="form-check-input"
+            type="checkbox"
+            formControlName="isActive"
+            id="isActiveCheck" />
+          <label class="form-check-label" for="isActiveCheck">
+            {{ 'YourModule::IsActive' | abpLocalization }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Multi-select example -->
+      <div class="col-md-6">
+        <label class="form-label">{{ 'YourModule::StatusList' | abpLocalization }}</label>
+        <select
+          class="form-select"
+          formControlName="statusList"
+          multiple
+          [class.is-invalid]="hasFormControlError('statusList')">
+          <option *ngFor="let status of statusOptions" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+        <div class="invalid-feedback" *ngIf="hasFormControlError('statusList')">
+          {{ getFormControlError('statusList') }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Actions -->
+    <div class="row">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <!-- Search Button -->
+            <button
+              type="submit"
+              class="btn btn-primary me-2"
+              [disabled]="disabled || isLoading()"
+              *ngIf="showSearchButton">
+              <i class="bi bi-search me-1"></i>
+              {{ '::Search' | abpLocalization }}
+            </button>
+
+            <!-- Clear Button -->
+            <button
+              type="button"
+              class="btn btn-outline-secondary me-2"
+              (click)="onClear()"
+              [disabled]="disabled || isLoading()"
+              *ngIf="showClearButton">
+              <i class="bi bi-x-circle me-1"></i>
+              {{ '::Clear' | abpLocalization }}
+            </button>
+
+            <!-- Advanced Filters Toggle -->
+            <button type="button" class="btn btn-outline-info" (click)="onToggleAdvanced()" [disabled]="disabled">
+              <i
+                class="bi"
+                [class.bi-chevron-down]="!showAdvancedFilters"
+                [class.bi-chevron-up]="showAdvancedFilters"></i>
+              {{
+                showAdvancedFilters
+                  ? ('YourModule::HideAdvancedFilters' | abpLocalization)
+                  : ('YourModule::ShowAdvancedFilters' | abpLocalization)
+              }}
+            </button>
+          </div>
+
+          <div>
+            <!-- Active Filters Indicator -->
+            <span
+              class="badge bg-info ms-2"
+              *ngIf="hasActiveFilters() | async"
+              [title]="'YourModule::ActiveFiltersTooltip' | abpLocalization">
+              <i class="bi bi-funnel me-1"></i>
+              {{ 'YourModule::ActiveFilters' | abpLocalization }}
+            </span>
+
+            <!-- Loading Indicator -->
+            <span class="badge bg-secondary ms-2" *ngIf="isLoading() | async">
+              <i class="bi bi-arrow-clockwise spin me-1"></i>
+              {{ 'YourModule::Loading' | abpLocalization }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation Errors Display -->
+    <div class="row mt-3" *ngIf="(validationErrors$ | async)?.length">
+      <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+          <h6 class="alert-heading">{{ 'YourModule::ValidationErrors' | abpLocalization }}</h6>
+          <ul class="mb-0">
+            <li *ngFor="let error of validationErrors$ | async">
+              <span *ngFor="let err of error.errors">{{ err }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+`

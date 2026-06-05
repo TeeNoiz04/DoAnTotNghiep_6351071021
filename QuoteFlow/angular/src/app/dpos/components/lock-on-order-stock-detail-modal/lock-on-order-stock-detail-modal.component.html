@@ -1,0 +1,168 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    animation: true,
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    backdrop: 'static',
+    windowClass: 'modal-fullscreen',
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h3>Lock Shipment Detail</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading lock shipment...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1 mt-2">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading lock shipment data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="lockOnOrderStockData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false"
+            (cellClick)="onCellClick($event)"
+            (actionClick)="onActionClick($event)"
+            (actionError)="onActionError($event)">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group name="Lock Shipment Information" cssClass="group-header lock-on-order-stock-group">
+              <!--Action Column-->
+              <app-table-column
+                field="action"
+                header=""
+                minWidth="auto"
+                width="35px"
+                maxWidth="none"
+                textAlign="center"
+                [showEdit]="!isItemFinalized"
+                [showDelete]="!isItemFinalized"
+                componentType="action" />
+
+              <!-- Status Column -->
+              <app-table-column
+                field="status"
+                header="Status"
+                width="100px"
+                textAlign="center"
+                componentType="status" />
+
+              <!-- PO No Column -->
+              <app-table-column field="poNo" header="PO No" width="130px" textAlign="start" />
+
+              <!-- PO Quantity Column -->
+              <app-table-column
+                field="poQty"
+                header="PO Qty"
+                width="50px"
+                textAlign="end"
+                inputType="number"
+                [formatter]="formatQuantity" />
+
+              <!-- PO Date Column -->
+              <app-table-column
+                field="poDate"
+                header="PO Date"
+                width="70px"
+                textAlign="center"
+                [formatter]="formatDate" />
+
+              <!-- Machine Number Column -->
+              <app-table-column field="machineNumber" header="Machine Number" width="120px" textAlign="start" />
+
+              <!-- STC Reply Column -->
+              <app-table-column
+                field="stcReply"
+                header="Supplier Reply"
+                width="120px"
+                textAlign="start"
+                [showEllipsis]="true" />
+
+              <!-- Quantity Locked Column -->
+              <app-table-column
+                field="qtyLocked"
+                header="Locked"
+                width="50px"
+                textAlign="end"
+                [editable]="!isItemFinalized"
+                [formatter]="formatQuantity" />
+
+              <!-- Quantity Imported Column -->
+              <app-table-column
+                field="qtyImported"
+                header="Imported"
+                width="60px"
+                textAlign="end"
+                [formatter]="formatQuantity" />
+
+              <!-- Quantity Need Import Column -->
+              <app-table-column
+                field="qtyNeedImport"
+                header="Need Import"
+                width="50px"
+                textAlign="end"
+                [formatter]="formatQuantity" />
+
+              <!-- Note Column -->
+              <app-table-column
+                field="note"
+                header="Note"
+                width="150px"
+                textAlign="start"
+                [editable]="!isItemFinalized"
+                inputType="textarea"
+                [showEllipsis]="true" />
+
+              <!-- ETA/ETD Column -->
+              <app-table-column
+                field="eta_etd"
+                header="ETA/ETD"
+                width="60px"
+                textAlign="center"
+                iconClass="bi bi-eye-fill"
+                componentType="clickCellIcon" />
+
+              <!-- Modified By Column -->
+              <app-table-column
+                field="lastModifierUsername"
+                header="Modified By"
+                width="120px"
+                textAlign="start"
+                [formatter]="formatUsername" />
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>
+
+<!-- ETA ETD Detail Modal -->
+<app-eta-etd-detail-modal
+  *ngIf="showETAETDDetailModal"
+  [(visible)]="showETAETDDetailModal"
+  [dpoDetail]="dpoDetail"
+  [dpoId]="dpoId || ''"
+  [dpoDetailId]="dpoDetailId || ''"
+  [poDetail]="poDetail">
+</app-eta-etd-detail-modal>

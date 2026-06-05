@@ -1,0 +1,159 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="buyer" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <ul ngbNav #nav="ngbNav" class="mt-0">
+        <li ngbNavItem>
+          <!-- <a ngbNavLink>
+            {{ '::Buyer' | abpLocalization }}
+          </a> -->
+          <ng-template ngbNavContent>
+            <div class="row mt-0">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-code">
+                  {{ '::Buyer Type' | abpLocalization }}
+                </label>
+                <ng-select
+                  id="buyer-type"
+                  [appendTo]="'body'"
+                  formControlName="buyerTypeId"
+                  [items]="buyerTypeOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [clearable]="false"
+                  [searchable]="false"
+                  (change)="onChangeBuyerType($event)">
+                </ng-select>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-code">
+                  {{ '::Buyer' | abpLocalization }}
+                </label>
+                <ng-select
+                  id="buyer-price-column"
+                  [appendTo]="'body'"
+                  formControlName="buyerId"
+                  [items]="buyerOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [clearable]="false"
+                  [searchable]="false"
+                  (change)="onBuyerChange($event)">
+                </ng-select>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-code">
+                  {{ '::Location' | abpLocalization }}
+                </label>
+                <ng-select
+                  id="buyer-price-column"
+                  [appendTo]="'body'"
+                  formControlName="locationId"
+                  [items]="locationOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [clearable]="false"
+                  [searchable]="false">
+                </ng-select>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-name">
+                  {{ '::MaterialType' | abpLocalization }}
+                </label>
+
+                <div class="row">
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6 mb-2">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="service.selectedMaterials.fa"
+                      (change)="service.onMaterialChange('fa', $event)"
+                      id="materialTypeCheckboxFA"
+                      style="margin-right: 8px" />
+                    <label class="form-check-label" for="materialTypeCheckboxFA"> FA </label>
+                  </div>
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6 mb-2">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [checked]="service.selectedMaterials.lvs"
+                      (change)="service.onMaterialChange('lvs', $event)"
+                      id="materialTypeCheckboxLVS"
+                      style="margin-right: 8px" />
+                    <label class="form-check-label" for="materialTypeCheckboxLVS"> LVS </label>
+                  </div>
+                  <div class="col-12">
+                    <div *ngIf="service.materialTypeInvalid" class="invalid-feedback d-block">
+                      At least one Material Type must be selected.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-container *ngIf="!service.selected; else inputField">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                  <label class="form-label label-required" for="saleUserName">
+                    {{ '::Username' | abpLocalization }}
+                  </label>
+                  <ng-select
+                    id="saleUserName"
+                    [appendTo]="'body'"
+                    [items]="requesterList$ | async"
+                    [typeahead]="inputRequester$"
+                    bindLabel="userName"
+                    formControlName="saleUserName"
+                    [multiple]="true"
+                    [searchable]="true"
+                    [ngClass]="{
+                      'is-invalid': f.saleUserName.invalid && f.saleUserName.touched,
+                      'is-valid': f.saleUserName.valid && f.saleUserName.touched,
+                    }">
+                  </ng-select>
+
+                  <div *ngIf="f.saleUserName.invalid && f.saleUserName.touched" class="invalid-feedback">
+                    Usernames required.
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-template #inputField>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                  <label class="form-label label-required" for="saleUserName">
+                    {{ '::Username' | abpLocalization }}
+                  </label>
+                  <input
+                    autocomplete="off"
+                    id="saleUserName"
+                    formControlName="saleUserName"
+                    class="form-control"
+                    maxlength="500" />
+                </div>
+              </ng-template>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="buyer">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

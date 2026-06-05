@@ -1,0 +1,89 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">ETA and ETD</h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading ETA and ETD...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading ETA and ETD data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="etaEtdData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group name="ETA and ETD Information" cssClass="group-header delivered-group">
+              <!-- Status Column -->
+              <app-table-column field="status" header="Status" width="100px" textAlign="center" componentType="status">
+              </app-table-column>
+
+              <!-- Invoice No Column -->
+              <app-table-column field="invoiceNo" header="Invoice No" width="180px" textAlign="start">
+              </app-table-column>
+
+              <!-- PO No Column -->
+              <app-table-column field="poNo" header="PO No" width="180px" textAlign="start"> </app-table-column>
+
+              <!-- Material Code Column -->
+              <app-table-column field="materialCode" header="Material Code" width="180px" textAlign="start">
+              </app-table-column>
+
+              <!-- Quantity Column -->
+              <app-table-column
+                field="qty_Allocation"
+                header="Quantity Allocation"
+                width="80px"
+                textAlign="end"
+                [editable]="true"
+                inputType="number"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- ETD Column -->
+              <app-table-column field="etd" header="ETD" width="80px" textAlign="start" [formatter]="formatDate">
+              </app-table-column>
+
+              <!-- ETA Column -->
+              <app-table-column field="eta" header="ETA" width="80px" textAlign="start" [formatter]="formatDate">
+              </app-table-column>
+
+              <!-- Shipment Method Column -->
+              <app-table-column field="shipmentMethod" header="Shipment Method" width="180px" textAlign="start">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

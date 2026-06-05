@@ -1,0 +1,372 @@
+// Unified Blue Color Scheme
+// Base color: #007bff (Bootstrap primary blue)
+$blue-base: #355dff;
+$blue-light: #336cc2;
+$blue-dark: #2a4bcf;
+$blue-gradient-start: #2b52f0;
+$blue-gradient-end: #2546ca;
+$blue-muted: #3477f3;
+$blue-secondary: #3743f3;
+$blue-accent: #5470e0;
+
+// Custom blue button variants
+.btn-blue-light {
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+
+  background-color: $blue-light;
+  border-color: $blue-light;
+  color: white;
+
+  &:hover,
+  &:focus {
+    background-color: darken($blue-light, 10%);
+    border-color: darken($blue-light, 10%);
+    color: white;
+  }
+
+  &:active,
+  &.active {
+    background-color: darken($blue-light, 15%);
+    border-color: darken($blue-light, 15%);
+  }
+}
+
+.btn-blue-dark {
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+
+  background-color: $blue-dark;
+  border-color: $blue-dark;
+  color: white;
+
+  &:hover,
+  &:focus {
+    background-color: darken($blue-dark, 8%);
+    border-color: darken($blue-dark, 8%);
+    color: white;
+  }
+
+  &:active,
+  &.active {
+    background-color: darken($blue-dark, 12%);
+    border-color: darken($blue-dark, 12%);
+  }
+}
+
+.btn-blue-gradient {
+  transition:
+    color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+
+  background: linear-gradient(135deg, $blue-gradient-start 0%, $blue-gradient-end 100%);
+  border-color: $blue-gradient-end;
+  color: white;
+  position: relative;
+  overflow: hidden;
+
+  &:hover,
+  &:focus {
+    background: linear-gradient(
+      135deg,
+      darken($blue-gradient-start, 8%) 0%,
+      darken($blue-gradient-end, 8%) 100%
+    );
+    border-color: darken($blue-gradient-end, 8%);
+    color: white;
+  }
+
+  &:active,
+  &.active {
+    background: linear-gradient(
+      135deg,
+      darken($blue-gradient-start, 12%) 0%,
+      darken($blue-gradient-end, 12%) 100%
+    );
+    border-color: darken($blue-gradient-end, 12%);
+  }
+}
+
+.page-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 999;
+    transition: all 0.3s ease;
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+    will-change: transform;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .header-content {
+      display: grid;
+      justify-content: space-between;
+      align-items: center;
+      grid-template-columns: 30% 1fr;
+      flex-wrap: wrap;
+
+      .content-header-container {
+        .content-header-body {
+          display: flex;
+          align-items: flex-start;
+          flex-direction: column;
+          justify-content: center;
+
+          .subtext {
+            font-size: 12px;
+            color: rgba(50, 81, 104, 1);
+          }
+        }
+
+        .content-header-content {
+          display: flex;
+          flex-direction: row;
+          gap: 0.5rem;
+          align-items: center;
+          justify-content: flex-start;
+
+          h1.content-header-title {
+            font-size: 16px !important;
+            font-weight: 500;
+            margin: 0;
+          }
+        }
+      }
+
+      .action-request {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+      }
+      .action-buttons-wrapper {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+        align-items: center;
+        justify-content: flex-end;
+        width: max-content;
+
+        .btn {
+          flex: 0 0 auto;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          min-width: 38px;
+          height: 38px;
+        }
+      }
+    }
+  }
+}
+
+.form-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .card {
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+
+    .card-header {
+      padding: 0.75rem 1.25rem;
+
+      h5,
+      h6 {
+        font-weight: 600;
+        margin: 0;
+      }
+    }
+
+    .card-body {
+      padding: 12px;
+    }
+  }
+}
+
+.status-badge {
+  font-size: 0.875rem;
+}
+
+.table-af {
+  .table thead th {
+    text-transform: capitalize;
+    font-size: 13px;
+    font-weight: 600;
+    background-color: rgba(210, 204, 204, 0.4);
+    border-bottom: 1px solid #ddd;
+    color: rgba(50, 81, 104, 1);
+  }
+
+  .table-summary {
+    th {
+      color: red !important;
+    }
+  }
+}
+
+.card-enhanced {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-header {
+    padding: 1rem 1.25rem;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+
+    h5,
+    h6 {
+      font-weight: 400;
+      font-size: 14px;
+    }
+
+    .card-actions {
+      .btn-icon {
+        padding: 0.25rem;
+        line-height: 1;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.25);
+        }
+      }
+    }
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+.progress {
+  width: 100px;
+  height: 3px;
+}
+
+// Generic Status Indicators - Text only (no background/border)
+.status-good {
+  color: #325168; // Unified text color for all statuses
+
+  &.progress-bar {
+    background-color: #28a745; // Green progress bar for good status
+  }
+}
+
+.status-warning {
+  color: #325168; // Unified text color for all statuses
+
+  &.progress-bar {
+    background-color: #ffc107; // Yellow progress bar for warning status
+  }
+}
+
+.status-exceeded {
+  color: #325168; // Unified text color for all statuses
+
+  &.progress-bar {
+    background-color: #dc3545; // Red progress bar for exceeded status
+  }
+}
+
+// Placeholder metrics (single number display)
+.metric-placeholder {
+  color: #6c757d; // Bootstrap text-muted color
+}
+
+@media (max-width: 768px) {
+  .page-content .sticky-header .header-content {
+    grid-template-columns: 1fr;
+
+    .action-request {
+      justify-content: flex-start;
+      margin-top: 1rem;
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .page-content .sticky-header .header-content .action-request {
+    .btn span:not(.badge):not(.spinner-border):not(.visually-hidden) {
+      display: none !important;
+    }
+
+    .btn i {
+      margin: 0 !important;
+    }
+
+    .btn {
+      padding: 0.375rem 0.5rem;
+    }
+
+    .dropdown-menu {
+      .dropdown-item span {
+        display: inline !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .page-content .sticky-header .header-content {
+    grid-template-columns: 1fr;
+
+    .action-request {
+      justify-content: flex-start;
+      margin-top: 1rem;
+      gap: 0.25rem;
+    }
+
+    .btn {
+      padding: 0.375rem 0.4rem !important;
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .page-content .sticky-header .header-content .action-request {
+    .btn .btn-text {
+      display: none !important;
+    }
+
+    .btn i {
+      margin: 0 !important;
+    }
+
+    .btn {
+      padding: 0.375rem 0.5rem;
+    }
+
+    .dropdown-menu {
+      .dropdown-item span {
+        display: inline !important;
+      }
+    }
+  }
+}

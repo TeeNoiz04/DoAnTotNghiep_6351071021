@@ -1,0 +1,87 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" *ngIf="searchForm" class="form-container">
+      <!-- Common filters for all types -->
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-label">Material Codes (%)</label>
+          <textarea appTrim autocomplete="off" class="form-control" formControlName="golfaCodes"></textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Models (%)</label>
+          <textarea appTrim autocomplete="off" class="form-control" formControlName="models"></textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">SAP Code</label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="sapCode" />
+        </div>
+      </div>
+
+      <div class="row-5-custom">
+        <div class="col">
+          <label class="form-label">Material Type</label>
+          <ng-select
+            [items]="materialTypeOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialType"
+            appendTo="body"
+            [clearable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Material Group</label>
+          <ng-select
+            [items]="materialGroupOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialGroup"
+            [clearable]="true"
+            appendTo="body">
+          </ng-select>
+        </div>
+
+        <div class="col">
+          <label class="form-label">Supplier</label>
+          <ng-select
+            [items]="supplierOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            appendTo="body"
+            formControlName="supplier"
+            [clearable]="true"
+            (change)="onSupplierChange($event)">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Supplier BU</label>
+          <ng-select
+            [items]="supplierBUOptions"
+            bindLabel="displayCode"
+            bindValue="displayCode"
+            formControlName="supplierBU"
+            appendTo="body"
+            [clearable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Material Status</label>
+          <ng-select
+            [items]="materialStatusOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialStatus"
+            appendTo="body"
+            [clearable]="true">
+          </ng-select>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

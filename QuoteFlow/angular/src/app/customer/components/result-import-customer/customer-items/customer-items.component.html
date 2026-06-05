@@ -1,0 +1,50 @@
+<app-advanced-data-table
+  [data]="data"
+  [height]="height"
+  [showGroupHeaders]="false"
+  [showRowNumber]="true"
+  [showSummary]="false"
+  [enableErrorHandling]="true"
+  [errorField]="'errors'"
+  [hasErrorsField]="'hasErrors'"
+  [rowIndexField]="'rowIndex'"
+  [enableClientSidePagination]="true"
+  [pageSize]="100"
+  [showPageSizeSelector]="true"
+  [pageSizeOptions]="[50, 100, 200, 300]"
+  [showItemsInfo]="true"
+  [paginationPosition]="'bottom'"
+  (rowClick)="onRowClick($event)">
+  <!-- Customer Information Group -->
+  <app-table-column-group name="Customer Information" cssClass="group-header item-group">
+    <app-table-column
+      field="rowData.state"
+      header="State"
+      width="100px"
+      textAlign="center"
+      [fixed]="true"
+      componentType="status" />
+
+    <app-table-column field="rowData.taxCode" header="Tax Code" width="150px" />
+
+    <app-table-column field="rowData.customerName" header="Customer Name" width="250px" />
+
+    <app-table-column field="rowData.shortName" header="Short Name" width="180px" />
+
+    <app-table-column field="rowData.address" header="Address" width="300px" />
+
+    <app-table-column field="rowData.phone" header="Phone" width="150px" />
+
+    <app-table-column field="rowData.country" header="Country" width="150px" />
+
+    <app-table-column field="rowData.province" header="Province" width="150px" />
+
+    <app-table-column field="rowData.website" header="Website" width="200px" />
+
+    <app-table-column field="rowData.customerType" header="Customer Type" width="150px" />
+
+    <app-table-column field="rowData.customerIndustry" header="Customer Industry" width="180px" />
+
+    <app-table-column field="rowData.note" header="Note" width="250px" />
+  </app-table-column-group>
+</app-advanced-data-table>

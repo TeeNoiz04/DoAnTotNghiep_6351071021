@@ -1,0 +1,145 @@
+<div class="import-result-container">
+  <div *ngIf="!resultImport?.listData?.length" class="text-center py-4">
+    <div class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      No items found in the import file.
+    </div>
+  </div>
+
+  <div *ngIf="resultImport?.listData?.length">
+    <!-- Search Bar -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            autocomplete="off"
+            type="text"
+            class="form-control"
+            placeholder="Search in: Material Code, Model, Price, Currency"
+            [(ngModel)]="searchText"
+            (input)="onSearchTextChange()" />
+          <button
+            *ngIf="searchText"
+            class="btn btn-outline-secondary"
+            type="button"
+            (click)="clearSearch()"
+            title="Clear search">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="d-flex justify-content-end gap-2">
+          <!-- Filter buttons -->
+          <button
+            class="btn btn-sm"
+            [class.btn-outline-secondary]="showFilter !== 'all'"
+            [class.btn-secondary]="showFilter === 'all'"
+            (click)="setFilter('all')">
+            All ({{ totalItems }})
+          </button>
+          <button
+            class="btn btn-sm"
+            [class.btn-outline-success]="showFilter !== 'valid'"
+            [class.btn-success]="showFilter === 'valid'"
+            (click)="setFilter('valid')">
+            Valid ({{ validItemsCount }})
+          </button>
+          <button
+            class="btn btn-sm"
+            [class.btn-outline-danger]="showFilter !== 'error'"
+            [class.btn-danger]="showFilter === 'error'"
+            (click)="setFilter('error')"
+            *ngIf="invalidItemsCount > 0">
+            Errors ({{ invalidItemsCount }})
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Items Table -->
+    <app-advanced-data-table
+      [data]="filteredItems"
+      [height]="'500px'"
+      [showGroupHeaders]="false"
+      [showSummary]="false"
+      [enableSelection]="false"
+      [enableErrorHandling]="true"
+      [errorField]="'errors'"
+      [hasErrorsField]="'hasErrors'"
+      [rowIndexField]="'rowIndex'"
+      [showRowNumber]="true"
+      rowNumberWidth="35px"
+      (rowClick)="onRowClick($event)">
+      <!-- Row Information Group -->
+      <app-table-column-group name="Row Information" cssClass="group-header row-group">
+        <!-- Status Column -->
+        <app-table-column
+          field="rowData.status"
+          header="Status"
+          width="80px"
+          textAlign="center"
+          [fixed]="true"
+          componentType="status">
+        </app-table-column>
+      </app-table-column-group>
+
+      <!-- Material Information Group -->
+      <app-table-column-group name="Material Information" cssClass="group-header material-group">
+        <!-- Material Code Column -->
+        <app-table-column field="rowData.materialCode" header="Material Code" width="120px" [fixed]="true">
+        </app-table-column>
+
+        <!-- Model Name Column -->
+        <app-table-column field="rowData.modelName" header="Model Name" width="150px" [fixed]="true" />
+
+        <!-- Account No Column -->
+        <app-table-column field="rowData.accountNo" header="Account No" width="150px" [fixed]="true" />
+      </app-table-column-group>
+
+      <!-- Quantity Information Group -->
+      <app-table-column-group name="Quantity Information" cssClass="group-header quantity-group">
+        <!-- Limit Quantity Column -->
+        <app-table-column
+          field="rowData.limitQty"
+          header="Limit Qty"
+          width="100px"
+          textAlign="end"
+          [formatter]="formatNumber">
+        </app-table-column>
+      </app-table-column-group>
+
+      <!-- Pricing Information Group -->
+      <app-table-column-group name="Pricing Information" cssClass="group-header pricing-group">
+        <!-- Standard Input Price Column -->
+        <app-table-column
+          field="rowData.landedCost"
+          header="Landed Cost"
+          width="120px"
+          textAlign="end"
+          [formatter]="formatCurrency">
+        </app-table-column>
+
+        <!-- Special Input Price Column -->
+        <app-table-column
+          field="rowData.specialInputPrice"
+          header="Special Price"
+          width="120px"
+          textAlign="end"
+          [formatter]="formatSpecialPrice">
+        </app-table-column>
+      </app-table-column-group>
+    </app-advanced-data-table>
+  </div>
+
+  <!-- No Data State -->
+  <div *ngIf="!resultImport" class="text-center py-5">
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      No import result data available.
+    </div>
+  </div>
+</div>

@@ -1,0 +1,239 @@
+<app-advanced-data-table
+  *ngFor="let key of [tableKey]; trackBy: trackByKey"
+  [data]="data"
+  [height]="height"
+  [showGroupHeaders]="false"
+  [showSummary]="true"
+  [autoCalculateSummary]="false"
+  [enableSelection]="canCancelItem"
+  [selectionCondition]="canSelectRow"
+  [selectionKey]="'id'"
+  [selectedItems]="selectedItems"
+  [trackBy]="trackBy"
+  (historyClick)="onHistoryClick($event)"
+  (selectionChange)="onSelectionChange($event)"
+  [enableClientSidePagination]="true"
+  [pageSizeOptions]="[25, 50, 100]">
+  <!-- Item Information Group -->
+  <app-table-column-group name="" cssClass="group-header item-group">
+    <!-- Action Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="action"
+      header=""
+      minWidth="auto"
+      width="20px"
+      maxWidth="none"
+      textAlign="center"
+      [fixed]="true"
+      componentType="action"
+      [showHistory]="true">
+    </app-table-column>
+
+    <!-- Row Number Column -->
+    <app-table-column
+      field="rowNo"
+      header="No."
+      headerClass="text-center"
+      width="40px"
+      textAlign="center"
+      [fixed]="true">
+    </app-table-column>
+
+    <!-- Status Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="status"
+      header="Status"
+      width="90px"
+      textAlign="center"
+      [fixed]="true"
+      componentType="status">
+    </app-table-column>
+
+    <!-- Material Code Column -->
+    <app-table-column field="golfaCode" header="Material Code" headerClass="text-center" width="130px" [fixed]="true">
+    </app-table-column>
+
+    <!-- Model Name Column -->
+    <app-table-column field="modelName" header="Model Name" headerClass="text-center" width="130px" [fixed]="true">
+    </app-table-column>
+
+    <!-- Quantity Column -->
+    <app-table-column field="qty" header="Qty" headerClass="text-center" width="50px" textAlign="end">
+    </app-table-column>
+
+    <!-- DPO Used Column -->
+    <app-table-column
+      field="dpoUsed"
+      header="DPO Used"
+      headerClass="text-center"
+      width="50px"
+      textAlign="end"
+      [formatter]="formatDpoUsed">
+    </app-table-column>
+  </app-table-column-group>
+
+  <!-- Pricing Group -->
+  <app-table-column-group name="" cssClass="group-header price-group">
+    <!-- Standard Price Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="standardPrice"
+      header="Standard Price"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Standard Amount Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="standardAmount"
+      header="Standard Amount"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      [summaryValue]="summaryData?.totalStandardAmount"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Buyer Price Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="buyerPrice"
+      header="Buyer&nbsp;Req. Price"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Requested Amount Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="requestedAmount"
+      header="Buyer&nbsp;Req. Amount"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      [summaryValue]="summaryData?.totalRequestedAmount"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Requested Discount Ratio Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="requestedDiscountRatio"
+      header="Buyer Req. Disc."
+      width="65px"
+      textAlign="end"
+      [summaryValue]="summaryData?.totalRequestedDiscountAmount"
+      [formatter]="formatDiscountRatioD1">
+    </app-table-column>
+
+    <!-- MEVN Offer Price Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="mevnOfferPrice"
+      header="MEVN Offer Price"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      textClass="text-warning fw-bold"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- MEVN Offer Amount Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="mevnOfferAmount"
+      header="MEVN Offer Amount"
+      width="110px"
+      maxWidth="110px"
+      textAlign="end"
+      textClass="text-warning fw-bold"
+      [summaryValue]="summaryData?.totalMEVNOfferAmount"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Actual Discount Ratio Column -->
+    <app-table-column
+      headerClass="text-center"
+      field="actualDiscountRatio"
+      header="Offer Disc. Ratio"
+      width="65px"
+      textAlign="end"
+      [summaryValue]="summaryData?.discountRatio"
+      [formatter]="formatDiscountRatioD1">
+    </app-table-column>
+
+    <!-- Landed Cost Column (conditional) -->
+    <app-table-column
+      headerClass="text-center"
+      *ngIf="isLandedCostViewable"
+      field="landingCost"
+      header="Landed Cost"
+      width="100px"
+      maxWidth="100px"
+      textAlign="end"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Landed Cost Column (conditional) -->
+    <app-table-column
+      headerClass="text-center"
+      *ngIf="isLandedCostViewable"
+      field="landingCostAmount"
+      header="Landed Cost Amount"
+      width="100px"
+      maxWidth="100px"
+      textAlign="end"
+      [summaryValue]="summaryData?.totalLandedCost"
+      [formatter]="formatCurrency">
+    </app-table-column>
+
+    <!-- Margin Column (conditional) -->
+    <app-table-column
+      headerClass="text-center"
+      *ngIf="isGPViewable"
+      field="priceOfferDetailMargin"
+      header="Margin"
+      width="65px"
+      textAlign="end"
+      [summaryValue]="summaryData?.totalGP"
+      [formatter]="formatDiscountRatioD1">
+    </app-table-column>
+  </app-table-column-group>
+
+  <!-- Extra Information Group -->
+  <app-table-column-group name="" cssClass="group-header extra-group">
+    <!-- Special Spec 1 Column -->
+    <app-table-column field="specialSpec1" header="Spec 1" headerClass="text-center" width="140px" textAlign="center">
+    </app-table-column>
+  </app-table-column-group>
+
+  <!-- Price To Customer Column -->
+  <app-table-column
+    headerClass="text-center"
+    field="priceToCustomer"
+    header="Price To Customer"
+    width="110px"
+    maxWidth="110px"
+    textAlign="end"
+    [formatter]="formatCurrencyWithBlank">
+  </app-table-column>
+
+  <!-- Price To Customer Amount Column (Computed) -->
+  <app-table-column
+    headerClass="text-center"
+    field="priceToCustomerAmount"
+    header="Price To Customer Amount"
+    width="110px"
+    maxWidth="110px"
+    textAlign="end"
+    [summaryValue]="summaryData?.totalPriceToCustomer"
+    [formatter]="formatCurrencyWithBlank">
+  </app-table-column>
+</app-advanced-data-table>

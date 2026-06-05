@@ -1,0 +1,25 @@
+::ng-deep.datatable-row-detail {
+  background: transparent !important;
+}
+
+::ng-deep.ngx-datatable.fixed-header
+  .datatable-header
+  .datatable-header-inner
+  .datatable-header-cell {
+  white-space: normal !important;
+  work-break: break-work !important;
+}
+
+::ng-deep.ngx-datatable.bootstrap
+  .datatable-header-cell-template-wrap
+  .datatable-header-cell-label {
+  padding: 0 !important;
+  line-height: 1 !important;
+  font-size: 12px !important;
+}
+
+::ng-deep.ngx-datatable.bootstrap .datatable-body .datatable-body-row .datatable-body-cell,
+::ng-deep.ngx-datatable.bootstrap .datatable-header .datatable-header-cell {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}

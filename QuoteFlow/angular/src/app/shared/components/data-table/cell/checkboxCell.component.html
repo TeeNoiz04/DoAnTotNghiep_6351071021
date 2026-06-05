@@ -1,0 +1,6 @@
+<input
+  type="checkbox"
+  [ngModel]="entry[name]"
+  (ngModelChange)="entry[name] = $event; onModelChange($event)"
+  [disabled]="disabled"
+  [ngClass]="cssClass" />

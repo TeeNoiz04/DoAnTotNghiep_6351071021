@@ -1,0 +1,143 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+  <div class="card mb-3">
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm>
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-4">
+              <label class="form-label" for="price-offer">
+                {{ '::Price Offer' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="priceOfferOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="false"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.workflowType"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="onChangePriceOffer($event)">
+              </ng-select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <label class="form-label" for="price-offer">
+                {{ '::Level' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="levelOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.workflowLevel"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <label class="form-label" for="price-offer">
+                {{ '::Condition' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="conditionOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.condition"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column
+          *abpPermission="AppPermissions.WorkflowConfigurations.Edit"
+          [name]=""
+          [maxWidth]="40"
+          [width]="40"
+          [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button class="btn btn-link p-0" (click)="update(row)">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Level" prop="workflowLevel" ellipsis="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.workflowLevel }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Role" prop="workflowRole" ellipsis="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.workflowRole }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Approvers" prop="approvers">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.approvers }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Condition" prop="condition" ellipsis="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.condition }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Note" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-workflow-configuration-detail-modal />
+  }
+}

@@ -1,0 +1,126 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button type="button" class="btn btn-primary" (click)="onSearch()">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="onClear()">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button type="button" class="btn btn-success" (click)="onExport()" [disabled]="service.isExportBusy">
+        <i *ngIf="service.isExportBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isExportBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <!-- Filter Section -->
+  <app-expandable-panel-v2
+    headerText="Search With Filters"
+    panelId="search_info"
+    [defaultCollapsed]="false"
+    icon="bi bi-search"
+    [isDisabled]="false"
+    class="mb-2">
+    <form [formGroup]="filterForm" (ngSubmit)="onSearch()">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="col">
+            <label for="materialCode" class="form-label">Material Code</label>
+            <input type="text" id="materialCode" class="form-control" formControlName="materialCode" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="col">
+            <label for="inventoryCategory" class="form-label">Inventory Category</label>
+            <input type="text" id="inventoryCategory" class="form-control" formControlName="inventoryCategory" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="col">
+            <label for="materialGroup" class="form-label">Material Group</label>
+            <select id="materialGroup" class="form-select" formControlName="materialGroup">
+              <option *ngFor="let option of materialGroupOptions" [value]="option.id">
+                {{ option.displayName }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </app-expandable-panel-v2>
+  <!-- Data Table -->
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        appTableEdgeScroller
+        default
+        class="bootstrap"
+        [rows]="data.items"
+        [count]="data.totalCount"
+        [list]="service.list"
+        (page)="service.onPage($event)">
+        <ngx-datatable-column [width]="120" [maxWidth]="120" name="Sap Code" prop="SAPCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.saP_Code }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Model" prop="model">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.model }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Material Group" prop="materialGroup">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.material_Group }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [width]="120" [maxWidth]="120" name="Golfa Code" prop="golfaCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.golfaCode }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="Qty"
+          prop="stockWarning_Qty"
+          [width]="100"
+          [maxWidth]="100"
+          headerClass="text-end"
+          [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.stockWarning_Qty | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Price"
+          [width]="120"
+          [maxWidth]="120"
+          prop="standard_Price"
+          headerClass="text-end"
+          [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.standard_Price | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="Amount"
+          prop="Amount"
+          [width]="150"
+          [maxWidth]="150"
+          headerClass="text-end"
+          [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.stockWarning_Amount | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>

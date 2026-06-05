@@ -1,0 +1,187 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom-end"
+          aria-haspopup="true"
+          (click)="onOpenImportBatchRequest()"
+          placement="bottom"
+          triggers="hover"
+          ngbTooltip="Import">
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Import' | abpLocalization }}</span>
+        </button>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom-end"
+          aria-haspopup="true"
+          (click)="onOpenDownloadImportBatchRequest()"
+          placement="bottom"
+          triggers="hover"
+          ngbTooltip="Download">
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download' | abpLocalization }}</span>
+        </button>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-import-batch-request-filter></app-import-batch-request-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        class="bootstrap"
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list">
+        <!-- <ngx-datatable-column name="" [width]="50" [maxWidth]="50" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center">
+              <button
+                *ngIf="row.status === 'IN_PROGRESS'"
+                class="btn btn-sm text-danger p-0"
+                (click)="onDeleteBatchRequest(row)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column> -->
+        <ngx-datatable-column name="{{ '::Status' | abpLocalization }}" [width]="120" [maxWidth]="120" prop="status">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.status"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::RequestNo' | abpLocalization }}" prop="requestNo">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a
+              [routerLink]="getDetailUrl(row)"
+              [queryParams]="getDetailQueryParams()"
+              class="text-primary text-decoration-none cursor-pointer">
+              {{ row.requestNo }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="File Name" prop="filName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fileName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Note" [width]="350" [maxWidth]="350" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorUsername">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<abp-modal
+  [(visible)]="showImportBatchRequest"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  (disappear)="onCloseImportModal()"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>
+      {{ 'SPO Batch Request' | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-batch-request-modal #importBatchRequest [importMode]="importMode" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display
+      [fileName]="resultImports?.[this.importMode]?.fileName"
+      [errors]="resultImports?.[this.importMode]?.errors || []">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-batch-request
+      [importMode]="importMode"
+      [importBatchRequestInformation]="importBatchRequestInformation"
+      [resultImport]="resultImports[this.importMode]" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="(resultImports?.[this.importMode]?.errors?.length ?? 0) > 0"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>

@@ -1,0 +1,99 @@
+<div
+  class="row align-items-center m-0 search-division multi-actions"
+  [ngClass]="{
+    'full-years-available': budgetPlanFilters?.fiscalYears?.length > 1,
+    relayout: hideFiscal,
+  }">
+  <div class="actions" *ngIf="showSearchActions">
+    <button
+      type="button"
+      title="Clear"
+      class="btn btn-outline-primary"
+      [disabled]="!initialized"
+      (click)="onClearFiltersClick()">
+      Clear
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="!initialized" (click)="onSearchClick()">
+      {{ submitLabel }}
+    </button>
+  </div>
+
+  <div [ngClass]="hideFiscal ? 'p-0' : 'row g-2 search-container'">
+    <div class="full-year-column" *ngIf="!hideFiscal">
+      <label for="fiscalYear" class="form-label">Fiscal Year</label>
+
+      <!-- Manual input for fiscal year -->
+      <input
+        *ngIf="manualFiscalYear"
+        autocomplete="off"
+        type="number"
+        class="form-control"
+        id="fiscalYear"
+        [(ngModel)]="selectedFiscalYear"
+        [disabled]="disableFiscalYearFilter" />
+
+      <!-- Dropdown selection for fiscal year -->
+      <ng-select
+        *ngIf="!manualFiscalYear"
+        [items]="budgetPlanFilters?.fiscalYears || []"
+        bindLabel="displayName"
+        bindValue="displayName"
+        [(ngModel)]="selectedFiscalYear"
+        clearable="false"
+        [disabled]="disableFiscalYearFilter"></ng-select>
+    </div>
+
+    <div [ngClass]="hideFiscal ? 'row' : 'w-100 right-column'">
+      <div [ngClass]="hideFiscal ? 'col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-2' : 'd-inline flex-column'">
+        <label for="division" class="form-label">Division</label>
+        <ng-select
+          [items]="divisionLookups"
+          bindLabel="displayDescription"
+          bindValue="displayName"
+          [(ngModel)]="selectedDivisionCode"
+          clearable="false"
+          [disabled]="disableFilters"
+          (change)="onDivisionChange($event)">
+        </ng-select>
+      </div>
+
+      <div [ngClass]="hideFiscal ? 'col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-2' : 'd-inline flex-column'">
+        <label for="department" class="form-label">Department</label>
+        <ng-select
+          [items]="departmentLookups"
+          bindLabel="displayDescription"
+          bindValue="displayName"
+          [(ngModel)]="selectedDepartmentCode"
+          [clearable]="isDepartmentClearable"
+          [disabled]="disableFilters"
+          (change)="onDepartmentChange($event)">
+        </ng-select>
+      </div>
+
+      <div [ngClass]="hideFiscal ? 'col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-2' : 'd-inline flex-column'">
+        <label for="section" class="form-label">Section</label>
+        <ng-select
+          [items]="sectionLookups"
+          bindLabel="displayDescription"
+          bindValue="displayName"
+          [(ngModel)]="selectedSectionCode"
+          [clearable]="isSectionClearable"
+          [disabled]="disableFilters"
+          (change)="onSectionChange($event)">
+        </ng-select>
+      </div>
+
+      <div [ngClass]="hideFiscal ? 'col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 mb-2' : 'd-inline flex-column'">
+        <label for="region" class="form-label">Region</label>
+        <ng-select
+          [items]="regionLookups"
+          bindLabel="displayDescription"
+          bindValue="displayName"
+          [(ngModel)]="selectedRegionCode"
+          [disabled]="disableFilters"
+          [clearable]="isRegionClearable">
+        </ng-select>
+      </div>
+    </div>
+  </div>
+</div>

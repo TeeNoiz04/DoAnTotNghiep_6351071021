@@ -1,0 +1,533 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="service.showDetails"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+  }"
+  [suppressUnsavedChangesWarning]="true"
+  (disappear)="service.closeDetails()">
+  <ng-template #abpHeader>
+    <h3>Material Details</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="material-details-container">
+      <form [formGroup]="basicInfoForm" class="mb-3" [skipValidation]="true">
+        <div class="row g-2">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="golfaCode">{{ 'Material Code' | abpLocalization }}</label>
+              <input autocomplete="off" type="text" id="golfaCode" formControlName="golfaCode" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="model">{{ '::Model' | abpLocalization }}</label>
+              <input autocomplete="off" type="text" id="model" formControlName="model" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="sapCode">SAP Code</label>
+              <input autocomplete="off" type="text" id="sapCode" formControlName="sapCode" class="form-control" />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="registrationDate">{{ '::Registration Date' | abpLocalization }}</label>
+              <input
+                autocomplete="off"
+                type="text"
+                id="registrationDate"
+                formControlName="registrationDate"
+                class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="validFrom">Valid From</label>
+              <input autocomplete="off" type="text" id="validFrom" formControlName="validFrom" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="validTo">Valid To</label>
+              <input autocomplete="off" type="text" id="validTo" formControlName="validTo" class="form-control" />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="supplier">Supplier</label>
+              <input autocomplete="off" type="text" id="supplier" formControlName="supplier" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="supplierBU">Supplier BU</label>
+              <input autocomplete="off" type="text" id="supplierBU" formControlName="supplierBU" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label" for="factory">Factory</label>
+              <input autocomplete="off" type="text" id="factory" formControlName="factory" class="form-control" />
+            </div>
+          </div>
+
+          <!-- <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label" for="materialGroup">{{ '::MaterialGroup' | abpLocalization }}</label>
+              <input autocomplete="off" type="text" id="materialGroup" formControlName="materialGroup" class="form-control" />
+            </div>
+          </div> -->
+        </div>
+      </form>
+      <!-- Information Section -->
+      <app-expandable-panel
+        headerText="Basic Information"
+        panelId="info-section"
+        iconPosition="start"
+        [defaultCollapsed]="true"
+        headerStyle="background-color: #4472c4; color: white;">
+        <form [formGroup]="informationForm">
+          <!-- <div class="row g-2">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="materialType">{{ '::MaterialType' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="materialType" formControlName="materialType" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="supplierCode">{{ '::Supplier Code' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="supplierCode" formControlName="supplierCode" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="unit">{{ '::Unit' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="unit" formControlName="unit" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="productHierarchy">{{ '::ProductHierarchy' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="productHierarchy" formControlName="productHierarchy" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="stockWarning">{{ '::Stock Warning' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="stockWarning" formControlName="stockWarning" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="vat">VAT</label>
+                <input autocomplete="off" type="text" id="vat" formControlName="vat" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="descriptionEN">{{ '::DescriptionEN' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="descriptionEN" formControlName="descriptionEN" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="descriptionVN">{{ '::DescriptionVN' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="descriptionVN" formControlName="descriptionVN" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="SupplierBUCode">{{ '::Supplier BU Code' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="supplierBUCode" formControlName="supplierBUCode" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-check">
+                <input autocomplete="off" type="checkbox" id="epa" formControlName="epa" class="form-check-input" />
+                <label for="epa" class="form-check-label">EPA</label>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="form-group">
+                <label class="form-label" for="note">{{ '::Note' | abpLocalization }}</label>
+                <textarea id="note" formControlName="note" class="form-control" rows="3"></textarea>
+              </div>
+            </div>
+          </div> -->
+          <div class="row g-2">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="materialType">{{ '::MaterialType' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="descriptionEN" class="form-label">{{ '::DescriptionEN' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="descriptionEN"
+                  formControlName="descriptionEN"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="unit" class="form-label">{{ '::Unit' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="unit" formControlName="unit" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="materialClass" class="form-label">{{ '::Material Class' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialClass"
+                  formControlName="materialClass"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="material Sec Classification" class="form-label">{{
+                  '::Material SEC Classification' | abpLocalization
+                }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialSecClassification"
+                  formControlName="materialSecClassification"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="sapMatGroup" class="form-label">{{ '::SAP Mat Group' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="sapMatGroup"
+                  formControlName="sapMatGroup"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="productHierarchy" class="form-label">{{ '::ProductHierarchy' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="productHierarchy"
+                  formControlName="productHierarchy"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="countryOfOrigin" class="form-label">{{ '::Country Of Origin' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="countryOfOrigin"
+                  formControlName="countryOfOrigin"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="warrantyTimeMonth" class="form-label">{{
+                  '::Warranty Time Month' | abpLocalization
+                }}</label>
+                <input
+                  autocomplete="off"
+                  type="number"
+                  id="warrantyTimeMonth"
+                  formControlName="warrantyTimeMonth"
+                  class="form-control"
+                  style="text-align: right" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="inventoryCategory" class="form-label">{{ '::Inventory Category' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="inventoryCategory"
+                  formControlName="inventoryCategory"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="maxLot" class="form-label">{{ '::Max Lot' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="number"
+                  id="maxLot"
+                  formControlName="maxLot"
+                  class="form-control"
+                  style="text-align: right" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="stockWarning" class="form-label">{{ '::Stock Warning' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="number"
+                  id="stockWarning"
+                  formControlName="stockWarning"
+                  class="form-control"
+                  style="text-align: right" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="vat" class="form-label">{{ '::VAT' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="number"
+                  id="vat"
+                  formControlName="vat"
+                  class="form-control"
+                  style="text-align: right" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="hsCode" class="form-label">{{ '::HS Code' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="hsCode" formControlName="hsCode" class="form-control" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </app-expandable-panel>
+
+      <!-- Specifications Section -->
+      <app-expandable-panel
+        headerText="Specifications"
+        panelId="specs-section"
+        [defaultCollapsed]="true"
+        iconPosition="start"
+        headerStyle="background-color: #4472c4; color: white;">
+        <form [formGroup]="specificationsForm">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="spec1">{{ '::Spec1' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="spec1" formControlName="spec1" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="spec2">{{ '::Spec2' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="spec2" formControlName="spec2" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="spec3">{{ '::Spec3' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="spec3" formControlName="spec3" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                <label class="form-label" for="spec4">{{ '::Spec4' | abpLocalization }}</label>
+                <input autocomplete="off" type="text" id="spec4" formControlName="spec4" class="form-control" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </app-expandable-panel>
+
+      <!-- Price Infos Section -->
+      <app-expandable-panel
+        headerText="Selling Price"
+        panelId="price-section"
+        iconPosition="start"
+        [defaultCollapsed]="true"
+        headerStyle="background-color: #4472c4; color: white;">
+        <form [formGroup]="priceInfosForm">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="standardPrice">
+                  {{ '::StandardPrice' | abpLocalization }}
+                </label>
+                <app-input-number id="value" formControlName="standardPrice" [allowDecimal]="true"> </app-input-number>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="buyerPrice1">Selling Price 1</label>
+                <app-input-number formControlName="buyerPrice1" [allowDecimal]="true" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="buyerPrice2">Selling Price 2</label>
+                <app-input-number formControlName="buyerPrice2" [allowDecimal]="true" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="buyerPrice3">Selling Price 3</label>
+                <app-input-number formControlName="buyerPrice3" [allowDecimal]="true" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="buyerPrice4">Selling Price 4</label>
+                <app-input-number formControlName="buyerPrice4" [allowDecimal]="true" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label class="form-label" for="buyerPrice5">Selling Price 5</label>
+                <app-input-number formControlName="buyerPrice5" [allowDecimal]="true" />
+              </div>
+            </div>
+          </div>
+        </form>
+      </app-expandable-panel>
+
+      <!-- Admin Area Section -->
+      <app-expandable-panel
+        *abpPermission="AppPermissions.Materials.ViewPurchaseArea"
+        headerText="Purchase"
+        panelId="admin-section"
+        [defaultCollapsed]="true"
+        iconPosition="start"
+        headerStyle="background-color: #4472c4; color: white;">
+        <form [formGroup]="adminAreaForm">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="inputPrice" class="form-label">{{ '::InputPrice' | abpLocalization }}</label>
+                <app-input-number [allowDecimal]="true" formControlName="inputPrice" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="inputCurrency" class="form-label">{{ '::Input Currency' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="inputCurrency"
+                  formControlName="inputCurrency"
+                  class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="incoterms" class="form-label">INCOTERMS</label>
+                <input autocomplete="off" type="text" id="incoterms" formControlName="incoterms" class="form-control" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="importDuty" class="form-label">{{ '::ImportDuty' | abpLocalization }}</label>
+                <input
+                  autocomplete="off"
+                  type="number"
+                  id="importDuty"
+                  formControlName="importDuty"
+                  class="form-control"
+                  style="text-align: right" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="appliedExchange" class="form-label">{{ '::Applied Exchange' | abpLocalization }}</label>
+                <app-input-number [allowDecimal]="true" formControlName="appliedExchange" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="landedCost" class="form-label">{{ '::Landed Cost (VND)' | abpLocalization }}</label>
+                <app-input-number [allowDecimal]="true" formControlName="landedCost" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="maxSalesOfferPrice" class="form-label">{{
+                  '::Max Sales Offer Price (VND)' | abpLocalization
+                }}</label>
+                <app-input-number [allowDecimal]="true" formControlName="maxSalesOfferPrice" />
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="maxManagerOfferPrice" class="form-label">{{
+                  '::Max Manager Offer Price (VND)' | abpLocalization
+                }}</label>
+                <app-input-number [allowDecimal]="true" formControlName="maxManagerOfferPrice" />
+              </div>
+            </div>
+            <div class="col-md-4 d-flex flex-column justify-content-end">
+              <div class="form-check">
+                <input type="checkbox" id="epa" formControlName="epa" class="form-check-input" />
+                <label for="epa" class="form-check-label">EPA</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </app-expandable-panel>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter></ng-template>
+</abp-modal>

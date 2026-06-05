@@ -1,0 +1,63 @@
+.table-edge-scroller-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  min-height: 100px;
+}
+
+.table-edge-scroller {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  flex: 1;
+}
+
+.scroll-nav-button {
+  position: absolute;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 80px;
+  border-radius: 8px;
+  background-color: rgba(53, 93, 255, 0.5);
+  border: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  font-size: 18px;
+  opacity: 0.5;
+  transform: translateY(-50%);
+}
+
+.scroll-nav-button:hover {
+  opacity: 1;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-nav-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.prev-button {
+  left: 8px;
+}
+
+.next-button {
+  right: 8px;
+}
+
+:host ::ng-deep ngx-datatable .datatable-body {
+  overflow-x: auto !important;
+}
+
+:host ::ng-deep ngx-datatable.fixed-header .datatable-header .datatable-header-inner {
+  width: 100% !important;
+}
+
+:host ::ng-deep .ngx-datatable {
+  overflow: visible !important;
+}

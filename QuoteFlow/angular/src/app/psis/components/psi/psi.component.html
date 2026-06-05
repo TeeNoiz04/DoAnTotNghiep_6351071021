@@ -1,0 +1,265 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Import"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Import' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importPSIOptions" (click)="onOpenImportPSI(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Download"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importPSIOptions" (click)="onOpenDownloadPSI(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-psi-filter></app-psi-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        class="bootstrap"
+        default
+        [rows]="service.data.items"
+        [count]="service?.data?.totalCount"
+        [list]="list">
+        <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <div ngbDropdown container="body" class="d-inline-block">
+                <button
+                  class="btn dropdown-toggle-btn"
+                  data-toggle="dropdown"
+                  placement="bottom-end"
+                  aria-haspopup="true"
+                  ngbDropdownToggle></button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="showHistory(row)">
+                    <i class="bi bi-clock-history me-2"></i> History
+                  </button>
+
+                  <div class="dropdown-divider"></div>
+
+                  <button *ngIf="row.flags?.isCancellable" ngbDropdownItem (click)="performAction('Cancelled', row)">
+                    <i class="bi bi-x-circle me-2"></i> Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Status' | abpLocalization }}" [maxWidth]="100" prop="status">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.status"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::PSI Code' | abpLocalization }}" prop="psiCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a [routerLink]="getDetailUrl(row)" class="text-primary text-decoration-none cursor-pointer">
+              {{ row.psiCode }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::FY' | abpLocalization }}" [maxWidth]="80" prop="fy">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fy }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::FileName' | abpLocalization }}" prop="fileName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fileName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <!-- Type Column -->
+        <ngx-datatable-column
+          name="M.Type"
+          prop="materialType"
+          headerClass="text-center"
+          [cellClass]="'text-center'"
+          [maxWidth]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="{
+                'bg-material-fa': row.materialType === 'FA',
+                'bg-material-lvs': row.materialType === 'LVS',
+              }">
+              {{ row.materialType }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Approvers' | abpLocalization }}" prop="currentApproverRoleName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a style="color: #355dff; text-decoration: none" class="cursor-pointer" (click)="loadApprovalList(row)">
+              {{ row.currentApproverRoleName }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          [maxWidth]="150"
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorName"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<!-- History List -->
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="approvalHistories"
+  (disappear)="closeHistoryDialog()" />
+
+<!-- Approver popup -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showImportPSI"
+  (disappear)="onCloseImportModal()"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }">
+  <ng-template #abpHeader>
+    <h3>Import PSI - {{ importPSITypeSelected?.label }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-psi-import-modal #importPSI [importMode]="importMode" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display
+      [fileName]="resultImports?.[this.importMode]?.fileName"
+      [errors]="resultImports?.[this.importMode]?.errors || []">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-psi
+      [importMode]="importMode"
+      [importInformation]="importInformation"
+      [resultImport]="resultImports[this.importMode]" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="(resultImports?.[this.importMode]?.errors?.length ?? 0) > 0"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>
+
+<app-approval-comment-modal
+  [(visible)]="service.isPerformActionModalOpen"
+  [busy]="service.isPerformActionModalBusy"
+  [actionTitle]="service.actionOptions"
+  [currentAction]="
+    service.actionOptions === 'Approved'
+      ? service.approvedAction
+      : service.actionOptions === 'Cancelled'
+        ? service.cancelledAction
+        : service.actionOptions === 'Rejected'
+          ? service.rejectedAction
+          : null
+  "
+  [requireComment]="true"
+  (commentSubmitted)="service.onPerformAction($event)"
+  (cancelClicked)="service.onClosePerformAction()"></app-approval-comment-modal>

@@ -1,0 +1,12 @@
+<div class="card mt-1 mb-3">
+  <div class="card-body">
+    <form>
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="formFile" class="label-required form-label">File</label>
+          <input class="form-control" type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

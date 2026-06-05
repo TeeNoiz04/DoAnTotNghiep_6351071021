@@ -1,0 +1,85 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form class="form-container" [formGroup]="form">
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label" for="buyerType">
+            <span>Buyer Type</span>
+          </label>
+          <ng-select
+            appendTo="body"
+            [items]="buyerTypeOptions"
+            bindLabel="displayName"
+            bindValue="id"
+            formControlName="buyerTypeId"
+            [clearable]="true"
+            [searchable]="true"
+            (change)="onBuyerTypeChange($event)"
+            [class.is-invalid]="f['buyerTypeId']?.invalid && f['buyerTypeId']?.touched">
+          </ng-select>
+          <div *ngIf="f['buyerTypeId']?.invalid && f['buyerTypeId']?.touched" class="invalid-feedback">
+            Buyer Type is required
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="buyer">
+            <span>Buyer</span>
+          </label>
+          <ng-select
+            [items]="buyerOptions"
+            appendTo="body"
+            bindLabel="displayCode"
+            bindValue="id"
+            formControlName="buyerId"
+            [clearable]="false"
+            [searchable]="true"
+            [class.is-invalid]="f['buyerId']?.invalid && f['buyerId']?.touched">
+          </ng-select>
+          <div *ngIf="f['buyerId']?.invalid && f['buyerId']?.touched" class="invalid-feedback">Buyer is required</div>
+        </div>
+        <div class="col">
+          <label class="form-label label-required" for="formDate">From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="formDate"
+              class="form-control"
+              name="formDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="fromdate"
+              (click)="minFromDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label label-required" for="toDate">To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              format="dd/MM/yyyy"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="todate"
+              (click)="minToDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

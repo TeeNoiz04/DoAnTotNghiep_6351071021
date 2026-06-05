@@ -1,0 +1,109 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button class="btn btn-primary" (click)="exportToExcel()" placement="bottom" ngbTooltip="Export" triggers="hover">
+        <i *ngIf="service.isExportToExcelBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isExportToExcelBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-md-3">
+          <div class="card bg-light border-0 h-100 mb-0">
+            <div class="card-body d-flex flex-column">
+              <b class="text-muted mb-1">Total Available Stock</b>
+              <h4 class="mb-0">{{ service?.totals?.available_Stock | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light border-0 h-100 mb-0">
+            <div class="card-body d-flex flex-column">
+              <b class="text-muted mb-1">Total Keeping Stock</b>
+              <h4 class="mb-0 text-stock">{{ service?.totals?.keeping_Stock | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light border-0 h-100 mb-0">
+            <div class="card-body d-flex flex-column">
+              <b class="text-muted mb-1">Total On Order Stock</b>
+              <h4 class="mb-0 text-fa">{{ service?.totals?.on_Order_Stock | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card bg-light border-0 h-100 mb-0">
+            <div class="card-body d-flex flex-column">
+              <b class="text-muted mb-1">Total Stock Warning</b>
+              <h4 class="mb-0 text-lvs">{{ service?.totals?.stockWarning | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ngx-datatable
+        default
+        class="bootstrap"
+        [rows]="service.data.items"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="50">
+        <!-- Type Column -->
+        <ngx-datatable-column name="M.Type" prop="materialType" headerClass="text-center" [cellClass]="'text-center'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="{
+                'bg-material-fa': row.materialType === 'FA',
+                'bg-material-lvs': row.materialType === 'LVS',
+              }">
+              {{ row.materialType }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Material Group" prop="material_Group">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.material_Group }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="Available Stock"
+          prop="available_Stock"
+          headerClass="text-end"
+          [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.available_Stock | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Keeping Stock" prop="keeping_Stock" headerClass="text-end" [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.keeping_Stock | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="On Order Stock"
+          prop="on_Order_Stock"
+          headerClass="text-end"
+          [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.on_Order_Stock | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Stock Warning" prop="stockWarning" headerClass="text-end" [cellClass]="'text-end'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.stockWarning | number: '1.0-0' }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>

@@ -1,0 +1,118 @@
+<div class="card mb-3">
+  <div class="card-body" *ngIf="service.searchForm">
+    <form [formGroup]="service.searchForm" class="form-container">
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="fileNameFilter"> Series <strong>(%)</strong> </label>
+            <textarea appTrim id="seriesFilter" class="form-control" formControlName="series"></textarea>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="golfaCodeFilter"> Material Code <strong>(%)</strong> </label>
+            <input appTrim autocomplete="off" id="golfaCodeFilter" class="form-control" formControlName="golfaCode" />
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="modelFilter"> Model </label>
+            <input appTrim autocomplete="off" id="modelFilter" class="form-control" formControlName="model" />
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="customerFilter"> Customer <strong>(%)</strong></label>
+            <input appTrim autocomplete="off" id="customerFilter" class="form-control" formControlName="customer" />
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <label class="form-label" for="formDate">From Date</label>
+          <div class="input-group">
+            <input
+              autocomplete="off"
+              id="formDate"
+              class="form-control"
+              name="formDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="fromDate"
+              (click)="minFromDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <label class="form-label" for="toDate">To Date</label>
+          <div class="input-group">
+            <input
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              format="dd/MM/yyyy"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="toDate"
+              (click)="minToDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="reportTypeFilter"> Import Type </label>
+            <ng-select
+              [items]="reportTypeOptions"
+              bindLabel="label"
+              bindValue="value"
+              clearable="true"
+              appendTo="body"
+              formControlName="reportType">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="materialTypeFilter"> Material Type </label>
+            <ng-select
+              [items]="materialTypeOptions"
+              bindLabel="label"
+              bindValue="value"
+              clearable="true"
+              appendTo="body"
+              formControlName="materialType">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="skuNameFilter"> SKU Name </label>
+            <input appTrim autocomplete="off" id="skuNameFilter" class="form-control" formControlName="skuName" />
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="packingListCodeFilter"> Packing List Code </label>
+            <input
+              appTrim
+              autocomplete="off"
+              id="packingListCodeFilter"
+              class="form-control"
+              formControlName="packingListCode" />
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+          <div>
+            <label class="form-label" for="checkListCodeFilter"> Check List Code </label>
+            <input appTrim autocomplete="off" id="checkListCode" class="form-control" formControlName="checkListCode" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

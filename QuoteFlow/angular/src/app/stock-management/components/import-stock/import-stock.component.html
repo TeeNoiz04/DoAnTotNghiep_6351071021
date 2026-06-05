@@ -1,0 +1,178 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button type="button" class="btn btn-primary" (click)="onSearch()" placement="bottom" ngbTooltip="Search">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importMaterialOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Import"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Import' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importMaterialOptions" (click)="onOpenImportMaterial(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importMaterialOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Download"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button
+            ngbDropdownItem
+            *ngFor="let item of importMaterialOptions"
+            (click)="onOpenDownloadImportMaterial(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-import-stock-filter></app-import-stock-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        class="bootstrap"
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list">
+        <ngx-datatable-column name="{{ '::Status' | abpLocalization }}" [width]="120" [maxWidth]="120" prop="status">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.status"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::RequestNo' | abpLocalization }}" prop="requestNo">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a [routerLink]="getDetailUrl(row)" class="text-primary text-decoration-none cursor-pointer">
+              {{ row.requestNo }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="File Name" prop="filName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fileName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Note" [width]="350" [maxWidth]="350" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorUsername">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<abp-modal
+  [(visible)]="showImportMaterial"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  (disappear)="onCloseImportModal()"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>
+      {{ importMaterialTypeSelected?.label }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-stock-modal #importMaterial [importMode]="importMode" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display
+      [fileName]="resultImports?.[this.importMode]?.fileName"
+      [errors]="resultImports?.[this.importMode]?.errors || []">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-stock
+      [importMode]="importMode"
+      [importMaterialInformation]="importMaterialInformation"
+      [resultImport]="resultImports[this.importMode]" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="(resultImports?.[this.importMode]?.errors?.length ?? 0) > 0"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>

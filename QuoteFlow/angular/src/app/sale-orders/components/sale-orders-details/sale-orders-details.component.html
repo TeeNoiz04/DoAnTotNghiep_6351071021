@@ -1,0 +1,377 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-2">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <div class="content-header-body">
+            <h1
+              [ngClass]="{
+                'content-header-title m-0': isNewRequestPage,
+                subtext: !isNewRequestPage,
+              }">
+              {{ titlePage }}
+            </h1>
+            <div class="content-header-content" *ngIf="!isNewRequestPage">
+              <h1 class="content-header-title m-0">
+                {{ service?.selected?.soNo }}
+              </h1>
+              <app-status-label [status]="service?.selected?.statusCode"></app-status-label>
+            </div>
+          </div>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0">
+          <div class="action-request text-end">
+            <!-- Confirm Delivery button -->
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="onConfirmDelivery()"
+              [disabled]="service?.sapInfoForm?.dirty || loading"
+              *ngIf="service.canConfirmDelivery(service?.selected)"
+              placement="bottom"
+              ngbTooltip="Confirm Delivery"
+              triggers="hover">
+              <i class="bi bi-check-circle"></i>
+              <span>Confirm Delivery</span>
+            </button>
+
+            <!-- Reopen button -->
+            <button
+              class="btn btn-warning"
+              type="button"
+              (click)="onReopen()"
+              [disabled]="loading"
+              *ngIf="service.canReopen(service?.selected)"
+              placement="bottom"
+              ngbTooltip="Reopen"
+              triggers="hover">
+              <i class="bi bi-arrow-clockwise"></i>
+              <span>Reopen</span>
+            </button>
+
+            <!-- Save button -> New Request -->
+            <button
+              class="btn btn-success"
+              type="button"
+              (click)="onSave()"
+              *ngIf="isNewRequestPage && service.canCreate"
+              placement="bottom"
+              ngbTooltip="Save"
+              triggers="hover">
+              <i class="bi bi-download"></i>
+              <span>Save</span>
+            </button>
+
+            <!-- Save button -> Edit Request -->
+            <button
+              class="btn btn-success"
+              type="button"
+              (click)="onSave()"
+              [disabled]="loading"
+              *ngIf="!isNewRequestPage && (service.canEdit(service?.selected) || service.canEditSAP(service?.selected))"
+              placement="bottom"
+              ngbTooltip="Save"
+              triggers="hover">
+              <i class="bi bi-download"></i>
+              <span>Save</span>
+            </button>
+
+            <button
+              class="btn btn-danger"
+              type="button"
+              (click)="onDelete()"
+              [disabled]="loading"
+              *ngIf="!isNewRequestPage && service.canDelete(service?.selected)"
+              placement="bottom"
+              ngbTooltip="Delete"
+              triggers="hover">
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm me-1"
+                role="status"
+                aria-hidden="true"></span>
+              <i *ngIf="!loading" class="bi bi-trash"></i>
+              <span>{{ loading ? 'Deleting...' : 'Delete' }}</span>
+            </button>
+
+            <!-- Navigation Actions -->
+            <!-- <button class="btn btn-secondary" type="button" (click)="navigateBack()">
+              <i class="bi bi-arrow-left-circle"></i>
+              <span class="ms-1">Back</span>
+            </button> -->
+            <button
+              class="btn btn-secondary"
+              type="button"
+              (click)="navigateBack()"
+              placement="bottom"
+              ngbTooltip="Back"
+              triggers="hover">
+              <i class="bi bi-arrow-left-circle me-1"></i>
+              <span class="btn-text">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="!loading; else loadingTemplate">
+      <div class="form-details">
+        <app-expandable-panel-v2
+          headerText="Sale Order Information"
+          panelId="basic_info"
+          [defaultCollapsed]="false"
+          icon="bi bi-info-circle"
+          [isDisabled]="false">
+          <app-sale-orders-form [isNewRequestPage]="isNewRequestPage"></app-sale-orders-form>
+        </app-expandable-panel-v2>
+
+        <app-expandable-panel-v2
+          headerText="SAP Information"
+          panelId="sap_info"
+          [defaultCollapsed]="!isNewRequestPage"
+          icon="bi bi-info-circle"
+          [isDisabled]="false">
+          <app-sap-info-form [isNewRequestPage]="isNewRequestPage"></app-sap-info-form>
+        </app-expandable-panel-v2>
+
+        <app-expandable-panel-v2
+          *ngIf="!isNewRequestPage"
+          headerText="Sale Order Items"
+          panelId="sale_order_items"
+          [defaultCollapsed]="false"
+          icon="bi bi-list-ul"
+          [badgeCount]="filteredSaleOrderDetails?.length || 0"
+          [selectedCount]="service?.selected?.saleOrderDetails?.length || 0"
+          [isDisabled]="false">
+          <ng-template #headerActions> </ng-template>
+
+          <!-- Search Box and Filters -->
+          <div class="row mb-2 align-items-center">
+            <div class="col-lg-5 col-md-5">
+              <div class="d-flex gap-2 align-items-center">
+                <div class="input-group flex-grow-1">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    [(ngModel)]="searchText"
+                    #searchInput
+                    [ngbTooltip]="'Search in: Material Code, Model, Notes, DPO No'"
+                    triggers="focus"
+                    placement="top" />
+                  <button
+                    *ngIf="searchText"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="clearSearch()"
+                    title="Clear search">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7 col-md-12">
+              <!-- Action Buttons -->
+              <div class="d-flex justify-content-end gap-2">
+                <!-- Add from DPO Button -->
+                <button
+                  *ngIf="service.canAddFromDPO(service.selected)"
+                  class="btn btn-outline-success btn-sm"
+                  type="button"
+                  (click)="openAddFromDPODialog(); $event.stopPropagation()"
+                  title="Add items from DPO">
+                  <i class="bi bi-plus-circle"></i>
+                  <span class="ms-1">Add from DPO</span>
+                </button>
+              </div>
+            </div>
+            <div>
+              <app-filter-pane
+                [filterFields]="filterFields"
+                [isOpen]="isFilterOpen"
+                [showApplyButton]="false"
+                [showClearButton]="false"
+                (filterChange)="onFilterChange($event)">
+              </app-filter-pane>
+            </div>
+          </div>
+
+          <ng-container *ngIf="service?.selected; else loadingTemplate">
+            <!-- Items Table -->
+            <app-advanced-data-table
+              [data]="filteredSaleOrderDetails"
+              [height]="'650px'"
+              [showRowNumber]="true"
+              [rowNumberHeader]="'No'"
+              [rowNumberWidth]="'50px'"
+              [showGroupHeaders]="false"
+              [showSummary]="false"
+              [enableSelection]="false"
+              [enableClientSidePagination]="true"
+              [pageSize]="100"
+              [pageSizeOptions]="[50, 100, 200, 300]"
+              [showPageSizeSelector]="true"
+              [paginationPosition]="'bottom'"
+              (actionClick)="onActionClick($event)"
+              (cellClick)="onCellClick($event)">
+              <!-- Item Information Group -->
+              <app-table-column-group name="Item Information" cssClass="group-header item-group">
+                <!-- Action -->
+                <app-table-column
+                  field="action"
+                  header="Action"
+                  textAlign="center"
+                  componentType="action"
+                  width="70px"
+                  [fixed]="true"
+                  [showEditModal]="true"
+                  [showEditFn]="isEditableRow"
+                  [showDelete]="canDeleteItem">
+                </app-table-column>
+
+                <!-- Status Column -->
+                <app-table-column
+                  field="statusCode"
+                  header="Status"
+                  width="100px"
+                  textAlign="center"
+                  [fixed]="true"
+                  componentType="status">
+                </app-table-column>
+
+                <!-- Material Code Column -->
+                <app-table-column field="golfaCode" header="Material Code" width="120px" [fixed]="true">
+                </app-table-column>
+
+                <!-- Model Column -->
+                <app-table-column field="dpoDetail.model" header="Model" width="130px" [fixed]="true">
+                </app-table-column>
+
+                <!-- Quantity Column -->
+                <app-table-column field="qty" header="Qty" width="60px" textAlign="end" [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Unit Price Column -->
+                <app-table-column
+                  field="price"
+                  header="Price"
+                  width="110px"
+                  textAlign="end"
+                  [formatter]="formatCurrency">
+                </app-table-column>
+
+                <!-- Extra Fee Column -->
+                <app-table-column
+                  field="extrafee"
+                  header="Extra Fee"
+                  width="85px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="extrafee"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Amount Column -->
+                <app-table-column
+                  field="amountIncludeExtrafee"
+                  header="Amount"
+                  width="110px"
+                  textAlign="end"
+                  [formatter]="formatCurrency">
+                </app-table-column>
+              </app-table-column-group>
+
+              <!-- Order Information Group -->
+              <app-table-column-group name="Order Information" cssClass="group-header delivery-group">
+                <!-- DPO No Column -->
+                <app-table-column field="dpoDetail.dpoNo" header="DPO No" width="150px" [showEllipsis]="true">
+                </app-table-column>
+
+                <!-- Customer Name Column -->
+                <app-table-column
+                  field="dpoDetail.note"
+                  header="DPO Notes"
+                  width="150px"
+                  [showEllipsis]="true"
+                  componentType="clickCell"
+                  cellClickAction="soNote">
+                </app-table-column>
+
+                <!-- DPO Confirm Notes Column -->
+                <app-table-column
+                  field="dpoDetail.confirmNoted"
+                  header="DPO Confirm Notes"
+                  width="150px"
+                  [showEllipsis]="true"
+                  componentType="clickCell"
+                  cellClickAction="dpoConfirmNotes">
+                </app-table-column>
+
+                <app-table-column field="dpoDetail.customerName" header="Customer" width="150px" [showEllipsis]="true">
+                </app-table-column>
+
+                <!-- SO Note Column -->
+                <app-table-column field="note" header="SO Note" width="150px" [showEllipsis]="true"> </app-table-column>
+              </app-table-column-group>
+            </app-advanced-data-table>
+          </ng-container>
+
+          <ng-template #loadingTemplate>
+            <div class="text-center p-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </ng-template>
+        </app-expandable-panel-v2>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading Sale Order Details...</p>
+            <p class="text-muted">Please wait while we fetch the details.</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>
+
+<app-add-from-dpo-dialog
+  *ngIf="isAddFromDpoDialogVisible"
+  [isVisible]="isAddFromDpoDialogVisible"
+  [saleOrderId]="saleOrderId!"
+  (visibleChange)="isAddFromDpoDialogVisible = $event"
+  (itemsAdded)="onItemsAdded($event)"
+  (itemsAddedAndDisable)="onItemsAddedAndDisable($event)">
+</app-add-from-dpo-dialog>
+
+<app-edit-sale-order-item-dialog
+  *ngIf="isEditSaleOrderItemDialogVisible"
+  [isVisible]="isEditSaleOrderItemDialogVisible"
+  [saleOrderDetail]="selectedSaleOrderDetail"
+  (visibleChange)="isEditSaleOrderItemDialogVisible = $event"
+  (itemUpdated)="onSaleOrderItemUpdated($event)">
+</app-edit-sale-order-item-dialog>
+
+<app-extra-fees-info-modal
+  *ngIf="showExtraFeesModal"
+  [(visible)]="showExtraFeesModal"
+  [soDetail]="selectedSaleOrderDetail"
+  (itemUpdated)="onExtraFeesInfoItemUpdated($event)">
+</app-extra-fees-info-modal>
+
+<app-dpo-note-info-modal *ngIf="showDPONotesModal" [(visible)]="showDPONotesModal" [soDetail]="selectedSaleOrderDetail">
+</app-dpo-note-info-modal>
+
+<!-- Approvers Modal -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>

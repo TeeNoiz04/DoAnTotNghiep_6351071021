@@ -1,0 +1,234 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+
+      <button
+        *abpPermission="AppPermissions.FAAdmins.CreateSaleTeam"
+        class="btn btn-primary"
+        style="width: 115px"
+        type="button"
+        (click)="create()"
+        placement="bottom"
+        ngbTooltip="Add New"
+        triggers="hover">
+        <i class="fa fa-plus me-1" aria-hidden="true"></i>
+        <span>{{ '::AddNew' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <!-- Filter section -->
+  <div class="card mb-4">
+    <!-- <div class="card-header">
+      <h5 class="card-title mb-0">{{ '::Filters' | abpLocalization }}</h5>
+    </div> -->
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm (keyup.enter)="onLoad()">
+          <!-- <div class="row mb-2">
+            <div class="col-12">
+              <div class="input-group">
+                <input
+                 autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters.filterText"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="onSearchTextChange($event)" />
+                <button class="btn btn-primary" type="button" (click)="onLoad()">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+          </div> -->
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="mb-2">
+                <label class="form-label" for="buyerName">
+                  {{ '::Buyer' | abpLocalization }}
+                </label>
+
+                <ng-select
+                  id="buyer-price-column"
+                  [(ngModel)]="filters.buyerId"
+                  [items]="buyerOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="mb-2">
+                <label class="form-label" for="locationName">
+                  {{ '::Location' | abpLocalization }}
+                </label>
+
+                <ng-select
+                  id="buyer-price-column"
+                  [(ngModel)]="filters.locationId"
+                  [items]="locationOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="mb-2">
+                <label class="form-label" for="userName">
+                  {{ '::Username' | abpLocalization }} <strong>(%)</strong>
+                </label>
+
+                <input
+                  appTrim
+                  autocomplete="off"
+                  id="userName"
+                  class="form-control"
+                  [(ngModel)]="filters.saleUserName"
+                  [ngModelOptions]="{ standalone: true }" />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="mb-2">
+                <label class="form-label" for="materialType">
+                  {{ '::Material Type' | abpLocalization }}
+                </label>
+
+                <!-- <input
+                  id="materialType"
+                  class="form-control"
+                  [(ngModel)]="filters.materialType"
+                  [ngModelOptions]="{ standalone: true }" /> -->
+                <ng-select
+                  id="materialType"
+                  [(ngModel)]="filters.materialType"
+                  [items]="materialOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row mt-2">
+            <div class="col-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-outline-primary me-2" (click)="clearFilters()">
+                <i class="fa fa-times me-1" aria-hidden="true"></i>
+                {{ '::Clear' | abpLocalization }}
+              </button>
+              <button type="button" class="btn btn-primary" (click)="onLoad()">
+                <i class="fa fa-search me-1" aria-hidden="true"></i>
+                {{ '::Search' | abpLocalization }}
+              </button>
+            </div>
+          </div> -->
+        </form>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column
+          [name]=""
+          [maxWidth]="80"
+          [width]="80"
+          [sortable]="false"
+          *abpPermission="AppPermissions.FAAdmins.EditSaleTeam + '||' + AppPermissions.FAAdmins.DeleteSaleTeam">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                *abpPermission="AppPermissions.FAAdmins.EditSaleTeam"
+                (click)="update(row)"
+                class="btn btn-link p-0">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+              <button
+                (click)="delete(row)"
+                *abpPermission="AppPermissions.FAAdmins.DeleteSaleTeam"
+                class="btn btn-link p-0">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Sale Name' | abpLocalization }}" prop="saleUserName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.saleUserName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Sale Full Name' | abpLocalization }}" prop="saleFullName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.saleFullName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Buyer' | abpLocalization }}" prop="buyer">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.buyerShortName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Location' | abpLocalization }}" prop="locationName" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.location.code }}
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- Type Column -->
+        <ngx-datatable-column name="M.Type" prop="materialType" headerClass="text-center" [cellClass]="'text-center'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="{
+                'bg-material-fa': row.materialType === 'FA',
+                'bg-material-lvs': row.materialType === 'LVS',
+              }">
+              {{ row.materialType }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- <ngx-datatable-column name="{{ '::CreatorName' | abpLocalization }}" prop="creatorName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.creatorName }}
+          </ng-template>
+        </ngx-datatable-column> -->
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-sale-buyer-detail-modal />
+  }
+}

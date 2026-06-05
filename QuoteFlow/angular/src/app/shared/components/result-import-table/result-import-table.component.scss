@@ -1,0 +1,295 @@
+.group-header-row {
+  display: none;
+}
+
+.group-header-row th {
+  height: 40px;
+  text-align: center;
+  position: relative;
+
+  &.group-header {
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  &.item-group {
+    border-right: 2px solid rgb(221, 221, 221);
+  }
+
+  &.price-group {
+    border-right: 2px solid rgb(221, 221, 221);
+  }
+
+  // Group headers should NOT be fixed - they span multiple columns
+  // Fixed styling is only applied via JavaScript to individual column headers
+}
+
+.grouped-table-container {
+  position: relative;
+  overflow: auto;
+
+  .table-responsive {
+    height: 100%;
+  }
+
+  table {
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 15;
+
+      tr:first-child {
+        border-bottom: 0;
+      }
+
+      tr:nth-child(2) th {
+        border-top: 0;
+      }
+
+      th {
+        font-size: 13px;
+        text-transform: capitalize;
+        font-weight: 600;
+        vertical-align: middle;
+        background-color: rgba(210, 204, 204, 1);
+        border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        color: rgba(50, 81, 104, 1);
+
+        &:first-child {
+          border-left: 1px solid #ddd;
+        }
+
+        &.bg-primary,
+        &.bg-info,
+        &.bg-warning {
+          font-weight: 700;
+          text-transform: uppercase;
+          text-align: center;
+        }
+      }
+
+      .group-header-row th {
+        height: 40px;
+      }
+
+      // Header fixed columns - dynamically calculated in component
+      th.fixed-column {
+        position: sticky !important;
+        background-color: rgba(210, 204, 204, 1) !important;
+        background-clip: padding-box;
+        border-right: 2px solid #ddd;
+        box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+        z-index: 20;
+      }
+
+      // Summary row fixed columns
+      .summary-row th.fixed-column {
+        position: sticky !important;
+        background-color: rgba(210, 204, 204, 1) !important;
+        background-clip: padding-box;
+        border-right: 2px solid #ddd;
+        box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+        z-index: 20;
+      }
+    }
+
+    // Regular cell borders
+    th,
+    td {
+      border-right: 1px solid #ddd;
+
+      &:first-child {
+        border-left: 1px solid #ddd;
+      }
+    }
+
+    .summary-row {
+      th {
+        font-weight: 600;
+        color: red;
+      }
+    }
+  }
+}
+
+// Error handling styles
+.has-errors {
+  background-color: rgba(192, 13, 73, 0.3);
+
+  &:hover {
+    background-color: rgba(192, 13, 73, 0.5);
+    cursor: pointer;
+  }
+
+  td {
+    position: relative;
+
+    // Fixed columns in error rows maintain error background
+    &.fixed-column {
+      background-color: rgba(192, 13, 73, 0.3) !important;
+    }
+  }
+
+  &:hover {
+    td.fixed-column {
+      background-color: rgba(192, 13, 73, 0.5) !important;
+    }
+  }
+}
+
+.error-details-row {
+  background-color: #fcf8f8;
+
+  .error-container {
+    border-left: 4px solid #dc3545;
+    background-color: #fff8f8;
+  }
+
+  .error-list {
+    color: #dc3545;
+    font-size: 0.9rem;
+  }
+}
+
+.error-indicator {
+  position: relative;
+
+  &:hover .error-tooltip {
+    display: block;
+  }
+
+  .error-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #dc3545;
+    color: white;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    z-index: 100;
+    white-space: nowrap;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #dc3545 transparent transparent transparent;
+    }
+  }
+}
+
+// Utility classes
+.text-start {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-end {
+  text-align: right;
+}
+
+// Column width classes
+.width_50 {
+  width: 50px;
+}
+
+.width_80 {
+  width: 80px;
+}
+
+.width_90 {
+  width: 90px;
+}
+
+.width_120 {
+  width: 120px;
+}
+
+.width_140 {
+  width: 140px;
+}
+
+.width_150 {
+  width: 150px;
+}
+
+.width_160 {
+  width: 160px;
+}
+
+.width_180 {
+  width: 180px;
+}
+
+.width_200 {
+  width: 200px;
+}
+
+// Fixed columns styling - position calculated dynamically
+.fixed-column {
+  position: sticky !important;
+  background-clip: padding-box;
+  border-right: 2px solid #ddd;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+// Body fixed columns
+tbody {
+  td.fixed-column {
+    background-color: white !important;
+    z-index: 10;
+    position: sticky !important;
+    background-clip: padding-box;
+    border-right: 2px solid #ddd;
+    box-shadow: 2px 0 3px rgba(0, 0, 0, 0.1);
+  }
+
+  // Handle alternating row colors for fixed columns
+  tr:nth-child(even) {
+    td.fixed-column {
+      background-color: #f8f9fa !important;
+    }
+  }
+
+  tr:hover {
+    td.fixed-column {
+      background-color: #f5f5f5 !important;
+    }
+  }
+
+  // Error rows override
+  tr.has-errors {
+    td.fixed-column {
+      background-color: rgb(237, 203, 216) !important;
+    }
+
+    &:hover td.fixed-column {
+      background-color: rgb(229, 172, 192) !important;
+    }
+  }
+}

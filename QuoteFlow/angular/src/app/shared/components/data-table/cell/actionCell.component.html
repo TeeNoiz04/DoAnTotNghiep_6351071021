@@ -1,0 +1,18 @@
+<div class="action-cell-container">
+  <button
+    [disabled]="readOnly"
+    (click)="editAction.emit(); $event.stopPropagation()"
+    class="btn btn-link p-0"
+    *ngIf="edit">
+    <i class="fa fa-edit text-muted icon-hover-edit" ngbTooltip="Edit"></i>
+  </button>
+
+  <button
+    [disabled]="readOnly"
+    (click)="removeAction.emit(); $event.stopPropagation()"
+    *ngIf="remove"
+    type="button"
+    class="btn btn-link p-0">
+    <i class="fa fa-trash text-muted icon-hover-delete" ngbTooltip="Delete"></i>
+  </button>
+</div>

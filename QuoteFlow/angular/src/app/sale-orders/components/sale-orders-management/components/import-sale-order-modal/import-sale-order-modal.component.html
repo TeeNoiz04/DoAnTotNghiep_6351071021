@@ -1,0 +1,22 @@
+<div class="card mt-1 mb-3">
+  <div class="card-body">
+    <form [formGroup]="importForm">
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="formFile" class="label-required form-label">File</label>
+          <input class="form-control" type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+        </div>
+      </div>
+      <!-- <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="toDate" class="form-label label-required">Note</label>
+          <textarea
+            class="form-control custom-textarea"
+            id="note"
+            formControlName="note"
+            appAutoResize></textarea>
+        </div>
+      </div> -->
+    </form>
+  </div>
+</div>

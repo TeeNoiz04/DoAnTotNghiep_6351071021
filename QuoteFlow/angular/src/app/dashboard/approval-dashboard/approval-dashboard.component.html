@@ -1,0 +1,80 @@
+<abp-page [title]="'Approval Dashboard'">
+  <div class="approval-dashboard-container">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="loading-pulse">
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+      </div>
+      <p class="loading-text">Gathering approval data...</p>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div *ngIf="!loading" class="dashboard-grid">
+      <div
+        *ngFor="let item of dashboardItems; let i = index"
+        class="dashboard-item"
+        [style.animation-delay.ms]="i * 100">
+        <!-- Card Header -->
+        <div class="item-header">
+          <div class="icon-container" [attr.data-category]="item.title">
+            <i class="{{ getIconClass(item.title!) }}"></i>
+          </div>
+          <h3 class="item-title">{{ item.title }}</h3>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid" [class.single-metric]="item.title !== 'SPO'">
+          <!-- In Approval Metric -->
+          <button
+            class="metric-card clickable"
+            (click)="navigateToInApproval(item.title!)"
+            [disabled]="item.in_Approval === 0"
+            [class.has-items]="item.in_Approval > 0">
+            <div class="metric-header">
+              <span class="metric-label">In Approval</span>
+              <i class="bi bi-arrow-right-short metric-arrow"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">{{ item.in_Approval }}</div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-status" *ngIf="item.in_Approval > 0">Requires Action</span>
+              <span class="metric-status empty" *ngIf="item.in_Approval === 0">All Clear</span>
+            </div>
+          </button>
+
+          <!-- Set Project Result Metric (SPO only) -->
+          <button
+            *ngIf="item.title === 'SPO'"
+            class="metric-card clickable secondary"
+            (click)="navigateToSetProjectResult()"
+            [disabled]="item.setProjectResult === 0"
+            [class.has-items]="item.setProjectResult > 0">
+            <div class="metric-header">
+              <span class="metric-label">Set Project Result</span>
+              <i class="bi bi-arrow-right-short metric-arrow"></i>
+            </div>
+            <div class="metric-content">
+              <div class="metric-value">{{ item.setProjectResult }}</div>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-status" *ngIf="item.setProjectResult > 0">Pending Update</span>
+              <span class="metric-status empty" *ngIf="item.setProjectResult === 0">Up to Date</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="dashboardItems.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <i class="bi bi-clipboard2-check"></i>
+        </div>
+        <h4 class="empty-title">All Caught Up</h4>
+        <p class="empty-description">No pending approvals at this time</p>
+      </div>
+    </div>
+  </div>
+</abp-page>

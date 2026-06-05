@@ -1,0 +1,110 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>Buyer Material Group</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form
+      [formGroup]="service.form"
+      id="system-category"
+      class="system-category-form"
+      (ngSubmit)="submitForm()"
+      [validateOnSubmit]="true">
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <div class="form-group" *ngIf="!service.selected">
+            <label class="form-label label-required" for="buyer">
+              {{ '::Buyer' | abpLocalization }}
+            </label>
+            <ng-select
+              id="buyerFilter"
+              [items]="buyerOptions"
+              name="buyerFilter"
+              bindLabel="displayCode"
+              bindValue="id"
+              formControlName="buyerId"
+              appendTo="body"
+              clearable="false">
+            </ng-select>
+          </div>
+          <div class="form-group" *ngIf="service.selected">
+            <label class="form-label label-required" for="buyer">
+              {{ '::Buyer' | abpLocalization }}
+            </label>
+            <input autocomplete="off" id="buyer" formControlName="buyerShortName" class="form-control" readonly />
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <label class="form-label">
+            {{ '::Material Group' | abpLocalization }}
+          </label>
+
+          <!-- FA Material Groups Section -->
+          <div class="material-section">
+            <div class="row">
+              <div class="col-md-4 col-sm-6 mb-2" *ngFor="let group of materialGroupFAOptions; let i = index">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    [id]="'material-fa-' + i"
+                    class="form-check-input me-2"
+                    [value]="group.id"
+                    [checked]="materialGroupsFormArray.value.includes(group.id)"
+                    (change)="onCheckboxChange($event, group.id)" />
+                  <label class="form-check-label" [for]="'material-fa-' + i">
+                    {{ group.displayName }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LVS Material Groups Section -->
+          <div class="material-section">
+            <div class="row">
+              <div class="col-md-4 col-sm-6 mb-2" *ngFor="let group of materialGroupLVSOptions; let i = index">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    [id]="'material-lvs-' + i"
+                    class="form-check-input me-2"
+                    [value]="group.id"
+                    [checked]="materialGroupsFormArray.value.includes(group.id)"
+                    (change)="onCheckboxChange($event, group.id)" />
+                  <label class="form-check-label" [for]="'material-lvs-' + i">
+                    {{ group.displayName }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Validation message -->
+          <div
+            *ngIf="service.form.get('materialGroups')?.errors?.['required'] && service.form.touched"
+            class="alert alert-danger py-2">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            <span>Please select at least one material group.</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

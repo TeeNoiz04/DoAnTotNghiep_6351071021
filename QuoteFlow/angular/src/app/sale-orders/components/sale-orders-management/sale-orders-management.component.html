@@ -1,0 +1,314 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="onCreate()"
+        *abpPermission="AppPermissions.SaleOrders.Create"
+        placement="bottom"
+        ngbTooltip="Create"
+        triggers="hover">
+        <i class="bi bi-plus-circle me-1"></i>
+        <span>{{ 'Create' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block" *ngIf="isActionButtonVisible">
+        <button
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Actions"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-check-circle-fill me-1"></i>
+          <span>{{ 'Actions' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem (click)="onOpenImport()" *abpPermission="AppPermissions.SaleOrders.ImportSAPSO">
+            <i class="fa fa-upload me-2"></i>
+            Import SAP Data
+          </button>
+          <button ngbDropdownItem (click)="exportToExcel()" *abpPermission="AppPermissions.SaleOrders.ExportSAPData">
+            <i class="fa fa-download me-2"></i>
+            Export SAP Data
+          </button>
+          <button
+            ngbDropdownItem
+            (click)="exportReportExcel()"
+            *abpPermission="AppPermissions.SaleOrders.ExportReportData">
+            <i class="fa fa-download me-2"></i>
+            Export Report Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-sale-orders-management-filter></app-sale-orders-management-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="service.data.items"
+          [count]="service.data.totalCount"
+          (page)="service.onPage($event)"
+          [list]="list"
+          [selected]="service.soCheckedList">
+          <!-- Header Checkbox -->
+          <ngx-datatable-column [width]="30" [maxWidth]="30" [sortable]="false">
+            <ng-template ngx-datatable-header-template>
+              <div class="checkbox-container">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="isAllSelected()"
+                    (change)="toggleSelectAll($event)" />
+                </div>
+              </div>
+            </ng-template>
+
+            <!-- Row Checkboxes -->
+            <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="isSelected">
+              <div class="checkbox-container">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="isRowSelected(row)"
+                    (change)="toggleRowSelection(row)" />
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+            <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+              <div
+                class="d-flex justify-content-center align-items-center gap-1"
+                *ngIf="service.canDelete(row) || service.canReopen(row)">
+                <div ngbDropdown container="body" class="d-inline-block">
+                  <button
+                    class="btn action-dropdown-toggle-btn"
+                    ngbDropdownToggle
+                    placement="bottom-end"
+                    aria-haspopup="true"></button>
+
+                  <div ngbDropdownMenu>
+                    <button ngbDropdownItem (click)="onDelete(row)" *ngIf="service.canDelete(row)">
+                      <i class="bi bi-trash me-2"></i>
+                      Delete
+                    </button>
+
+                    <button ngbDropdownItem (click)="onReopen(row)" *ngIf="service.canReopen(row)">
+                      <i class="bi bi-arrow-clockwise me-2"></i>
+                      Reopen
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+
+                    <button ngbDropdownItem (click)="viewHistory(row)" *ngIf="service.canViewHistory(row)">
+                      <i class="fa fa-clock me-2 text-info"></i>
+                      {{ '::History' | abpLocalization }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="95"
+            headerClass="text-center"
+            cellClass="text-center"
+            name="{{ '::Status' | abpLocalization }}"
+            prop="statusCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-status-label [status]="row.statusCode"></app-status-label>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="SO No" prop="soNo">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a
+                [routerLink]="['/' + soRoutes.BASE, row.id, soRoutes.DETAILS.BASE]"
+                class="text-primary text-decoration-none cursor-pointer">
+                {{ row.soNo }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Invoice No" prop="sapInvoice">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.sapInvoice }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="SO-SAP No" prop="sosapNo">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.sosapNo }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="VAT" prop="sO_VAT" [width]="80">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end">
+                {{
+                  row.sO_VAT !== null && row.sO_VAT !== undefined ? (row.sO_VAT * 100 | number: '1.0-2') + '%' : 'KCT'
+                }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Buyer" prop="buyerCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.buyerCode }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="M.Type" prop="materialType" headerClass="text-center" [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span
+                class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-material-fa': row.materialType === 'FA',
+                  'bg-material-lvs': row.materialType === 'LVS',
+                }">
+                {{ row.materialType }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Order Date" prop="orderDate">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.orderDate | date: 'dd/MM/yyyy' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column headerClass="text-end" name="Total" prop="totalAmount" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end text-red">
+                {{ row.totalAmount | number: '1.0-2' }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Note" prop="note">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span ngbTooltip="{{ row.note }}" placement="top" container="body" [disableTooltip]="!row.note">
+                {{ row.note | slice: 0 : 20 }}{{ row.note?.length > 20 ? '...' : '' }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Audit Info Column -->
+          <ngx-datatable-column
+            name="{{ '::Info' | abpLocalization }}"
+            headerClass="text-center"
+            [maxWidth]="50"
+            [sortable]="false"
+            [canAutoResize]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-audit-info-column
+                [creationTime]="row.creationTime"
+                [creatorName]="row.creatorUsername"
+                [lastModificationTime]="row.lastModificationTime"
+                [lastModifierName]="row.lastModifierUsername">
+              </app-audit-info-column>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>
+
+<abp-modal
+  [(visible)]="showImport"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }">
+  <ng-template #abpHeader>
+    <h3>Import Sale Order SAP</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-sale-order-modal #importForm />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display [fileName]="resultImports?.fileName" [errors]="resultImports?.errors || []"> </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-sale-order [importInformation]="importInformation" [resultImport]="resultImports" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="(resultImports?.errors?.length ?? 0) > 0"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>
+
+<app-history-modal
+  appEscCloseModal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="service.historySO"
+  (disappear)="closeHistoryDialog()" />

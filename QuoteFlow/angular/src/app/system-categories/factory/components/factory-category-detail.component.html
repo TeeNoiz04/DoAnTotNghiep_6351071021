@@ -1,0 +1,135 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="supplier-bu-form">
+      <div class="row mt-2 fade-in-top">
+        <div class="col-md-4 mb-2">
+          <label class="form-label label-required" for="supplierBUCode">
+            {{ '::Supplier BU Code' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="supplierBUCode" class="form-control" formControlName="supplierBUCode" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="supplierBURemarks">
+            {{ '::Supplier BU Name' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="supplierBURemarks" formControlName="supplierBURemarks" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="orderMethod">
+            {{ '::OrderMethod' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="orderMethod" formControlName="orderMethod" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="poTemplate">
+            {{ '::POTemplate' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="poTemplate" formControlName="poTemplate" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="contact">
+            {{ '::Contact' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="contact" formControlName="contact" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="email">
+            {{ '::Email' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="email" formControlName="email" class="form-control" type="email" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="incoTerm">
+            {{ '::IncoTerm' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="incoTerm" formControlName="incoTerm" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="paymentTermCode">
+            {{ '::PaymentTermCode' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="paymentTermCode" formControlName="paymentTermCode" class="form-control" />
+        </div>
+
+        <div class="col-md-12 mb-2">
+          <label class="form-label" for="paymentDescription">
+            {{ '::PaymentDescription' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="paymentDescription" formControlName="paymentDescription" class="form-control" />
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="currency">
+            {{ '::Currency' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="currencyOptions"
+            bindLabel="label"
+            bindValue="code"
+            formControlName="currency"
+            [clearable]="true"
+            [searchable]="true"
+            [appendTo]="'body'">
+          </ng-select>
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="materialType">
+            {{ '::MaterialType' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="materialTypeOptions"
+            bindLabel="label"
+            bindValue="code"
+            formControlName="materialType"
+            [clearable]="true"
+            [searchable]="true"
+            [appendTo]="'body'">
+          </ng-select>
+        </div>
+
+        <div class="col-md-4 mb-2">
+          <label class="form-label" for="supplierId">
+            {{ '::Supplier' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="supplierOptions"
+            bindLabel="label"
+            bindValue="code"
+            formControlName="supplierShortName"
+            [clearable]="true"
+            [searchable]="true"
+            [appendTo]="'body'">
+          </ng-select>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" (click)="submitForm()" formName="supplier-bu-form">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

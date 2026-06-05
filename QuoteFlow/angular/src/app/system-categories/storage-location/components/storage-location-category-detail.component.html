@@ -1,0 +1,113 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }} Storage Location</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form
+      [formGroup]="service.form"
+      id="system-category"
+      class="system-category-form"
+      (ngSubmit)="submitForm()"
+      [validateOnSubmit]="true">
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label label-required" for="stock-code">
+              {{ '::Stock Code' | abpLocalization }}
+            </label>
+            <input autocomplete="off" id="stock-code" formControlName="stockCode" class="form-control" maxlength="50" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="form-label" for="sap-code">
+              {{ '::SAP Code' | abpLocalization }}
+            </label>
+            <input autocomplete="off" id="sap-code" formControlName="sapCode" class="form-control" maxlength="50" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="form-label label-required" for="stock-name">
+              {{ '::Stock Name' | abpLocalization }}
+            </label>
+            <input
+              autocomplete="off"
+              id="stock-name"
+              formControlName="stockName"
+              class="form-control"
+              maxlength="500" />
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-3">
+          <label class="form-label">
+            {{ '::Main Stock (Default)' | abpLocalization }}
+          </label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="mainStock" />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">
+            {{ '::Damaged Stock' | abpLocalization }}
+          </label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="damagedStock" />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">
+            {{ '::FOC' | abpLocalization }}
+          </label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="foc" />
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">
+            {{ '::IsDeactive' | abpLocalization }}
+          </label>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="isDeactive" />
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-label" for="system-category-note">
+              {{ '::Note' | abpLocalization }}
+            </label>
+            <textarea
+              id="system-category-note"
+              formControlName="note"
+              class="form-control"
+              maxlength="4000"
+              rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

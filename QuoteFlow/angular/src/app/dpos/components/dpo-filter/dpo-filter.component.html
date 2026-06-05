@@ -1,0 +1,147 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form [formGroup]="searchForm!" (ngSubmit)="onSearch()" *ngIf="searchForm" class="form-container">
+      <div class="row-5-custom">
+        <div class="col">
+          <label class="form-label">DPO No <strong>(%)</strong></label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="dpoNo" />
+        </div>
+        <div class="col">
+          <label class="form-label">Material Code <strong>(%)</strong></label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="materialCode" />
+        </div>
+        <div class="col">
+          <label class="form-label">Model Name <strong>(%)</strong></label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="model" />
+        </div>
+        <div class="col">
+          <label class="form-label">PO No <strong>(%)</strong></label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="poNo" />
+        </div>
+        <div class="col">
+          <label class="form-label">Customer Name <strong>(%)</strong></label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="customerName" />
+        </div>
+      </div>
+
+      <div class="row-5-custom">
+        <div class="col">
+          <label class="form-label" for="formDate">Ordered From</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="formDate"
+              class="form-control"
+              name="formDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="orderFromDate"
+              (click)="minFromDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label" for="toDate">Ordered To</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              format="dd/MM/yyyy"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="orderToDate"
+              (click)="minToDateInput.toggle()"
+              container="body" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+        <div class="col">
+          <label class="form-label">Buyer Type</label>
+          <ng-select
+            [items]="buyerTypeOptions"
+            name="materialTypeFilter"
+            bindLabel="displayCode"
+            bindValue="id"
+            formControlName="buyerTypeId"
+            appendTo="body"
+            (change)="onChangeBuyerType($event)">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Buyer</label>
+          <ng-select
+            [items]="buyerOptions"
+            name="materialTypeFilter"
+            bindLabel="displayCode"
+            bindValue="id"
+            formControlName="buyerId"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Material Type</label>
+          <ng-select
+            [items]="materialTypeOptions"
+            name="materialTypeFilter"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialType"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="row-5-custom">
+        <div class="col">
+          <label class="form-label">Supplier</label>
+          <ng-select
+            [items]="supplierTypeOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            appendTo="body"
+            formControlName="supplierId"
+            [clearable]="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Special price code</label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="specialPriceCode" />
+        </div>
+        <div class="col">
+          <label class="form-label">Material Group</label>
+          <ng-select
+            [items]="materialGroupTypeOptions"
+            name="materialTypeFilter"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialGroup"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div>
+        <div class="col">
+          <label class="form-label">Tax Code</label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="taxCode" />
+        </div>
+        <!-- <div class="col">
+          <label class="form-label">Sales Org</label>
+          <input appTrim autocomplete="off" type="text" class="form-control" formControlName="salesOrg" />
+        </div> -->
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

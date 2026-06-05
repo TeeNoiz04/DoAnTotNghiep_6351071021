@@ -1,0 +1,85 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="isVisible"
+  [busy]="isBusy"
+  [options]="{ size: 'xl', centered: true, backdrop: 'static' }"
+  (disappear)="closeDialog()">
+  <ng-template #abpHeader>
+    <div class="top-header">
+      <h3>Edit DPO Item</h3>
+      <app-status-label [status]="DPODetail?.status"></app-status-label>
+    </div>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="content">
+      <form [formGroup]="form" [skipValidation]="true">
+        <div class="row mb-1">
+          <div class="col-md-4">
+            <label class="form-label" for="qty">Qty</label>
+            <app-input-number [readOnly]="true" id="qty" formControlName="qty" [allowDecimal]="true" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="materialCode">Material Code</label>
+            <input
+              id="materialCode"
+              class="form-control"
+              formControlName="materialCode"
+              [ngClass]="{ 'is-invalid': form.get('materialCode').invalid && form.get('materialCode').touched }" />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="model">Model</label>
+            <input
+              id="model"
+              class="form-control"
+              formControlName="model"
+              [ngClass]="{ 'is-invalid': form.get('model').invalid && form.get('model').touched }" />
+          </div>
+        </div>
+
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <label class="form-label" for="confirmNote">Confirm Note</label>
+            <textarea
+              id="confirmNote"
+              class="form-control"
+              formControlName="confirmNote"
+              rows="3"
+              [ngClass]="{
+                'is-invalid': form.get('confirmNote').invalid && form.get('confirmNote').touched,
+              }"></textarea>
+            <div *ngIf="form.get('confirmNote').invalid && form.get('confirmNote').touched" class="invalid-feedback">
+              <span *ngIf="form.get('confirmNote').errors?.maxlength">Confirm Note cannot exceed 500 characters</span>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <div class="col-md-12">
+            <label class="form-label" for="note">Note</label>
+            <textarea
+              id="note"
+              class="form-control"
+              formControlName="note"
+              rows="3"
+              [ngClass]="{ 'is-invalid': form.get('note').invalid && form.get('note').touched }"></textarea>
+            <div *ngIf="form.get('note').invalid && form.get('note').touched" class="invalid-feedback">
+              <span *ngIf="form.get('note').errors?.maxlength">Note cannot exceed 500 characters</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="closeDialog()">
+      <i class="bi bi-x-circle me-1"></i>
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="isBusy || form.invalid" (click)="onSave()">
+      <i class="bi bi-save me-1"></i>
+      Save Changes
+    </button>
+  </ng-template>
+</abp-modal>

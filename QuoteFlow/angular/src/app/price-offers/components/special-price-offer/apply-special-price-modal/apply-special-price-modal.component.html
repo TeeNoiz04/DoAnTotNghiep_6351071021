@@ -1,0 +1,67 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="visible"
+  [busy]="busy"
+  (visibleChange)="onModalVisibilityChange($event)"
+  [options]="{
+    size: 'lg',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }">
+  <ng-template #abpHeader>
+    <h3>Apply Special Price</h3>
+  </ng-template>
+  <ng-template #abpBody>
+    <div>
+      <!-- Special Input Price -->
+      <div class="mb-3">
+        <label class="form-label label-required">Special Input Price</label>
+        <ng-select
+          [(ngModel)]="applySpecialPriceData.selectedSpecialInputPriceId"
+          [clearable]="false"
+          [loading]="isLoadingOptions"
+          appendTo="body">
+          <ng-option *ngFor="let option of specialInputPriceOptions" [value]="option.id">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold">
+                {{ option.accountNo }} -
+                <span
+                  [ngClass]="{
+                    'text-danger': option.status === 'Expired',
+                    'text-success': option.status === 'Valid',
+                  }">
+                  {{ option.status }} -
+                </span>
+                <span>{{ option.materialType }}</span>
+              </span>
+              <span class="text-muted ms-2">{{ option.accountName }}</span>
+            </div>
+          </ng-option>
+        </ng-select>
+      </div>
+
+      <!-- Note Field -->
+      <div class="mb-3">
+        <label class="form-label">Note</label>
+        <textarea class="form-control" [(ngModel)]="applySpecialPriceData.note" rows="3"></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-secondary" type="button" (click)="onCancel()">
+      <i class="bi bi-x-circle"></i>
+      <span class="ms-1">Cancel</span>
+    </button>
+    <abp-button
+      iconClass="bi bi-check-circle"
+      class="btn-primary"
+      type="button"
+      [disabled]="!isFormValid()"
+      (click)="onApply()">
+      Apply
+    </abp-button>
+  </ng-template>
+</abp-modal>

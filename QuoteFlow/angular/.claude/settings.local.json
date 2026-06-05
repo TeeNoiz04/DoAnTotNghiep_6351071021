@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ss:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(yarn --version)",
+      "Bash(yarn:*)",
+      "Bash(yarn local)",
+      "Bash(yarn start)",
+      "Bash(yarn cache:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:ibb.co)",
+      "mcp__ide__getDiagnostics",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:ng-bootstrap.github.io)",
+      "Bash(cat \"/mnt/d/Learning/ABP/Github/MEVN.FA.WF2025/angular/src/app/price-offers/components/special-price-offer/grouped-table/grouped-table.component.scss\")",
+      "Bash(findstr:*)",
+      "Bash(grep:*)",
+      "WebSearch",
+      "Skill(frontend-design:frontend-design)"
+    ],
+    "deny": []
+  }
+}

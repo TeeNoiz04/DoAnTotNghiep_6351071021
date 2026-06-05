@@ -1,0 +1,59 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Public.Web.Security.Recaptcha
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.Packages.Zxcvbn
+@using Volo.Abp.Settings
+@model Volo.Abp.Account.Public.Web.Pages.Account.RegisterModel
+@inject IHtmlLocalizer<AccountResource> L
+@inject Volo.Abp.AspNetCore.Mvc.UI.Layout.IPageLayout PageLayout
+@inject ISettingProvider SettingProvider
+@{
+    PageLayout.Content.Title = "Account Unavailable";
+    var reCaptchaVersion = await SettingProvider.GetAsync<int>(AccountSettingNames.Captcha.Version);
+}
+
+@if (Model.EnableLocalRegister)
+{
+    @section scripts
+    {
+        <abp-script-bundle name="@typeof(Volo.Abp.Account.Public.Web.Pages.Account.RegisterModel).FullName">
+            <abp-script type="@typeof(ZxcvbnScriptContributor)"/>
+            <abp-script src="/Pages/Account/PasswordComplexityIndicator.js"/>
+            <abp-script src="/Pages/Account/Register.js"/>
+        </abp-script-bundle>
+
+        @if (Model.UseCaptcha)
+        {
+            if (reCaptchaVersion == 3)
+            {
+                <recaptcha-script-v3/>
+                <recaptcha-script-v3-js action="register" execute="false" />
+            }
+            else
+            {
+                <recaptcha-script-v2/>
+            }
+        }
+    }
+}
+
+<div class="account-module-form">
+
+    @if (Model.EnableLocalLogin)
+    {
+        <div class="text-center">
+            <h5>Your account does not exist in the system.</h5>
+            <p>Please contact the administrator.</p>
+            <p>
+                <a class="btn btn-outline-primary"
+                   href="@Url.Page("./Login", new { returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash })">
+                    &larr; Login
+                </a>
+            </p>
+        </div>
+    }
+
+
+</div>

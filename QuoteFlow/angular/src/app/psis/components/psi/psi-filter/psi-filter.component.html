@@ -1,0 +1,56 @@
+@if (service.filters; as filters) {
+  <div class="card mb-3">
+    <div class="card-body">
+      <form>
+        <div class="row">
+          <div class="col-md-2">
+            <div>
+              <label class="form-label" for="fyFilter">
+                {{ '::FY' | abpLocalization }}
+              </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="fyFilter"
+                class="form-control"
+                [(ngModel)]="filters.fy"
+                [ngModelOptions]="{ standalone: true }" />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div>
+              <label class="form-label" for="statusFilter">
+                {{ '::Approval Status' | abpLocalization }}
+              </label>
+              <ng-select
+                [items]="statusOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                [openOnEnter]="false"
+                [(ngModel)]="filters.status"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label">Material Type</label>
+            <ng-select
+              [items]="materialTypeOptions"
+              name="materialTypeFilter"
+              bindLabel="displayName"
+              bindValue="displayCode"
+              [(ngModel)]="filters.materialType"
+              [ngModelOptions]="{ standalone: true }"
+              appendTo="body"
+              clearable="true">
+            </ng-select>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+}

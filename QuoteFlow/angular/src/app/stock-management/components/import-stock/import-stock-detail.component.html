@@ -1,0 +1,131 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-3">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <div class="content-header-body">
+            <h1 class="subtext">{{ title }}</h1>
+            <div class="content-header-content">
+              <h1 class="content-header-title m-0">
+                {{ service?.selected?.requestNo }}
+              </h1>
+
+              <app-status-label [status]="service?.selected?.status"></app-status-label>
+            </div>
+          </div>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0">
+          <div class="action-request text-end">
+            <button class="btn btn-secondary" type="button" (click)="goBack()" placement="bottom" ngbTooltip="Back">
+              <i class="bi bi-arrow-left-circle"></i>
+              <span class="ms-1">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.form; else loadingTemplate">
+      <div class="form-details">
+        <app-expandable-panel-v2
+          headerText="Stock Information"
+          panelId="basic_info"
+          [defaultCollapsed]="false"
+          icon="bi bi-info-circle"
+          [isDisabled]="false">
+          <form [formGroup]="service?.form" class="form-details">
+            <div class="row g-2">
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="fileName">{{ '::File Name' | abpLocalization }}</label>
+                  <input autocomplete="off" id="fileName" formControlName="fileName" readonly class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="requestNo">{{ '::Request No' | abpLocalization }}</label>
+                  <input autocomplete="off" id="requestNo" formControlName="requestNo" readonly class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="importType">{{ '::Import Type' | abpLocalization }}</label>
+                  <input
+                    autocomplete="off"
+                    id="importType"
+                    formControlName="importType"
+                    readonly
+                    class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-3">
+                <label class="form-label">Status</label>
+                <div class="form-control-plaintext">
+                  <app-status-label [status]="service?.selected?.status"></app-status-label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </app-expandable-panel-v2>
+
+        <app-expandable-panel-v2
+          headerText="Stock Items"
+          panelId="stock_items"
+          [defaultCollapsed]="false"
+          icon="bi bi-list-ul"
+          [isDisabled]="false">
+          <ngx-datatable
+            default
+            class="bootstrap custom-datatable"
+            columnMode="force"
+            [rowHeight]="'auto'"
+            [rows]="service?.selected?.materialStockUploadDetails"
+            [count]="service?.selected?.materialStockUploadDetails?.length"
+            [scrollbarH]="true">
+            <ngx-datatable-column
+              *ngFor="let col of columns[service?.selected?.importType]"
+              [prop]="col.prop"
+              [name]="col.name"
+              [sortable]="col.sortable"
+              [minWidth]="col.minWidth"
+              [frozenLeft]="col.frozenLeft"
+              [cellClass]="col.frozenLeft ? 'frozen-cell' : ''">
+              <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-column="column">
+                <ng-container [ngSwitch]="col?.format">
+                  <ng-container *ngSwitchCase="'number'">
+                    {{ value | number: '1.0-2' }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'currency'">
+                    {{ value | currency }}
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'date'">
+                    {{ value | date: 'dd/MM/yyyy' }}
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    {{ value }}
+                  </ng-container>
+                </ng-container>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </app-expandable-panel-v2>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card mt-0 mb-0">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading form data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>

@@ -1,0 +1,20 @@
+<label for="typeahead-division" class="form-label label-required">Division</label>
+<input
+  id="typeahead-division"
+  type="text"
+  matInput
+  autocomplete="off"
+  class="form-control typeahead-division"
+  [(ngModel)]="divisionSelected"
+  [ngbTypeahead]="search"
+  [resultTemplate]="rt"
+  [inputFormatter]="formatter"
+  [ngModelOptions]="{ standalone: true }"
+  (selectItem)="selectItem($event)"
+  #instance="ngbTypeahead"
+  container="body" />
+<ng-template #rt let-r="result" let-t="term">
+  <div class="content-division-list">
+    {{ r.displayDescription }}
+  </div>
+</ng-template>

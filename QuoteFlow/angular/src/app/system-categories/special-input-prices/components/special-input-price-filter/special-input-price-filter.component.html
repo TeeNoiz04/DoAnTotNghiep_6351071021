@@ -1,0 +1,56 @@
+<app-expandable-panel-v2
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  headerText="Search With Filters"
+  icon="bi bi-search"
+  class="mb-3"
+  [isDisabled]="false">
+  <form [formGroup]="searchForm!" (ngSubmit)="onSearch()" *ngIf="searchForm">
+    <div class="row mb-1">
+      <div class="col-md-5">
+        <label class="form-label">Account No</label>
+        <input appTrim autocomplete="off" type="text" class="form-control" formControlName="accountNo" />
+      </div>
+      <div class="col-md-5">
+        <label class="form-label">Account Name (%)</label>
+        <input appTrim autocomplete="off" type="text" class="form-control" formControlName="accountName" />
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        <ng-select
+          formControlName="status"
+          [clearable]="true"
+          bindLabel="label"
+          bindValue="value"
+          [appendTo]="'body'"
+          [items]="statusOptions">
+        </ng-select>
+      </div>
+    </div>
+
+    <div class="row mb-1">
+      <div class="col-md-6">
+        <label class="form-label">
+          <span>Material Code</span>
+          <i
+            class="fa fa-info-circle ms-1"
+            placement="top"
+            container="body"
+            ngbTooltip="Items must be separated by line break (Shift + Enter)"></i>
+        </label>
+        <textarea appTrim class="form-control" formControlName="materialCodes" rows="3"> </textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">
+          <span>Model Name</span>
+          <i
+            class="fa fa-info-circle ms-1"
+            placement="top"
+            container="body"
+            ngbTooltip="Items must be separated by line break (Shift + Enter)"></i>
+        </label>
+        <textarea appTrim class="form-control" formControlName="modelNames" rows="3"> </textarea>
+      </div>
+    </div>
+  </form>
+</app-expandable-panel-v2>

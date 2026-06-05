@@ -1,0 +1,51 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="visible"
+  [options]="{
+    size: 'lg',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h3 class="d-flex align-items-center">
+      <i class="bi bi-question-circle-fill me-2 text-primary"></i>
+      {{ modalTitle }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="mb-3">
+      <label for="noteTextarea" class="form-label">
+        {{ noteLabel }}
+        <span *ngIf="requiredNote" class="text-danger ms-1">*</span>
+      </label>
+      <textarea
+        id="noteTextarea"
+        class="form-control"
+        [class.is-invalid]="requiredNote && (!note || note?.trim().length === 0)"
+        [rows]="noteRows"
+        [(ngModel)]="note"
+        #noteInput
+        autofocus>
+      </textarea>
+      <div *ngIf="requiredNote && (!note || note?.trim().length === 0)" class="invalid-feedback">
+        This field is required.
+      </div>
+      <div *ngIf="note && note.trim().length > 0" class="form-text">{{ note.trim().length }} characters</div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+      <i class="bi bi-x-circle me-1"></i>
+      {{ cancelLabel }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="!isValid" (click)="onSubmit()">
+      <i class="bi bi-check-circle me-1"></i>
+      {{ submitLabel }}
+    </button>
+  </ng-template>
+</abp-modal>

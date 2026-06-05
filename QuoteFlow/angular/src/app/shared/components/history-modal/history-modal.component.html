@@ -1,0 +1,35 @@
+@if (isVisible) {
+  <abp-modal
+    [suppressUnsavedChangesWarning]="true"
+    [visible]="isVisible"
+    [options]="options"
+    (disappear)="onDisappear()">
+    <ng-template #abpHeader>
+      <h3>{{ title }}</h3>
+    </ng-template>
+
+    <ng-template #abpBody>
+      <div class="mb-3">
+        <app-data-table
+          [itemEdit]="false"
+          [itemRemove]="false"
+          [records]="approvalHistories"
+          (actionBadgeClicked)="onActionBadgeClicked($event)">
+          <app-header title="Username" name="approverFullName" [className]="'w-20'"></app-header>
+          <app-header title="Role" name="approverRoleName"></app-header>
+          <app-header title="Action" name="action" [className]="'width-35'"></app-header>
+          <app-header title="Action Date" name="actionDate" [className]="'w-5'"></app-header>
+          <app-header title="Comment" name="comment" [className]="'w-25'"></app-header>
+
+          <app-column value="approverFullName"></app-column>
+          <app-column value="approverRoleName"></app-column>
+          <app-column value="action" columnType="action"></app-column>
+          <app-column value="actionDate" columnType="date"></app-column>
+          <app-column value="note" columnType="wrapText"></app-column>
+        </app-data-table>
+      </div>
+    </ng-template>
+
+    <ng-template #abpFooter> </ng-template>
+  </abp-modal>
+}

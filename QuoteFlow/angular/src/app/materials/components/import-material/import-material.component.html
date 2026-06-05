@@ -1,0 +1,300 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importMaterialOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          aria-haspopup="true"
+          ngbDropdownToggle
+          ngbTooltip="Import"
+          triggers="hover">
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Import' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importMaterialOptions" (click)="onOpenImportMaterial(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importMaterialOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          ngbDropdownToggle
+          placement="bottom"
+          ngbTooltip="Download"
+          triggers="hover">
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button
+            ngbDropdownItem
+            *ngFor="let item of importMaterialOptions"
+            (click)="onOpenDownloadImportMaterial(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-import-material-filter />
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        class="bootstrap"
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list">
+        <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <div ngbDropdown container="body" class="d-inline-block">
+                <button
+                  class="btn action-dropdown-toggle-btn"
+                  data-toggle="dropdown"
+                  placement="bottom-end"
+                  aria-haspopup="true"
+                  ngbDropdownToggle></button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="showHistory(row)">
+                    <i class="bi bi-clock-history me-2"></i> History
+                  </button>
+                  <div class="dropdown-divider"></div>
+                  <button *ngIf="row.flags?.isCancellable" ngbDropdownItem (click)="performAction('Cancelled', row)">
+                    <i class="bi bi-x-circle me-2"></i> Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Status' | abpLocalization }}" [width]="120" [maxWidth]="120" prop="status">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.status"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::RequestNo' | abpLocalization }}" [minWidth]="200" prop="requestNo">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a [routerLink]="getDetailUrl(row)" class="text-primary text-decoration-none cursor-pointer">
+              {{ row.requestNo }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="File Name" prop="fileName" [minWidth]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fileName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Import Type" [maxWidth]="150" prop="importType">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.importType }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Approvers' | abpLocalization }}"
+          prop="currentApproverRoleName"
+          [maxWidth]="150"
+          ellipsis="true">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div [title]="row.currentApproverRoleName">
+              <a style="color: #355dff; text-decoration: none" class="cursor-pointer" (click)="loadApprovalList(row)">
+                {{ row.currentApproverRoleName }}
+              </a>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Note" [width]="350" [maxWidth]="350" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorUsername">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<!-- Approver popup -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<app-history-modal
+  appEscCloseModal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="approvalHistories"
+  (disappear)="closeHistoryDialog()" />
+
+<!-- Import Modal -->
+<abp-modal
+  [(visible)]="showImportMaterial"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true"
+  (disappear)="onCloseImportModal()">
+  <ng-template #abpHeader>
+    <h3>
+      {{ importMaterialTypeSelected?.label }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-material-modal #importMaterial [importMode]="importMode" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<!-- Result Import Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <div class="d-flex align-items-center gap-1">
+      <app-error-display
+        [fileName]="resultImports?.[importMode]?.fileName"
+        [errors]="resultImports?.[importMode]?.errors"
+        [customMessage]="'Errors: ' + resultImports?.[importMode]?.errors?.length">
+      </app-error-display>
+      <app-warning-display
+        *ngIf="resultImports?.[importMode]?.hasNotFoundWarnings"
+        [warnings]="resultImports?.[importMode]?.warnings"
+        [customMessage]="'Warnings: ' + resultImports?.[importMode]?.warnings?.length">
+      </app-warning-display>
+    </div>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-material
+      [importMode]="importMode"
+      [importMaterialInformation]="importMaterialInformation"
+      [resultImport]="resultImports[this.importMode]" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose (click)="onBack()">
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="resultImports?.[this.importMode]?.errors?.length > 0 || submitting"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>
+
+<!-- ✅ Custom Warning Confirm Modal -->
+<abp-modal
+  [(visible)]="showWarningConfirmModal"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+    size: 'md',
+  }"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h5 class="modal-title d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+      Warning
+    </h5>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="d-flex align-items-start gap-3 p-2">
+      <i class="bi bi-exclamation-triangle-fill text-warning fs-3 flex-shrink-0"></i>
+      <div>
+        <p class="mb-1 fw-semibold">{{ warningConfirmCount }} material code(s) do not exist in the system.</p>
+        <p class="mb-0 text-muted small">
+          These materials will still be included in the import. Do you want to continue?
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="onWarningConfirmCancel()">Cancel</button>
+    <button type="button" class="btn btn-warning" (click)="onWarningConfirmOk()">
+      <i class="bi bi-check-lg me-1"></i>
+      Continue
+    </button>
+  </ng-template>
+</abp-modal>
+
+<!-- Approval Comment Modal -->
+<app-approval-comment-modal
+  [(visible)]="service.isPerformActionModalOpen"
+  [busy]="service.isPerformActionModalBusy"
+  [actionTitle]="service.actionOptions"
+  [currentAction]="
+    service.actionOptions === 'Approved'
+      ? service.approvedAction
+      : service.actionOptions === 'Cancelled'
+        ? service.cancelledAction
+        : service.actionOptions === 'Rejected'
+          ? service.rejectedAction
+          : null
+  "
+  [requireComment]="true"
+  (commentSubmitted)="service.onPerformAction($event)"
+  (cancelClicked)="service.onClosePerformAction()"></app-approval-comment-modal>

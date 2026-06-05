@@ -1,0 +1,125 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="buyer" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <div class="row mt-0">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+          <label class="form-label label-required" for="buyer-code">
+            {{ '::Buyer Type' | abpLocalization }}
+          </label>
+          <ng-select
+            id="buyer-price-column"
+            [appendTo]="'body'"
+            formControlName="buyerType"
+            [items]="buyerTypeOptions"
+            bindLabel="displayCode"
+            bindValue="id"
+            [clearable]="false"
+            [searchable]="false"
+            (change)="onBuyerTypeChange($event)">
+          </ng-select>
+          <div *ngIf="isInvalid('buyer')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('buyer', 'required')">Buyer is required</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+          <label class="form-label label-required" for="buyer-code">
+            {{ '::Buyer' | abpLocalization }}
+          </label>
+          <ng-select
+            id="buyer-price-column"
+            [appendTo]="'body'"
+            formControlName="buyer"
+            [items]="buyerOptions"
+            bindLabel="displayCode"
+            [clearable]="false"
+            [searchable]="false"
+            (change)="onBuyerChange($event)">
+          </ng-select>
+          <div *ngIf="isInvalid('buyer')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('buyer', 'required')">Buyer is required</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+          <label class="form-label label-required" for="buyer-code">
+            {{ '::Material Type' | abpLocalization }}
+          </label>
+          <ng-select
+            id="buyer-price-column"
+            [appendTo]="'body'"
+            formControlName="materialType"
+            [items]="projectTypeOption"
+            bindLabel="label"
+            bindValue="value"
+            [clearable]="false"
+            [searchable]="false">
+          </ng-select>
+          <div *ngIf="isInvalid('materialType')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('materialType', 'required')">Material Type is required</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+          <label class="form-label label-required" for="first-half">
+            {{ '::First half' | abpLocalization }}
+          </label>
+          <app-input-number id="first-half" formControlName="firstFYTarget"></app-input-number>
+          <div *ngIf="isInvalid('firstFYTarget')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('firstFYTarget', 'required')">First half is required</div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+          <label class="form-label label-required" for="second-half">
+            {{ '::Second half' | abpLocalization }}
+          </label>
+
+          <app-input-number id="second-half" formControlName="secondFYTarget"></app-input-number>
+          <div *ngIf="isInvalid('secondFYTarget')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('secondFYTarget', 'required')">Second half is required</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+            <label class="form-label label-required" for="buyer-name">
+              {{ '::Finance Year' | abpLocalization }}
+            </label>
+
+            <ng-select
+              formControlName="financeYear"
+              [items]="fiscalYears"
+              bindLabel="year"
+              bindValue="year"
+              appendTo="body"
+              [clearable]="false"
+              [searchable]="false">
+            </ng-select>
+            <div *ngIf="isInvalid('financeYear')" class="invalid-feedback d-block">
+              <div *ngIf="hasError('financeYear', 'required')">Finance Year is required</div>
+            </div>
+          </div>
+        </div>
+        <label for="toDate" class="form-label">Note</label>
+        <textarea class="form-control custom-textarea" id="note" formControlName="note" appAutoResize></textarea>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="buyer">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

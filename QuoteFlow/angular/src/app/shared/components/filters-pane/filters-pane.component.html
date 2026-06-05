@@ -1,0 +1,133 @@
+<div class="filter-pane" [class.show]="isOpen">
+  <div class="card border-0" *ngIf="isOpen">
+    <div class="card-body">
+      <!-- Action Buttons -->
+      <div class="row" *ngIf="showApplyButton || showClearButton">
+        <div class="col-12">
+          <div class="d-flex gap-2 justify-content-end">
+            <button
+              *ngIf="showClearButton"
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              (click)="clearAllFilters()">
+              <i class="bi bi-x-circle me-1"></i>
+              Clear All
+            </button>
+            <button *ngIf="showApplyButton" type="button" class="btn btn-sm btn-primary" (click)="applyFilters()">
+              <i class="bi bi-check-circle me-1"></i>
+              Apply Filters
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 align-items-end">
+        <!-- Dynamic Filter Fields -->
+        <div *ngFor="let field of filterFields" [class]="field.col || 'col-md-4 col-lg-3'">
+          <!-- Checkbox -->
+          <div *ngIf="field.type === 'checkbox'">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              [class.active]="field.value"
+              (click)="toggleCheckbox(field)">
+              <i [class]="getCheckboxIcon(field)"></i>
+              <span class="ms-2">{{ field.label }}</span>
+            </button>
+          </div>
+
+          <!-- Select Dropdown -->
+          <div *ngIf="field.type === 'select'">
+            <label class="form-label small text-muted mb-1">{{ field.label }}</label>
+            <ng-select
+              [items]="field.options"
+              bindLabel="label"
+              bindValue="value"
+              [placeholder]="field.placeholder || 'All'"
+              [(ngModel)]="field.value"
+              (ngModelChange)="onFilterChange()"
+              [clearable]="true"
+              [searchable]="true"
+              appendTo="body"
+              class="ng-select-sm">
+            </ng-select>
+          </div>
+
+          <!-- Multi-select -->
+          <div *ngIf="field.type === 'multiselect'">
+            <label class="form-label small text-muted mb-1">{{ field.label }}</label>
+            <ng-select
+              [items]="field.options"
+              bindLabel="label"
+              bindValue="value"
+              [placeholder]="field.placeholder || 'Select...'"
+              [(ngModel)]="field.value"
+              (ngModelChange)="onFilterChange()"
+              [multiple]="true"
+              [clearable]="true"
+              [searchable]="true"
+              appendTo="body"
+              [closeOnSelect]="false"
+              class="ng-select-sm">
+            </ng-select>
+          </div>
+
+          <!-- Radio Buttons -->
+          <div *ngIf="field.type === 'radio'">
+            <label class="form-label small text-muted mb-1">{{ field.label }}</label>
+            <div *ngFor="let opt of field.options" class="form-check">
+              <input
+                type="radio"
+                class="form-check-input"
+                [name]="'filter-' + field.key"
+                [id]="'filter-' + field.key + '-' + opt.value"
+                [value]="opt.value"
+                [(ngModel)]="field.value"
+                (ngModelChange)="onFilterChange()" />
+              <label class="form-check-label" [for]="'filter-' + field.key + '-' + opt.value">
+                {{ opt.label }}
+              </label>
+            </div>
+          </div>
+
+          <!-- Date Range -->
+          <div *ngIf="field.type === 'daterange'">
+            <label class="form-label small text-muted mb-1">{{ field.label }}</label>
+            <div class="d-flex gap-2">
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="field.value.from"
+                (ngModelChange)="onFilterChange()"
+                placeholder="From" />
+              <input
+                type="date"
+                class="form-control form-control-sm"
+                [(ngModel)]="field.value.to"
+                (ngModelChange)="onFilterChange()"
+                placeholder="To" />
+            </div>
+          </div>
+
+          <!-- Number Range -->
+          <div *ngIf="field.type === 'numberrange'">
+            <label class="form-label small text-muted mb-1">{{ field.label }}</label>
+            <div class="d-flex gap-2">
+              <input
+                type="number"
+                class="form-control form-control-sm"
+                [(ngModel)]="field.value.min"
+                (ngModelChange)="onFilterChange()"
+                [placeholder]="'Min'" />
+              <input
+                type="number"
+                class="form-control form-control-sm"
+                [(ngModel)]="field.value.max"
+                (ngModelChange)="onFilterChange()"
+                [placeholder]="'Max'" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

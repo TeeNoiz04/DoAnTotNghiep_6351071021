@@ -1,0 +1,100 @@
+<div class="card mb-0 mt-1">
+  <div class="card-body p-0">
+    <div class="form-details">
+      <!-- Import Information Card -->
+      <div class="card card-enhanced mb-0 border-card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          (click)="toggleCardCollapse('importInformation')">
+          <h5 class="mb-0 d-flex align-items-center">
+            <i class="bi bi-info-circle me-2"></i>
+            Import Information
+          </h5>
+          <div class="card-actions">
+            <button class="btn btn-sm btn-icon" type="button">
+              <i class="bi" [ngClass]="isCardCollapsed['importInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body" [ngbCollapse]="isCardCollapsed['importInformation']">
+          <div class="row">
+            <div class="col-md-4">
+              <label class="form-label" for="materialTypeReadonly">Material Type</label>
+              <input
+                autocomplete="off"
+                id="materialTypeReadonly"
+                class="form-control"
+                [value]="dpoData?.materialType || 'N/A'"
+                readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="dpoNoReadonly">DPO No</label>
+              <input
+                autocomplete="off"
+                id="dpoNoReadonly"
+                class="form-control"
+                [value]="dpoData?.dpoNo || 'N/A'"
+                readonly />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="fileNameReadonly">File Name</label>
+              <input
+                autocomplete="off"
+                id="fileNameReadonly"
+                class="form-control"
+                [value]="resultImport?.fileName || 'N/A'"
+                readonly />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="col-md-12">
+              <label class="form-label" for="remarkReadonly">Remark</label>
+              <textarea
+                id="remarkReadonly"
+                class="form-control"
+                [value]="dpoData?.remark || 'N/A'"
+                readonly
+                rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-check">
+                <input
+                  [disabled]="true"
+                  type="checkbox"
+                  class="form-check-input"
+                  id="securityExportControl"
+                  [checked]="true" />
+                <label class="form-check-label" for="securityExportControl">
+                  I have checked Security Export Control
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DPO Items Card -->
+      <div class="card card-enhanced mb-0 border-card">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+          (click)="toggleCardCollapse('dpoItems')">
+          <h5 class="mb-0 d-flex align-items-center">
+            <i class="bi bi-table me-2"></i>
+            DPO Items
+            <span *ngIf="dpoItemsCount > 0" class="ms-2 badge bg-info"> {{ dpoItemsCount }} items </span>
+          </h5>
+          <div class="card-actions">
+            <button class="btn btn-sm btn-icon" type="button">
+              <i class="bi" [ngClass]="isCardCollapsed['dpoItems'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+            </button>
+          </div>
+        </div>
+        <div class="card-body" [ngbCollapse]="isCardCollapsed['dpoItems']">
+          <app-dpo-items [resultImport]="resultImport"></app-dpo-items>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+<app-advanced-data-table
+  [data]="data"
+  [height]="height"
+  [showGroupHeaders]="false"
+  [showRowNumber]="true"
+  [showSummary]="false"
+  [enableErrorHandling]="true"
+  [errorField]="'errors'"
+  [hasErrorsField]="'hasErrors'"
+  [rowIndexField]="'rowIndex'"
+  [enableClientSidePagination]="true"
+  [pageSize]="100"
+  [showPageSizeSelector]="true"
+  [pageSizeOptions]="[50, 100, 200, 300]"
+  [showItemsInfo]="true"
+  [paginationPosition]="'bottom'"
+  (rowClick)="onRowClick($event)">
+  <!-- Cargo Detail Group -->
+  <app-table-column-group name="Batch Request Detail" cssClass="group-header item-group">
+    <app-table-column field="rowData.spoCode" header="SPO Code (*)" width="180px" />
+
+    <app-table-column field="rowData.golfaCode" header="Golfa Code (*)" width="180px" />
+
+    <app-table-column field="rowData.action" header="Action" width="180px" />
+
+    <app-table-column field="rowData.actionDate" header="Action Date" width="180px" [formatter]="formatDate" />
+
+    <app-table-column field="rowData.note" header="Note" width="180px" />
+  </app-table-column-group>
+</app-advanced-data-table>

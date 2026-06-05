@@ -1,0 +1,430 @@
+// Base styles for keyboard navigation hints
+.keyboard-navigation-hint {
+  position: fixed;
+  z-index: 10000; // Above modals
+  pointer-events: auto;
+
+  // Position variants
+  &.position-top-right {
+    top: 20px;
+    right: 20px;
+  }
+
+  &.position-bottom-left {
+    bottom: 20px;
+    left: 20px;
+  }
+
+  &.position-bottom-right {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  &.position-center-bottom {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+// Approach 1: Minimalist floating tooltip
+.hint-minimal {
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideInFade 0.3s ease-out;
+
+  .hint-keys {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .key-combo {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .key {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      .action {
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+
+      .separator {
+        opacity: 0.6;
+        margin: 0 4px;
+      }
+    }
+  }
+
+  .btn-close-hint {
+    background: none;
+    border: none;
+    color: white;
+    padding: 2px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+// Approach 2: Card-style with animations
+.hint-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  animation: slideInBounce 0.4s ease-out;
+
+  .hint-header {
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .hint-icon {
+      color: #6c757d;
+      font-size: 1.1rem;
+    }
+
+    .hint-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #495057;
+      flex: 1;
+    }
+
+    .btn-close-hint {
+      background: none;
+      border: none;
+      color: #6c757d;
+      padding: 4px;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #495057;
+      }
+    }
+  }
+
+  .hint-body {
+    padding: 8px 16px 12px;
+
+    .key-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+
+      .key {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        color: #495057;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        min-width: 40px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .description {
+        font-size: 0.875rem;
+        color: #6c757d;
+      }
+    }
+  }
+}
+
+// Approach 3: Interactive overlay with help toggle
+.hint-interactive {
+  .btn-hint-toggle {
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+
+    &:hover {
+      background: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 123, 255, 0.4);
+    }
+
+    &.expanded {
+      background: #28a745;
+
+      &:hover {
+        background: #1e7e34;
+      }
+    }
+
+    .badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+  }
+
+  .hint-popup {
+    position: absolute;
+    bottom: 54px;
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    min-width: 240px;
+    animation: popupSlideUp 0.3s ease-out;
+
+    .hint-popup-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .title {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.875rem;
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        color: #6c757d;
+        padding: 4px;
+
+        &:hover {
+          color: #495057;
+        }
+      }
+    }
+
+    .hint-popup-body {
+      padding: 12px 16px;
+
+      .shortcut-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 0;
+
+        .shortcut-key {
+          min-width: 60px;
+
+          kbd {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+
+        .shortcut-desc {
+          color: #6c757d;
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+}
+
+// Approach 4: Bottom bar notification style
+.hint-notification {
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 500px;
+  animation: slideInUp 0.4s ease-out;
+
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+
+    .notification-icon {
+      color: #2196f3;
+      font-size: 1.1rem;
+    }
+
+    .notification-text {
+      font-size: 0.875rem;
+      color: #1565c0;
+
+      kbd {
+        background: rgba(33, 150, 243, 0.1);
+        border: 1px solid rgba(33, 150, 243, 0.3);
+        color: #1565c0;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .btn-got-it {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #1976d2;
+      }
+    }
+
+    .btn-close-notification {
+      background: none;
+      border: none;
+      color: #2196f3;
+      padding: 4px;
+
+      &:hover {
+        color: #1976d2;
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideInFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInBounce {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes popupSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .keyboard-navigation-hint {
+    &.position-bottom-right,
+    &.position-bottom-left {
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      transform: none;
+    }
+
+    &.position-center-bottom {
+      left: 10px;
+      right: 10px;
+      transform: none;
+    }
+  }
+
+  .hint-card,
+  .hint-interactive .hint-popup {
+    max-width: calc(100vw - 20px);
+  }
+
+  .hint-notification {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    .notification-actions {
+      justify-content: flex-end;
+    }
+  }
+}

@@ -1,0 +1,118 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg' }">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }} Buyer</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="buyer" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <ul ngbNav #nav="ngbNav" class="mt-0">
+        <li ngbNavItem>
+          <!-- <a ngbNavLink>
+            {{ '::Buyer' | abpLocalization }}
+          </a> -->
+          <ng-template ngbNavContent>
+            <div class="row fade-in-top">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-code">
+                  {{ '::Code' | abpLocalization }}
+                </label>
+                <input
+                  autocomplete="off"
+                  id="buyer-code"
+                  formControlName="code"
+                  class="form-control"
+                  maxlength="50"
+                  autofocus
+                  [disabled]="true" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+                <label class="form-label label-required" for="buyer-name">
+                  {{ '::Name' | abpLocalization }}
+                </label>
+
+                <input autocomplete="off" id="buyer-name" formControlName="name" class="form-control" maxlength="500" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+                <label class="form-label" for="buyer-address">
+                  {{ '::Address' | abpLocalization }}
+                </label>
+
+                <input
+                  autocomplete="off"
+                  id="buyer-address"
+                  formControlName="address"
+                  class="form-control"
+                  maxlength="500" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+                <label class="form-label" for="buyer-price-column">
+                  {{ '::GetPriceColumn' | abpLocalization }}
+                </label>
+
+                <ng-select
+                  id="buyer-price-column"
+                  formControlName="priceColumn"
+                  [items]="service.getPriceFromOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  [clearable]="false"
+                  [searchable]="false">
+                </ng-select>
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                <label class="form-label" for="buyer-contact-info">
+                  {{ '::ContactInfo' | abpLocalization }}
+                </label>
+
+                <input
+                  autocomplete="off"
+                  id="buyer-contact-info"
+                  formControlName="contactInfo"
+                  class="form-control"
+                  maxlength="4000" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                <label class="form-label" for="buyer-note">
+                  {{ '::Note' | abpLocalization }}
+                </label>
+
+                <textarea
+                  id="buyer-note"
+                  formControlName="note"
+                  class="form-control"
+                  maxlength="4000"
+                  rows="4"></textarea>
+              </div>
+
+              <div *ngIf="!!service.selected" class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+                <div class="checklist-container">
+                  <mat-slide-toggle id="isDeactive" formControlName="isDeactive"> IsDeactive </mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="buyer">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

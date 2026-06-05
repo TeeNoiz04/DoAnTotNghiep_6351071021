@@ -1,0 +1,167 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    keyboard: true,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-clock-history me-2 text-info"></i>
+      Material History&nbsp;-&nbsp;<strong>Material Code: </strong> {{ materialItem?.golfaCode }}&nbsp;-&nbsp;<strong
+        >Model:
+      </strong>
+      {{ materialItem?.model }}
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading material history...</span>
+    </div>
+
+    <div class="content">
+      <!-- History Table Section -->
+      <div class="mb-3">
+        <div class="card-body p-0">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">History Data</h5>
+
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="exportToExcel()"
+                [disabled]="isExportToExcelBusy || tableLoading">
+                <span
+                  *ngIf="isExportToExcelBusy"
+                  class="spinner-border spinner-border-sm me-1"
+                  role="status"
+                  aria-hidden="true"></span>
+                <i *ngIf="!isExportToExcelBusy" class="bi bi-file-earmark-excel me-1"></i>
+                {{ isExportToExcelBusy ? 'Exporting...' : 'Export' }}
+              </button>
+            </div>
+
+            <div *ngIf="tableLoading" class="text-center py-3">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <span class="ms-2">Loading history data...</span>
+            </div>
+
+            <app-advanced-data-table
+              *ngIf="!tableLoading"
+              [data]="filteredHistoryData"
+              [height]="'500px'"
+              [showGroupHeaders]="true"
+              [showSummary]="false"
+              [enableSelection]="false"
+              [enableClientSidePagination]="true"
+              [pageSize]="50">
+              <app-table-column-group
+                name="Material History Information"
+                cssClass="group-header material-history-group">
+                <!-- Action Column -->
+                <app-table-column
+                  field="action"
+                  header="Action"
+                  width="120px"
+                  textAlign="center"
+                  [formatter]="formatActionStatus">
+                </app-table-column>
+
+                <!-- Previous Value Column -->
+                <app-table-column
+                  field="previousValue"
+                  header="Previous Value"
+                  width="130px"
+                  textAlign="end"
+                  [formatter]="formatQuantity">
+                </app-table-column>
+
+                <!-- Value Column -->
+                <app-table-column
+                  field="nextValue"
+                  header="Next Value"
+                  width="100px"
+                  textAlign="end"
+                  [formatter]="formatQuantity">
+                </app-table-column>
+
+                <app-table-column field="beforeChange" header="Before Change" width="120px" textAlign="start">
+                </app-table-column>
+
+                <!-- ✅ After Change Column -->
+                <app-table-column field="afterChange" header="After Change" width="120px" textAlign="start">
+                </app-table-column>
+
+                <!-- Creator Column -->
+                <app-table-column field="creatorUsername" header="Creator" width="180px" textAlign="start">
+                </app-table-column>
+
+                <!-- Date Column -->
+                <app-table-column
+                  field="creationTime"
+                  header="Date"
+                  width="100px"
+                  textAlign="center"
+                  [formatter]="formatModifiedDate">
+                </app-table-column>
+              </app-table-column-group>
+            </app-advanced-data-table>
+            <div
+              *ngIf="!tableLoading && totalItems > pageSize"
+              class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <small
+                  >Showing <strong>{{ startItem }}</strong> - <strong>{{ endItem }}</strong> of
+                  <strong>{{ totalItems }}</strong></small
+                >
+              </div>
+
+              <nav aria-label="Material history pagination">
+                <ul class="pagination mb-0">
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="goToFirst()" [disabled]="currentPage === 1">«</button>
+                  </li>
+
+                  <li class="page-item" [class.disabled]="currentPage === 1">
+                    <button class="page-link" (click)="prevPage()" [disabled]="currentPage === 1">‹</button>
+                  </li>
+
+                  <li
+                    class="page-item"
+                    *ngFor="let p of pagesToShow"
+                    [class.active]="p === currentPage"
+                    [class.disabled]="p === -1">
+                    <button class="page-link" (click)="goToPage(p)" [disabled]="p === -1">
+                      {{ p === -1 ? '...' : p }}
+                    </button>
+                  </li>
+
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+                  </li>
+
+                  <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <button class="page-link" (click)="goToLast()" [disabled]="currentPage === totalPages">»</button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter></ng-template>
+</abp-modal>

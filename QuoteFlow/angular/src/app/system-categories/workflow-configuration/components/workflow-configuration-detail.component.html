@@ -1,0 +1,152 @@
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg' }"
+  (disappear)="service.onModalClose()">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form
+      [formGroup]="service.form"
+      id="system-category"
+      class="system-category-form"
+      (ngSubmit)="submitForm()"
+      [validateOnSubmit]="true">
+      <div class="row g-2 mt-0 mb-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-label label-required" for="workflow-role">
+              {{ '::Role' | abpLocalization }}
+            </label>
+            <input autocomplete="off" id="workflow-role" formControlName="workflowRole" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-label" for="system-category-note">
+              {{ '::Note' | abpLocalization }}
+            </label>
+            <textarea
+              id="system-category-note"
+              formControlName="note"
+              class="form-control"
+              maxlength="4000"
+              rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-12">
+          <div class="mb-2 d-flex flex-row align-items-center justify-content-between">
+            <div class="d-flex flex-row align-items-center">
+              <label class="form-label mb-0 font-bold"> Approvers </label>
+              <div class="ms-1">
+                <button class="btn btn-link btn-sm" type="button" (click)="service.addNewApprover()">
+                  <i class="fa fa-plus me-1" aria-hidden="true"></i>
+                  Add new
+                </button>
+              </div>
+            </div>
+            <div *ngIf="service.hasUnsavedChanges" class="text-danger">
+              <small><i class="fa fa-exclamation-circle me-1"></i>Changes not saved</small>
+            </div>
+          </div>
+          <app-data-table
+            [itemEdit]="false"
+            [itemRemove]="true"
+            [noDataFound]="''"
+            [records]="service.approver$ | async"
+            (removeItemHandler)="service.deleteDetailItem($event?.entry)">
+            <app-header title="" name="action" [className]="'width-50'"></app-header>
+            <app-header title="Approver" name="approver"></app-header>
+            <app-header title="Created" name="creationTime" [className]="'w-20'"></app-header>
+            <app-header title="Created By" name="creatorName" [className]="'w-20'"></app-header>
+
+            <app-column value="action" type="action"></app-column>
+            <app-column value="approver"></app-column>
+            <app-column value="creationTime" columnType="date" dateFormat="dd/MM/yyyy"></app-column>
+            <app-column value="creatorName"></app-column>
+          </app-data-table>
+
+          <div>
+            <div class="new-items-container">
+              <ng-container
+                [ngTemplateOutlet]="relationshipItemTemplate"
+                [ngTemplateOutletContext]="{
+                  items: service.newApprover$,
+                  options: service.userOptions,
+                  placeholder: '',
+                  emptyItems: service.approver$,
+                  onSelectionChange: service.onApproverSelectionChange.bind(service),
+                }">
+              </ng-container>
+              <div *ngIf="(service.newApprover$ | async)?.length === 0 && (service.approver$ | async)?.length === 0">
+                <div class="text-center p-1 text-muted border rounded bg-light">
+                  No items added yet. Click "Add new" to add items.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template
+            #relationshipItemTemplate
+            let-items="items"
+            let-options="options"
+            let-placeholder="placeholder"
+            let-onSelectionChange="onSelectionChange">
+            <ng-container *ngFor="let item of items | async; let i = index">
+              <div class="new-item-row d-flex align-items-center border-bottom">
+                <!-- Delete button -->
+                <div class="new-item-action" style="width: 50px">
+                  <button type="button" class="btn btn-link p-0" (click)="service.removeApprover(i)">
+                    <i class="fa fa-trash text-muted icon-hover-delete"></i>
+                  </button>
+                </div>
+
+                <!-- Item selection -->
+                <div class="new-item-description flex-grow-1">
+                  <ng-select
+                    [items]="options"
+                    [clearable]="false"
+                    [searchable]="true"
+                    [appendTo]="'body'"
+                    bindValue="userName"
+                    bindLabel="userName"
+                    [placeholder]="placeholder"
+                    [(ngModel)]="item.approver"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="onSelectionChange(item, i)">
+                    <ng-template ng-option-tmp let-item="item">
+                      {{ item.userName }}
+                    </ng-template>
+                  </ng-select>
+                </div>
+
+                <!-- Code display -->
+                <div class="new-item-code" style="width: 20%"></div>
+
+                <!-- Code display -->
+                <div class="new-item-code" style="width: 20%"></div>
+              </div>
+            </ng-container>
+          </ng-template>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

@@ -1,0 +1,10 @@
+<button
+  type="button"
+  [class]="buttonClass"
+  [disabled]="disabled"
+  (click)="onBackClick()"
+  [attr.aria-label]="buttonText"
+  title="{{ buttonText }}">
+  <i *ngIf="showIcon" [class]="iconClass" aria-hidden="true"></i>
+  <span *ngIf="buttonText" [class]="{ '': showIcon }">{{ buttonText }}</span>
+</button>

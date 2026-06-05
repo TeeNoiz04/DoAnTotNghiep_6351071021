@@ -1,0 +1,24 @@
+<div class="pie-chart-container" [style.height]="height" [style.width]="width">
+  <div class="chart-content">
+    <canvas baseChart [data]="chartData" [options]="chartOptions" [plugins]="plugins" [type]="chartType"></canvas>
+
+    @if (showTotal && options?.centerText && options?.doughnut) {
+      <div class="center-text">
+        @for (line of centerTextLines; track $index) {
+          <div [class]="$index === 0 ? 'primary-text' : 'secondary-text'">{{ line }}</div>
+        }
+      </div>
+    }
+
+    <div *ngIf="options?.showLegend && data?.length" class="custom-legend-container">
+      <div class="custom-legend-scroll-area">
+        <div *ngFor="let item of data" class="legend-item">
+          <div class="legend-symbol" [style.background-color]="item.color"></div>
+          <div class="legend-label" [title]="item.label + ': ' + formatNumber(item.value)">
+            {{ item.label }}: {{ formatNumber(item.value) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

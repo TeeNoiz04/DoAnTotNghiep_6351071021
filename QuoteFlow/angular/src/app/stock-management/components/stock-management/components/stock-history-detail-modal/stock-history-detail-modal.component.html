@@ -1,0 +1,217 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-clock-history me-2 text-info"></i>
+      Stock Qty History&nbsp;-&nbsp;<strong>Material Code: </strong> {{ materialItem?.golfaCode }}&nbsp;-&nbsp;<strong
+        >Model:
+      </strong>
+      {{ materialItem?.model }}
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading stock history...</span>
+    </div>
+
+    <div class="content">
+      <!-- Filter Section -->
+      <div class="mb-3">
+        <div class="card-body p-0">
+          <!-- Server Filter Section -->
+          <form [formGroup]="serverFilterForm" [skipValidation]="true">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label class="form-label fw-bold" for="actionFrom">From</label>
+                  <div class="input-group">
+                    <input
+                      readonly
+                      autocomplete="off"
+                      id="actionFrom"
+                      class="form-control"
+                      name="actionFrom"
+                      #actionFromInput="ngbDatepicker"
+                      ngbDatepicker
+                      format="dd/MM/yyyy"
+                      formControlName="actionFrom"
+                      (click)="actionFromInput.toggle()"
+                      container="body" />
+                    <button
+                      class="btn btn-light bi bi-calendar3"
+                      (click)="actionFromInput?.toggle()"
+                      type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group">
+                  <label class="form-label fw-bold" for="actionTo">To</label>
+                  <div class="input-group">
+                    <input
+                      readonly
+                      autocomplete="off"
+                      id="actionTo"
+                      class="form-control"
+                      name="actionTo"
+                      #actionToInput="ngbDatepicker"
+                      ngbDatepicker
+                      format="dd/MM/yyyy"
+                      formControlName="actionTo"
+                      (click)="actionToInput.toggle()"
+                      container="body" />
+                    <button
+                      class="btn btn-light bi bi-calendar3"
+                      (click)="actionToInput?.toggle()"
+                      type="button"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="form-label fw-bold" for="stockCode">Storage</label>
+                  <ng-select
+                    id="stockCode"
+                    formControlName="stockCode"
+                    [clearable]="false"
+                    bindLabel="displayName"
+                    bindValue="displayCode"
+                    appendTo="body">
+                    <ng-option *ngFor="let stock of stockCategoryOptions" [value]="stock.displayCode">
+                      {{ stock.displayName }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-4 d-flex gap-2">
+                <button type="button" class="btn btn-primary" (click)="onApplyServerFilter()">
+                  <i class="bi bi-search me-1"></i>
+                  Search
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-success"
+                  (click)="exportToExcel()"
+                  [disabled]="isExportToExcelBusy || tableLoading">
+                  <span
+                    *ngIf="isExportToExcelBusy"
+                    class="spinner-border spinner-border-sm me-1"
+                    role="status"
+                    aria-hidden="true"></span>
+                  <i *ngIf="!isExportToExcelBusy" class="bi bi-file-earmark-excel me-1"></i>
+                  {{ isExportToExcelBusy ? 'Exporting...' : 'Export' }}
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <!-- History Table Section -->
+          <div class="mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="fw-bold mb-0">History Data</h5>
+              <div class="d-flex gap-2 align-items-center">
+                <div class="input-group" style="width: 300px">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    [(ngModel)]="searchText"
+                    (ngModelChange)="onSearchChange()"
+                    placeholder="Search in table..."
+                    #searchInput />
+                  <button
+                    *ngIf="searchText"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="clearSearch()"
+                    title="Clear search">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="tableLoading" class="text-center py-3">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <span class="ms-2">Loading history data...</span>
+            </div>
+            <app-advanced-data-table
+              *ngIf="!tableLoading"
+              [data]="filteredHistoryData"
+              [height]="'500px'"
+              [showGroupHeaders]="true"
+              [showSummary]="false"
+              [enableSelection]="false"
+              [enableClientSidePagination]="true"
+              [pageSize]="100">
+              <app-table-column-group name="Stock History Information" cssClass="group-header stock-history-group">
+                <!-- Action Column -->
+                <app-table-column field="action" header="Action" width="120px" textAlign="start" componentType="status">
+                </app-table-column>
+
+                <!-- Previous Value Column -->
+                <app-table-column
+                  field="previousValue"
+                  header="Previous Value"
+                  width="130px"
+                  textAlign="end"
+                  [formatter]="formatQuantity">
+                </app-table-column>
+
+                <!-- Qty Column -->
+                <app-table-column field="qty" header="Qty" width="100px" textAlign="end" [formatter]="formatQuantity">
+                </app-table-column>
+
+                <!-- Next Value Column -->
+                <app-table-column
+                  field="nextValue"
+                  header="Next Value"
+                  width="120px"
+                  textAlign="end"
+                  [formatter]="formatQuantity">
+                </app-table-column>
+
+                <!-- Storage Column -->
+                <app-table-column field="stockName" header="Storage" width="150px" textAlign="start">
+                </app-table-column>
+
+                <!-- Note Column -->
+                <app-table-column field="note" header="Note" width="200px" textAlign="start"> </app-table-column>
+
+                <!-- Date Column -->
+                <app-table-column
+                  field="creationTime"
+                  header="Date"
+                  width="150px"
+                  textAlign="center"
+                  [formatter]="formatModifiedDate">
+                </app-table-column>
+              </app-table-column-group>
+            </app-advanced-data-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

@@ -1,0 +1,122 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'lg',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-2 text-warning"></i>
+      Extra Fee Information
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading extra fees...</span>
+    </div>
+
+    <div class="content">
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading data...</span>
+          </div>
+
+          <div *ngIf="!tableLoading && soDetail" class="mb-3">
+            <form [formGroup]="form" [skipValidation]="true">
+              <!-- DPO Information -->
+              <div class="row mb-2">
+                <div class="col-md-4">
+                  <label class="form-label">DPO Total</label>
+                  <app-input-number
+                    [readOnly]="true"
+                    [allowDecimal]="false"
+                    formControlName="extrafeeDPO"></app-input-number>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Current Used</label>
+                  <app-input-number
+                    [readOnly]="true"
+                    [allowDecimal]="false"
+                    formControlName="soCurrentExtraFee"
+                    valueClass="text-danger fw-bold"></app-input-number>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Available</label>
+                  <app-input-number
+                    [readOnly]="true"
+                    [allowDecimal]="false"
+                    formControlName="extrafeeAvailable"></app-input-number>
+                </div>
+              </div>
+
+              <!-- DPO Note -->
+              <div class="mb-2">
+                <label class="form-label">DPO Note</label>
+                <textarea class="form-control" rows="3" [readOnly]="true" formControlName="noteDPO"></textarea>
+              </div>
+
+              <div class="row mb-2" *ngIf="canEditExtraFee">
+                <!-- Adjustment -->
+                <div class="col-md-12">
+                  <label class="form-label label-required">Adjustment</label>
+                  <app-input-number
+                    formControlName="soExtraFee"
+                    [allowDecimal]="false"
+                    [allowNegative]="true"
+                    [readOnly]="false"
+                    placeholder="Enter amount (positive to add, negative to reduce)"></app-input-number>
+                  <!-- Validation Error -->
+                  <div *ngIf="form.errors?.['extraFeeExceeded']" class="text-danger">
+                    Added amount exceeds DPO available ({{ form.errors?.['extraFeeExceeded'].max | number: '1.0-2' }})
+                  </div>
+                  <div *ngIf="form.get('soExtraFee').invalid && form.get('soExtraFee').touched" class="text-danger">
+                    <span *ngIf="form.get('soExtraFee').errors?.required">Adjustment is required</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SO Note -->
+              <div class="col-12">
+                <label class="form-label label-required">SO Note</label>
+                <textarea class="form-control" rows="3" formControlName="noteSO"></textarea>
+                <div *ngIf="form.get('noteSO').invalid && form.get('noteSO').touched" class="text-danger">
+                  <span *ngIf="form.get('noteSO').errors?.required">SO Note is required</span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="onClose()">
+      <i class="bi bi-x-circle me-1"></i>
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="isBusy || form.invalid || form.errors?.['extraFeeExceeded'] || !canEditExtraFee"
+      (click)="onSave()">
+      <i class="bi bi-save me-1"></i>
+      Save Changes
+    </button>
+  </ng-template>
+</abp-modal>

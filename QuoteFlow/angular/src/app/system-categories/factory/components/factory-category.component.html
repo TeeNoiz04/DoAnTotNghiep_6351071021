@@ -1,0 +1,360 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="deactive()"
+        [ngbTooltip]="!canDeactive ? 'Please select at least 1 item to active or deactive' : null"
+        [disabled]="!canDeactive">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ '::Change Status' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onOpenImport()"
+        *abpPermission="AppPermissions.MasterDatas.ImportSupplierBU"
+        placement="bottom"
+        ngbTooltip="Import"
+        triggers="hover">
+        <i class="bi bi-upload me-1"></i>
+        <span>{{ '::Import' | abpLocalization }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover">
+        <i class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+  <div class="card mb-3">
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm (keyup.enter)="onLoad()">
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Supplier' | abpLocalization }}
+                </label>
+                <ng-select
+                  [items]="service.supplierOptions"
+                  bindLabel="label"
+                  bindValue="code"
+                  [clearable]="true"
+                  [searchable]="true"
+                  [(ngModel)]="filters.supplierCode"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Material Type' | abpLocalization }}
+                </label>
+                <ng-select
+                  [items]="service.materialTypeOptions"
+                  bindLabel="displayCode"
+                  bindValue="displayName"
+                  [clearable]="true"
+                  [searchable]="true"
+                  [(ngModel)]="filters.materialType"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Supplier BU Code' | abpLocalization }}
+                  <strong>(%)</strong>
+                </label>
+                <input
+                  appTrim
+                  autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters.supplierBUCode"
+                  [ngModelOptions]="{ standalone: true }" />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="isDeactive">
+                  {{ '::Deactive' | abpLocalization }}
+                </label>
+                <ng-select
+                  id="isDeactive"
+                  [(ngModel)]="filters.isDeactive"
+                  [ngModelOptions]="{ standalone: true }"
+                  [items]="deactiveOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  appendTo="body">
+                </ng-select>
+              </div>
+            </div>
+
+            <!-- <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="isDeactiveFilter">
+                  {{ '::IsDeactive' | abpLocalization }}
+                </label>
+
+                <select
+                  id="isDeactiveFilter"
+                  class="form-select form-control"
+                  [(ngModel)]="filters.isDeactive"
+                  [ngModelOptions]="{ standalone: true }"
+                  (change)="onLoad()">
+                  <option [ngValue]="true">{{ '::Yes' | abpLocalization }}</option>
+                  <option [ngValue]="false">{{ '::No' | abpLocalization }}</option>
+                </select>
+              </div>
+            </div> -->
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap"
+        [selected]="service.selected">
+        <!-- Header Checkbox -->
+        <ngx-datatable-column [name]="" [maxWidth]="50" [width]="50" [sortable]="false">
+          <ng-template ngx-datatable-header-template>
+            <div class="checkbox-container">
+              <div class="checkbox-control">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [checked]="isAllSelected()"
+                  (change)="toggleSelectAll($event)" />
+              </div>
+            </div>
+          </ng-template>
+
+          <!-- Row Checkboxes -->
+          <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="isSelected">
+            <div class="checkbox-container">
+              <div class="checkbox-control">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  [checked]="isSelected"
+                  (change)="
+                    isSelected ? service.selected.splice(service.selected.indexOf(row), 1) : service.selected.push(row)
+                  " />
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                (click)="delete(row)"
+                class="btn btn-link p-0"
+                *abpPermission="AppPermissions.MasterDatas.DeleteSupplierBU">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Supplier' | abpLocalization }}" prop="supplierShortName" [maxWidth]="200">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.supplierShortName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Supplier BU Code' | abpLocalization }}"
+          prop="supplierBUCode"
+          [maxWidth]="300">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.supplierBUCode }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Supplier BU Name' | abpLocalization }}"
+          prop="supplierBURemarks"
+          [maxWidth]="350">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.supplierBURemarks }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <!-- Type Column -->
+        <ngx-datatable-column
+          name="M.Type"
+          prop="materialType"
+          headerClass="text-center"
+          [cellClass]="'text-center'"
+          [minWidth]="50">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="{
+                'bg-material-fa': row.materialType === 'FA',
+                'bg-material-lvs': row.materialType === 'LVS',
+              }">
+              {{ row.materialType }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Currency' | abpLocalization }}" prop="currency" [minWidth]="50">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.currency }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Payment Term Code' | abpLocalization }}"
+          prop="paymentTermCode"
+          [minWidth]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.paymentTermCode }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Payment Description' | abpLocalization }}"
+          prop="paymentDescription"
+          [minWidth]="180">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.paymentDescription }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorName"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-factory-detail-modal />
+  }
+}
+
+<abp-modal
+  [(visible)]="showImport"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true"
+  (disappear)="onCloseImportModal()">
+  <ng-template #abpHeader>
+    <h3>Import Supplier BU</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-supplier-bu-modal #importSupplierBU />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <button class="btn btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImport"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onCloseImportResultModal()">
+  <ng-template #abpHeader>
+    <app-error-display
+      [fileName]="resultImports?.fileName"
+      [errors]="resultImports?.errors"
+      [customMessage]="'Errors: ' + totalImportErrors">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-supplier-bu [resultImport]="resultImports" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose (click)="onBack()">
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="submit"
+      [disabled]="totalImportErrors > 0 || submitting"
+      (click)="onSubmitImport()">
+      <i class="bi bi-send"></i>
+      <span class="ms-1">Submit</span>
+    </button>
+  </ng-template>
+</abp-modal>

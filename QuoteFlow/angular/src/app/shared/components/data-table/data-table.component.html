@@ -1,0 +1,241 @@
+<div *ngIf="shouldShowPagination('top')" [ngClass]="getPaginationClass('top')">
+  <ngb-pagination
+    [page]="page"
+    [maxSize]="5"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    [pageSize]="pageSize"
+    [collectionSize]="totalCount"
+    (pageChange)="onChangePage($event)">
+  </ngb-pagination>
+</div>
+<div class="table-responsive">
+  <table
+    class="table table-bordered table-striped table-actions"
+    [ngClass]="{
+      'allow-wrap-cell': allowWrap,
+    }">
+    <thead>
+      <tr *ngIf="headerDepth >= 3">
+        <th
+          *ngFor="let h of headerLevels?.headerLevel1"
+          class="text-center"
+          [attr.colspan]="h.colspan"
+          [attr.rowspan]="h.rowspan"
+          [class]="h.className">
+          {{ h.title }}
+        </th>
+      </tr>
+      <tr *ngIf="headerDepth >= 2">
+        <th
+          *ngFor="let h of headerLevels?.headerLevel2"
+          class="text-center"
+          [attr.colspan]="h.colspan"
+          [attr.rowspan]="h.rowspan"
+          [class]="h.className">
+          {{ h.title }}
+        </th>
+      </tr>
+      <tr>
+        <th *ngIf="showCheckbox" [class.fixed]="fixColumn === 'first'" class="width-50">
+          <input
+            *ngIf="showAllCheckbox"
+            type="checkbox"
+            [checked]="isAllChecked()"
+            (change)="onSelectAll($event)"
+            [disabled]="!records || records.length === 0" />
+        </th>
+        <th *ngIf="actions && actions.length" [class.fixed]="fixColumn === 'first'" class="text-center"></th>
+        <ng-template ngFor let-header let-i="index" [ngForOf]="headers">
+          <th
+            [class.fixed]="(fixColumn === 'first' && i === 0) || (fixColumn === 'last' && i === headers.length - 1)"
+            class="{{ header.className }}">
+            <span [innerHTML]="header.title"></span>
+            <ng-container *ngIf="header?.hasTooltip">
+              <i
+                class="fa fa-info-circle ml-1"
+                [ngStyle]="{ color: '#966Ce9' }"
+                ngbTooltip="{{ header?.tooltip }}"
+                [placement]="'right'">
+              </i>
+            </ng-container>
+          </th>
+        </ng-template>
+      </tr>
+    </thead>
+    <tbody *ngIf="records?.length > 0">
+      <tr *ngIf="hasTotalRow" class="total-row">
+        <ng-template ngFor let-column let-j="index" [ngForOf]="columns">
+          <td
+            [class.fixed]="(fixColumn === 'first' && j === 0) || (fixColumn === 'last' && j === columns.length - 1)"
+            class="{{ column.columnCssClass }}">
+            <app-text-cell
+              *ngIf="
+                getValue(totalItemsSummary, column.value) !== null &&
+                getValue(totalItemsSummary, column.value) !== undefined
+              "
+              [formatter]="column.formatter"
+              [value]="getValue(totalItemsSummary, column.value)"
+              [entry]="totalItemsSummary"
+              [columnType]="column.columnType"
+              [dateFormat]="column.dateFormat"
+              [cssClass]="column.cssClass">
+            </app-text-cell>
+          </td>
+        </ng-template>
+      </tr>
+      <ng-container *ngTemplateOutlet="tbody"></ng-container>
+    </tbody>
+    <tbody *ngIf="records?.length === 0 && noDataFound">
+      <tr>
+        <td [attr.colspan]="getColumnCount()">No data found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="shouldShowPagination('bottom')" [ngClass]="getPaginationClass('bottom')">
+  <ngb-pagination
+    [page]="page"
+    [maxSize]="5"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    [pageSize]="pageSize"
+    [collectionSize]="totalCount"
+    (pageChange)="onChangePage($event)">
+  </ngb-pagination>
+</div>
+
+<ng-template #tbody>
+  <ng-template ngFor let-row let-i="index" [ngForOf]="records">
+    <tr
+      [id]="i"
+      [ngClass]="{
+        focused: row?.isFocused,
+        'table-row-clickable': hasClickRow,
+      }"
+      (click)="hasClickRow ? onClickedRow(row, $event) : null">
+      <td class="check" [class.fixed]="fixColumn === 'first'" *ngIf="showCheckbox">
+        <input
+          type="checkbox"
+          [(ngModel)]="row.checked"
+          [value]="row.entityId"
+          (change)="checkboxSelectChange(row, $event); $event.stopPropagation()" />
+      </td>
+      <td class="checkbox-icon-column" [class.fixed]="fixColumn === 'first'" *ngIf="showCheckboxIcon">
+        <i class="fas fa-check-square" *ngIf="row?.isFocused"></i>
+        <i class="fa fa-square-o" *ngIf="!row?.isFocused"></i>
+      </td>
+      <ng-template ngFor let-column let-j="index" [ngForOf]="columns">
+        <td
+          [ngSwitch]="allowCheckToEditRow && row.checked ? column.typeEdit : column.type"
+          [class.fixed]="(fixColumn === 'first' && j === 0) || (fixColumn === 'last' && j === columns.length - 1)"
+          class="{{ column.columnCssClass }}">
+          <app-action-cell
+            *ngSwitchCase="'action'"
+            [edit]="itemEdit"
+            [remove]="itemRemove"
+            [readOnly]="checkReadOnly(row)"
+            (removeAction)="removeActionHandler(row, column)"
+            (editAction)="editActionHandler(row, column)">
+          </app-action-cell>
+          <app-link-cell
+            *ngSwitchCase="'link'"
+            [formatter]="column.formatter"
+            [value]="getValue(row, column.value)"
+            [entry]="row"
+            [getLink]="column.getLink"
+            [cssClass]="column.cssClass">
+          </app-link-cell>
+          <app-click-cell
+            *ngSwitchCase="'clickCell'"
+            [formatter]="column.formatter"
+            [value]="getValue(row, column.value)"
+            [entry]="row"
+            [isActive]="true"
+            [showIcon]="column?.showIcon"
+            [iconClass]="column?.iconClass"
+            [columnType]="column.columnType"
+            [showAccountWithClear]="column?.showAccountWithClear"
+            (clickAction)="clickCellActionHandler(row, column)"
+            (clearAction)="clearCellActionHandler(row, column)"
+            [cssClass]="column.cssClass">
+          </app-click-cell>
+          <app-textbox-cell
+            *ngSwitchCase="'textbox'"
+            [(ngModel)]="row[column.value]"
+            [name]="column.value"
+            [disabled]="column.disabled"
+            [entry]="row"
+            [typeControl]="column?.typeControl"
+            [cssClass]="column.cssClass"
+            (ngModelChange)="handleCellValueChanges(row, column)">
+          </app-textbox-cell>
+          <app-select-cell
+            *ngSwitchCase="'select'"
+            [(ngModel)]="row[column?.value]"
+            [items]="column?.selectOptions"
+            [name]="column?.value"
+            [bindValue]="column?.bindValue"
+            [bindLabel]="column?.bindLabel"
+            [disabled]="column?.disabled"
+            [entry]="row"
+            [customLabel]="column?.labelTpl"
+            [customOption]="column?.optionTpl"
+            (ngModelChange)="handleCellValueChanges(row, column)">
+          </app-select-cell>
+          <ng-container *ngSwitchDefault>
+            <app-text-cell
+              [formatter]="column.formatter"
+              [value]="getValue(row, column.value)"
+              [entry]="row"
+              [columnType]="column.columnType"
+              [dateFormat]="column.dateFormat"
+              [cssClass]="column.cssClass"
+              (actionClicked)="actionBadgeClicked.emit($event)">
+            </app-text-cell>
+            <i
+              *ngIf="getValue(row, column.tooltipContent)"
+              class="fa fa-info-circle ml-1"
+              [ngStyle]="{ color: '#966Ce9' }"
+              [ngbTooltip]="getValue(row, column.tooltipContent)"
+              placement="auto">
+            </i>
+          </ng-container>
+          <app-checkbox-cell
+            *ngSwitchCase="'checkbox'"
+            [(ngModel)]="row[column.value]"
+            [name]="column.value"
+            [entry]="row"
+            [disabled]="column.disabled"
+            [cssClass]="column.cssClass">
+          </app-checkbox-cell>
+
+          <app-datebox-cell
+            *ngSwitchCase="'datebox'"
+            [(ngModel)]="row[column.value]"
+            [name]="column.value"
+            [entry]="row"
+            [disabled]="column.disabled"
+            [cssClass]="column.cssClass">
+          </app-datebox-cell>
+          <div class="error" *ngIf="row?.errors?.[column?.value]" style="color: red">
+            {{ row?.errors?.[column?.value] }}
+          </div>
+        </td>
+      </ng-template>
+    </tr>
+    <tr *ngIf="row[fieldChild] && row[fieldChild].length > 0">
+      <td [attr.colspan]="getColumnCount()" style="background-color: #dee2e6">
+        <app-child-table
+          [headers]="childHeaders"
+          [records]="row[fieldChild]"
+          [columns]="childColumns"
+          [title]="titleChildTable"
+          [disableAction]="disableChildAction"
+          [showActions]="showChildActions"
+          (editChildItemHandler)="editChildItemHandler.emit($event)"
+          (removeChildItemHandler)="removeChildItemHandler.emit($event)" />
+      </td>
+    </tr>
+  </ng-template>
+</ng-template>

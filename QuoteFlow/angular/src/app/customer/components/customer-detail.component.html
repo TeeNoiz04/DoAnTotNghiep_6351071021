@@ -1,0 +1,181 @@
+<abp-modal
+  appEscCloseModal
+  [busy]="service.isBusy"
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="buyer" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <ul ngbNav #nav="ngbNav" class="mt-0">
+        <li ngbNavItem>
+          <!-- <a ngbNavLink>
+            {{ '::Buyer' | abpLocalization }}
+          </a> -->
+          <ng-template ngbNavContent>
+            <div class="row fade-in-top">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <label class="form-label label-required" for="buyer-code"> Tax Code </label>
+                <input
+                  autocomplete="off"
+                  id="buyer-code"
+                  formControlName="taxCode"
+                  class="form-control"
+                  maxlength="50" />
+              </div>
+
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <label class="form-label label-required" for="cusName"> Customer Name </label>
+                <input
+                  autocomplete="off"
+                  id="cusName"
+                  formControlName="customerName"
+                  class="form-control"
+                  maxlength="400" />
+              </div>
+            </div>
+
+            <div class="row g-2 mb-1">
+              <div class="col-12 col-md-6">
+                <div class="mb-0">
+                  <label class="form-label label-required" for="nationality">{{
+                    '::Nationality' | abpLocalization
+                  }}</label>
+                  <ng-select
+                    id="nationality"
+                    [items]="nationalityOptions"
+                    bindLabel="label"
+                    bindValue="label"
+                    [appendTo]="'body'"
+                    formControlName="country"
+                    [clearable]="false"
+                    [searchable]="false"
+                    placeholder="{{ '::Select Country' | abpLocalization }}">
+                  </ng-select>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-6">
+                <div class="mb-0">
+                  <label class="form-label" for="province">{{ '::Province' | abpLocalization }}</label>
+                  <!-- If country == 'Vietnam', show the province select -->
+                  <ng-container *ngIf="service?.form.get('country')?.value === 'Viet Nam'; else otherCountry">
+                    <ng-select
+                      id="province"
+                      [items]="service?.provinceOptions"
+                      bindLabel="label"
+                      bindValue="value"
+                      [appendTo]="'body'"
+                      formControlName="province">
+                    </ng-select>
+                  </ng-container>
+                  <!-- Else show a textbox -->
+                  <ng-template #otherCountry>
+                    <input
+                      type="text"
+                      autocomplete="off"
+                      id="province"
+                      formControlName="province"
+                      class="form-control" />
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                <label class="form-label" for="address"> Address </label>
+                <textarea
+                  autocomplete="off"
+                  id="address"
+                  formControlName="address"
+                  class="form-control"
+                  maxlength="500"
+                  rows="3">
+                </textarea>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                  <label class="form-label" for="website"> Website </label>
+                  <input autocomplete="off" id="website" formControlName="website" class="form-control" />
+                </div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                  <label class="form-label" for="phoneNumber"> Phone </label>
+                  <input
+                    autocomplete="off"
+                    id="phoneNumber"
+                    formControlName="phone"
+                    class="form-control"
+                    maxlength="50" />
+                </div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <label class="form-label" for="customerType"> Customer Type </label>
+
+                <ng-select
+                  [items]="customerTypeOptions"
+                  bindLabel="displayName"
+                  bindValue="displayCode"
+                  formControlName="customerType"
+                  [clearable]="true"
+                  [searchable]="false"
+                  [appendTo]="'body'">
+                </ng-select>
+              </div>
+              <div class="col-12 col-sm-12 col-md-12 col-lg-6 mb-1">
+                <label class="form-label" for="nationality"> Customer Industry </label>
+
+                <ng-select
+                  [items]="customerIndustryOptions"
+                  bindLabel="displayName"
+                  bindValue="displayCode"
+                  formControlName="customerIndustry"
+                  [clearable]="true"
+                  [searchable]="false"
+                  [appendTo]="'body'">
+                </ng-select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                <div class="checklist-container">
+                  <mat-slide-toggle id="isDeactive" formControlName="isDeactive"> Deactive </mat-slide-toggle>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                <label class="form-label" for="note">Note</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  rows="3"
+                  appAutoResize></textarea>
+                <!-- <angular-editor formControlName="note" [config]="editorConfig" appendTo="body"> </angular-editor> -->
+              </div>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav"></div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="buyer">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

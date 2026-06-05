@@ -1,0 +1,118 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <form [formGroup]="searchForm!" (ngSubmit)="onSearch()" *ngIf="searchForm">
+    <div class="row">
+      <!-- Tax Code -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="taxCode"> {{ '::Tax Code' | abpLocalization }} <strong>(%)</strong> </label>
+          <input appTrim autocomplete="off" id="taxCode" class="form-control" formControlName="taxCode" />
+        </div>
+      </div>
+
+      <!-- Customer Name -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="customerName">
+            {{ '::Customer Name' | abpLocalization }} <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="customerName" class="form-control" formControlName="customerName" />
+        </div>
+      </div>
+
+      <!-- Deactive -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="isDeactive">{{ '::Deactive' | abpLocalization }}</label>
+          <ng-select
+            id="isDeactive"
+            formControlName="isDeactive"
+            [items]="deactiveOptions"
+            bindLabel="label"
+            bindValue="value"
+            clearable="false"
+            appendTo="body"></ng-select>
+        </div>
+      </div>
+
+      <!-- Customer Type -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="customerType">{{ '::Customer Type' | abpLocalization }}</label>
+          <ng-select
+            [items]="customerTypeOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="customerType"
+            [clearable]="true"
+            [searchable]="false"
+            [appendTo]="'body'"></ng-select>
+        </div>
+      </div>
+
+      <!-- Customer Industry -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="customerIndustry"> Customer Industry </label>
+          <ng-select
+            [items]="customerIndustryOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="customerIndustry"
+            [clearable]="true"
+            [searchable]="false"
+            [appendTo]="'body'"></ng-select>
+        </div>
+      </div>
+
+      <!-- From Date -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="fromDate">From</label>
+          <div class="input-group">
+            <input
+              autocomplete="off"
+              id="fromDate"
+              class="form-control"
+              name="fromDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="fromDate"
+              (click)="minFromDateInput.toggle()"
+              container="body"
+              readonly />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- To Date -->
+      <div class="col-12 col-sm-3 col-md-3 col-lg-3">
+        <div class="mb-1">
+          <label class="form-label" for="formDate">To</label>
+          <div class="input-group">
+            <input
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="toDate"
+              (click)="minToDateInput.toggle()"
+              container="body"
+              readonly />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-expandable-panel-v2>

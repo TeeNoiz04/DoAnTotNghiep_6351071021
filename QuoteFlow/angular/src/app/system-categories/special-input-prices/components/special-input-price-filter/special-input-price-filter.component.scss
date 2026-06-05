@@ -1,0 +1,27 @@
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.input-group .btn {
+  border-left: 0;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 70px;
+}
+
+ng-select {
+  min-height: 38px;
+}
+
+.btn-primary {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-outline-secondary {
+  color: var(--bs-secondary);
+  border-color: var(--bs-secondary);
+}

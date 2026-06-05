@@ -1,0 +1,12 @@
+@if (this.hasLoggedIn) {
+  <abp-loader-bar></abp-loader-bar>
+  <abp-dynamic-layout></abp-dynamic-layout>
+  <abp-modal [(visible)]="loading" [busy]="true" [options]="loadingOptions">
+    <ng-template #abpBody class="loading-modal">
+      <div class="text-center">
+        <img src="assets/images/getting-started/ajax-loader.gif" />
+        <p>{{ (loadingService.loading$ | async)?.message }}</p>
+      </div>
+    </ng-template>
+  </abp-modal>
+}

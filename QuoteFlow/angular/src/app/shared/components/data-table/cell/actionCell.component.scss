@@ -1,0 +1,16 @@
+.disabled-action-cell {
+  cursor: no-drop;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+}
+
+.action-cell-container {
+  text-align: left;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}

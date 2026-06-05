@@ -1,0 +1,174 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <div *ngIf="searchForm">
+      <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="form-container">
+        <div class="row-5-custom">
+          <div class="col">
+            <div>
+              <label class="form-label" for="offerTypeFilter"> SPO Type </label>
+              <ng-select
+                name="offerTypeFilter"
+                [items]="priceOfferTypeOptions"
+                bindLabel="label"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                formControlName="priceOfferType">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="materialTypeFilter"> Material Type </label>
+              <ng-select
+                [items]="materialTypeOptions"
+                name="materialTypeFilter"
+                bindLabel="displayName"
+                bindValue="displayName"
+                clearable="true"
+                appendTo="body"
+                formControlName="materialType">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="buyerFilter"> Buyer </label>
+              <ng-select
+                [items]="buyerOptions"
+                name="buyerFilter"
+                bindLabel="displayCode"
+                bindValue="id"
+                clearable="true"
+                appendTo="body"
+                formControlName="buyerId">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="spoCodeFilter"> SPO Code <strong>(%)</strong> </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="spoCodeFilter"
+                class="form-control"
+                formControlName="priceOfferCode" />
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="taxCodeFilter"> Tax Code </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="taxCodeFilter"
+                class="form-control"
+                formControlName="customerTaxCode" />
+            </div>
+          </div>
+        </div>
+        <div class="row-5-custom">
+          <div class="col">
+            <div>
+              <label class="form-label" for="status"> Approval Status </label>
+              <ng-select
+                [items]="statusOptions"
+                bindLabel="label"
+                name="status"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                formControlName="approvalStatus">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="projectResultStatusFilter"> Project Result </label>
+              <ng-select
+                [items]="projectResultStatusOptions"
+                bindLabel="label"
+                name="projectResultStatusFilter"
+                bindValue="value"
+                clearable="true"
+                appendTo="body"
+                formControlName="projectResultStatus">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label" for="formDate">From</label>
+            <div class="input-group">
+              <input
+                autocomplete="off"
+                id="formDate"
+                class="form-control"
+                name="formDate"
+                #minFromDateInput="ngbDatepicker"
+                ngbDatepicker
+                format="dd/MM/yyyy"
+                formControlName="createdFrom"
+                (click)="minFromDateInput.toggle()"
+                container="body"
+                readonly />
+              <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label" for="toDate">To</label>
+            <div class="input-group">
+              <input
+                autocomplete="off"
+                id="toDate"
+                class="form-control"
+                name="toDate"
+                format="dd/MM/yyyy"
+                #minToDateInput="ngbDatepicker"
+                ngbDatepicker
+                formControlName="createdTo"
+                (click)="minToDateInput.toggle()"
+                container="body"
+                readonly />
+              <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+            </div>
+          </div>
+          <div class="col checkbox-container">
+            <div class="checkbox-control">
+              <input type="checkbox" id="relatedToMe" class="form-check-input" formControlName="relatedToMe" />
+              <label class="form-check-label" for="relatedToMe"> Related To Me </label>
+            </div>
+          </div>
+        </div>
+        <div class="row-5-custom">
+          <div class="col">
+            <label class="form-label" for="projectNameFilter"> SPO Name <strong>(%)</strong> </label>
+            <input
+              appTrim
+              autocomplete="off"
+              id="projectNameFilter"
+              class="form-control"
+              formControlName="projectName" />
+          </div>
+          <div class="col">
+            <div>
+              <label class="form-label" for="customerFilter"> Customer <strong>(%)</strong> </label>
+              <input
+                appTrim
+                autocomplete="off"
+                id="customerFilter"
+                class="form-control"
+                formControlName="customerName" />
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-expandable-panel-v2>

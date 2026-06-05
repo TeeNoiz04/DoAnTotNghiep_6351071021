@@ -1,0 +1,42 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <form>
+      <div class="row">
+        <div class="col-md-8">
+          <div>
+            <label class="form-label" for="fileNameFilter">
+              {{ '::FileName' | abpLocalization }}
+            </label>
+            <input
+              appTrim
+              autocomplete="off"
+              id="fileNameFilter"
+              class="form-control"
+              [(ngModel)]="filters.fileName"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="onFiltersChange()" />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div>
+            <label class="form-label" for="reportTypeFilter">
+              {{ '::ReportType' | abpLocalization }}
+            </label>
+            <ng-select
+              [items]="reportTypeOptions"
+              bindLabel="label"
+              bindValue="value"
+              clearable="true"
+              appendTo="body"
+              [openOnEnter]="false"
+              [(ngModel)]="filters.reportType"
+              [ngModelOptions]="{ standalone: true }"
+              (change)="onReportTypeChange($event)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

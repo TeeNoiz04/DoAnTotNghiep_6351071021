@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+
+const { execSync } = require("child_process");
+
+try {
+    const changedFiles = execSync("git diff --name-only HEAD", {
+        cwd: "angular",
+        encoding: "utf8",
+    })
+        .split("\n")
+        .filter((f) => f.match(/\.(ts|html|scss)$/))
+        .map((f) => f.replace(/^angular\//, ''))
+        .filter((f) => {
+            try {
+                execSync(`git ls-files --error-unmatch "${f}"`, {
+                    cwd: "angular",
+                    stdio: "ignore",
+                });
+                return true; // file still exists
+            } catch {
+                return false; // file was deleted
+            }
+        });
+
+    if (changedFiles.length > 0) {
+        const filesStr = changedFiles.map((f) => `"${f}"`).join(" ");
+        execSync(`npx prettier --write ${filesStr}`, {
+            cwd: "angular",
+            stdio: "inherit",
+        });
+        execSync("git add .", {
+            cwd: "angular",
+            stdio: "inherit",
+        });
+    } else {
+        console.log("No matching files to format.");
+    }
+} catch (e) {
+    console.error("❌ Pre-commit hook failed.", e);
+    process.exit(1);
+}

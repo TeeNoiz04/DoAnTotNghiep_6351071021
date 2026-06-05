@@ -1,0 +1,24 @@
+<ng-select
+  [items]="items"
+  [bindLabel]="bindLabel"
+  [bindValue]="bindValue"
+  [(ngModel)]="value"
+  (ngModelChange)="onModelChange($event)"
+  [clearable]="clearable"
+  [appendTo]="'body'"
+  [placeholder]="placeholder"
+  [disabled]="disabled">
+  <!-- Custom Label Template (shown when selected) -->
+  <ng-container *ngIf="customLabel">
+    <ng-template ng-label-tmp let-item="item">
+      <ng-container *ngTemplateOutlet="customLabel; context: { item: item }"></ng-container>
+    </ng-template>
+  </ng-container>
+
+  <!-- Custom Option Template (dropdown) -->
+  <ng-container *ngIf="customOption">
+    <ng-template ng-option-tmp let-item="item">
+      <ng-container *ngTemplateOutlet="customOption; context: { item: item }"></ng-container>
+    </ng-template>
+  </ng-container>
+</ng-select>

@@ -1,0 +1,99 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-2 text-warning"></i>
+      Delivered Detail DPO
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading delivered...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading delivered data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="deliveredData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group name="Delivered Detail DPO Information" cssClass="group-header delivered-group">
+              <!-- DO No Column -->
+              <app-table-column field="soNo" header="SO No" width="100px" textAlign="start"> </app-table-column>
+
+              <!-- SO SAP No Column -->
+              <app-table-column field="sosapNo" header="SO SAP No" width="100px" textAlign="start"> </app-table-column>
+
+              <!-- Invoice No Column -->
+              <app-table-column field="invoiceNo" header="Invoice No" width="100px" textAlign="start">
+              </app-table-column>
+
+              <!-- Stock Name Column -->
+              <app-table-column field="stockName" header="Stock Name" width="90px" textAlign="start">
+              </app-table-column>
+
+              <!-- Delivery Date Column -->
+              <app-table-column
+                field="invoiceDate"
+                header="Invoice Date"
+                width="70px"
+                textAlign="start"
+                [formatter]="formatDate">
+              </app-table-column>
+
+              <!-- Quantity Column -->
+              <app-table-column
+                field="quantity"
+                header="Qty"
+                width="40px"
+                textAlign="end"
+                [editable]="!isItemFinalized"
+                inputType="number"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- Note Column -->
+              <app-table-column
+                field="note"
+                header="Note"
+                width="200px"
+                textAlign="center"
+                [editable]="!isItemFinalized"
+                [showEllipsis]="true"
+                inputType="textarea">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

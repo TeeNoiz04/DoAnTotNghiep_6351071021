@@ -1,0 +1,68 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }} Buyer Type</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form
+      [formGroup]="service.form"
+      id="system-category"
+      class="system-category-form"
+      (ngSubmit)="submitForm()"
+      [validateOnSubmit]="true">
+      <div class="row mb-2 d-flex align-items-end">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="form-label label-required" for="code">
+              {{ '::Code' | abpLocalization }}
+            </label>
+            <input autocomplete="off" id="code" formControlName="code" class="form-control" maxlength="50" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="form-label label-required" for="description">
+              {{ '::Description' | abpLocalization }}
+            </label>
+            <input
+              autocomplete="off"
+              id="description"
+              formControlName="description"
+              class="form-control"
+              maxlength="500" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group mt-3">
+            <mat-slide-toggle id="isDeactive" formControlName="isDeactive"> Deactive </mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-label" for="note">
+              {{ '::Note' | abpLocalization }}
+            </label>
+            <textarea id="note" formControlName="note" class="form-control" maxlength="4000" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

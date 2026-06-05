@@ -1,0 +1,11 @@
+<input
+  matInput
+  type="number"
+  autocomplete="off"
+  class="form-control text-end"
+  [value]="displayName"
+  [readonly]="isReadOnly"
+  [placeholder]="placeholder"
+  (input)="onInput($event)"
+  (blur)="onBlur()"
+  [class.is-invalid]="isInvalid" />

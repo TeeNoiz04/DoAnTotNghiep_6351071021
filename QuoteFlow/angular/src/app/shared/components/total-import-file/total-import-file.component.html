@@ -1,0 +1,22 @@
+<div class="d-flex align-items-center m-0 gap-3">
+  <div class="d-flex text-start p-0">
+    <span class="fw-bold"> Total: </span>
+    <span class="px-1 fw-bold text-info">
+      {{ value | appNumberFormat: 0 }}
+    </span>
+  </div>
+
+  <div class="d-flex text-start p-0">
+    <span class="fw-bold"> Success: </span>
+    <span class="px-1 fw-bold text-success">
+      {{ success | appNumberFormat: 0 }}
+    </span>
+  </div>
+
+  <div class="d-flex text-start p-0">
+    <span class="fw-bold"> Error: </span>
+    <span class="px-1 fw-bold text-warning">
+      {{ failed | appNumberFormat: 0 }}
+    </span>
+  </div>
+</div>

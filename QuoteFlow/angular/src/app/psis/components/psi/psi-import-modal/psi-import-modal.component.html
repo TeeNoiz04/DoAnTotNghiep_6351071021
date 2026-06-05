@@ -1,0 +1,53 @@
+<div class="card mt-1 mb-3">
+  <div class="card-body">
+    <form [formGroup]="importForm">
+      <div class="row">
+        <div class="col-10">
+          <div class="flex-grow-1">
+            <label for="formFile" class="label-required form-label">File</label>
+            <input class="form-control" type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="flex-grow-1">
+            <label class="form-label label-required" for="financeYear">
+              {{ '::Finance Year' | abpLocalization }}
+            </label>
+            <ng-select
+              [items]="fyOptions"
+              name="financeYear"
+              bindLabel="displayName"
+              bindValue="displayCode"
+              formControlName="financeYear"
+              appendTo="body"
+              clearable="true">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between gap-3 mb-2"></div>
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <!-- <div class="flex-grow-1">
+          <label class="form-label label-required" for="materialType">
+            {{ '::Material Type' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="materialTypeOptions"
+            name="materialTypeFilter"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            formControlName="materialType"
+            appendTo="body"
+            clearable="true">
+          </ng-select>
+        </div> -->
+      </div>
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="toDate" class="label-required form-label">Note</label>
+          <textarea class="form-control custom-textarea" id="note" formControlName="note" appAutoResize></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

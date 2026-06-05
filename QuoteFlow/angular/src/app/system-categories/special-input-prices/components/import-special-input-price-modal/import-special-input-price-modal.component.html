@@ -1,0 +1,22 @@
+<form [formGroup]="importForm" class="import-form">
+  <!-- File picker -->
+  <div class="row mb-1">
+    <div class="col-12">
+      <label class="form-label required">File</label>
+      <input
+        #fileInput
+        type="file"
+        class="form-control"
+        accept=".xlsx,.xls"
+        (change)="onFileChange($event)"
+        [class.is-invalid]="f['file'].invalid && f['file'].touched" />
+      <div *ngIf="f['file'].invalid && f['file'].touched" class="invalid-feedback">File is required</div>
+    </div>
+  </div>
+
+  <!-- Form validation summary -->
+  <div *ngIf="importForm.invalid && importForm.touched" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    Please select a file before proceeding.
+  </div>
+</form>

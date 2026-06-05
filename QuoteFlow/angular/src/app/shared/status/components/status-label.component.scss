@@ -1,0 +1,287 @@
+.text-status {
+  font-size: 11px;
+}
+
+// In Progress statuses
+.status-draft {
+  background-color: #8e8e93;
+  /* Light gray - initial state */
+  color: white;
+}
+
+.status-inprogress {
+  background-color: #ff9500;
+  /* Orange - active state */
+  color: white;
+}
+
+.status-submitted {
+  background-color: #007aff;
+  /* Blue - formal submission */
+  color: white;
+}
+
+.status-unprocessed {
+  background-color: #e7e7e7;
+  /* Very light gray - waiting */
+  color: #2c2c2e;
+}
+
+.status-insettlement {
+  background-color: #c7a012;
+  /* Gold/amber color - financial/settlement process */
+  color: white;
+}
+
+// Review statuses
+.status-pending-dit {
+  background-color: #5856d6;
+  /* Purple - government/official review */
+  color: white;
+}
+
+.status-confirming-purchasing {
+  background-color: #5ac8fa;
+  /* Light blue - procurement stage */
+  color: white;
+}
+
+.status-requested-ending-settlement {
+  background-color: #4a90e2;
+  /* Medium blue - review stage */
+  color: white;
+}
+
+// Final outcomes
+.status-approved {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+
+.status-confirmed-lockstock {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+
+.status-success {
+  background-color: #30d158;
+  /* Slightly different green - positive */
+  color: white;
+}
+.status-expired {
+  background-color: #ff3b30;
+  /* Red - negative */
+  color: white;
+}
+
+.status-rejected {
+  background-color: #ff3b30;
+  /* Red - negative */
+  color: white;
+}
+
+.status-failed {
+  background-color: #ff453a;
+  /* Slightly different red - negative */
+  color: white;
+}
+
+.status-cancelled {
+  background-color: #ff6b6b;
+  /* Light red - user-initiated negative */
+  color: white;
+}
+
+.status-closed {
+  background-color: #6c757d;
+  /* Gray - neutral finale */
+  color: white;
+}
+.status-reopen {
+  background-color: #18f12a;
+  /* Gray - neutral finale */
+  color: white;
+}
+.status-deactive {
+  background-color: #8e8e93;
+  color: white;
+}
+
+.status-submitted-r2 {
+  background-color: #007aff;
+  /* Blue - formal submission */
+  color: white;
+}
+
+// Default
+.status-default {
+  background-color: #8e8e93;
+  /* Neutral gray */
+  color: white;
+}
+
+.status-returning {
+  background-color: #f1bc00;
+  /* Darker orange - related to but distinct from in-progress */
+  color: white;
+  /* Indicates second round approval process in progress */
+}
+
+.status-wait-for-it {
+  background-color: #5ac8fa;
+  /* Light blue - similar to confirming-purchasing */
+  color: white;
+  /* Indicates waiting for IT action after approval */
+}
+
+.status-wait-for-return {
+  background-color: #1cb22f;
+  /* Light green - indicates approved first round */
+  color: white;
+  /* Waiting for requester action */
+}
+
+.status-wait-for-resolving {
+  background-color: #1cb22f;
+  /* Light green - indicates approved first round */
+  color: white;
+  /* Waiting for requester action */
+}
+
+.status-wait-for-claim {
+  background-color: #f1bc00;
+  /* Darker orange - related to but distinct from in-progress */
+  color: white;
+  /* Indicates second round approval process in progress */
+}
+
+.status-wait-for-approving-claim {
+  background-color: #4a90e2;
+  /* Medium blue - review stage */
+  color: white;
+}
+
+.status-wait-for-closing {
+  background-color: #c7a012;
+  /* Gold/amber color - financial/settlement process */
+  color: white;
+}
+
+.status-confirmed {
+  background-color: #34c759;
+  /* Green - positive */
+  color: white;
+}
+
+.status-locked-stock {
+  background-color: #ff6b35;
+  /* Orange-red - distinct from in-progress */
+  color: white;
+}
+
+.status-billing {
+  background-color: #30d158;
+  /* Slightly different green - positive */
+  color: white;
+}
+
+.status-discontinue {
+  background-color: #f54242;
+  /* Neutral gray */
+  color: white;
+}
+
+.status-downgraded {
+  background-color: #ff9500;
+  /* Orange - active state */
+  color: white;
+}
+
+.status-outdated {
+  background-color: #8e8e93;
+  /* Red - negative */
+  color: white;
+}
+
+.status-pending {
+  background-color: #8e8e93;
+  /* Red - negative */
+}
+
+.status-wait-for-close {
+  background-color: #007aff; /* vàng */
+  color: white;
+}
+// History Tracking Actions
+.status-correction {
+  background-color: #ff9500;
+  /* Orange - adjustment/correction action */
+  color: white;
+}
+
+.status-revert-delivery {
+  background-color: #ff6b35;
+  /* Orange-red - revert action */
+  color: white;
+}
+
+.status-delivery {
+  background-color: #34c759;
+  /* Green - positive delivery action */
+  color: white;
+}
+
+.status-adjustment-stock {
+  background-color: #5ac8fa;
+  /* Light blue - adjustment action */
+  color: white;
+}
+
+.status-moving-stock {
+  background-color: #5856d6;
+  /* Purple - movement action */
+  color: white;
+}
+
+.status-import {
+  background-color: #007aff;
+  /* Blue - data import action */
+  color: white;
+}
+
+.status-migration {
+  background-color: #4a90e2;
+  /* Medium blue - data migration action */
+  color: white;
+}
+
+.status-inventory {
+  background-color: #ffc107;
+  color: white;
+}
+
+.status-transfer {
+  background-color: #6f42c1;
+  color: white;
+}
+
+.status-return {
+  background-color: #f1bc00;
+  color: white;
+}
+.status-wait-for-return {
+  background-color: #1cb22f;
+  color: white;
+}
+
+.status-returning {
+  background-color: #f1bc00;
+  color: white;
+}
+
+.status-confirm-close {
+  background-color: #34c759;
+  color: white;
+}

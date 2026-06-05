@@ -1,0 +1,911 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-2">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <div class="content-header-body">
+            <h1 class="subtext">DPO Details</h1>
+            <div class="content-header-content">
+              <h1 class="content-header-title m-0">
+                {{ service?.dpo?.dpoNo }}
+              </h1>
+
+              <app-status-label [status]="service?.dpo?.status"></app-status-label>
+            </div>
+          </div>
+        </abp-page-title-container>
+        <abp-page-toolbar-container>
+          <div class="action-request text-end">
+            <!-- Information Actions -->
+            <button
+              class="btn btn-primary"
+              type="button"
+              (click)="onViewHistory()"
+              placement="bottom"
+              ngbTooltip="History"
+              triggers="hover">
+              <i class="bi bi-clock-history"></i>
+              <span class="ms-1">History</span>
+            </button>
+
+            <button
+              *ngIf="service?.dpo?.flags?.canConfirmLockOnOrder"
+              class="btn btn-warning"
+              type="button"
+              (click)="confirmAction(historyActions.ConfirmLockOnOrder)"
+              placement="bottom"
+              ngbTooltip="Confirm Lock On Order"
+              triggers="hover">
+              <span class="ms-1">Confirm Lock On Order</span>
+            </button>
+
+            <button
+              *ngIf="service?.dpo?.flags?.canConfirmLockStock"
+              class="btn"
+              [class.btn-primary]="gkrAllocations?.length > 0"
+              [class.btn-warning]="gkrAllocations?.length === 0"
+              type="button"
+              (click)="confirmAction(historyActions.ConfirmLockStock)"
+              placement="bottom"
+              ngbTooltip="Confirm Lock Stock"
+              triggers="hover">
+              <span *ngIf="gkrAllocations?.length > 0" class="badge bg-success me-2">
+                ✓ {{ gkrAllocations.length }} GKR
+              </span>
+              <span *ngIf="gkrAllocations?.length === 0" class="badge bg-danger me-2">⚠️ No GKR</span>
+              <span class="ms-1">Confirm Lock Stock</span>
+            </button>
+
+            <!-- Approve Button -->
+            <button
+              *ngIf="service?.dpo?.flags?.canApprove"
+              class="btn btn-success"
+              type="button"
+              (click)="onApprove()"
+              placement="bottom"
+              ngbTooltip="Confirm"
+              triggers="hover">
+              <i class="bi bi-check-circle"></i>
+              <span class="ms-1">Confirm</span>
+            </button>
+
+            <!-- Reject Button -->
+            <button
+              *ngIf="service?.dpo?.flags?.canReject"
+              class="btn btn-danger"
+              type="button"
+              (click)="onReject()"
+              placement="bottom"
+              ngbTooltip="Reject"
+              triggers="hover">
+              <i class="bi bi-x-circle"></i>
+              <span class="ms-1">Reject</span>
+            </button>
+
+            <!-- Delete Button -->
+            <ng-container *ngIf="service?.dpo?.flags?.canDelete">
+              <button
+                *abpPermission="AppPermissions.MovingOrders.DPOs.Delete"
+                class="btn btn-danger"
+                (click)="onDelete()"
+                placement="bottom"
+                ngbTooltip="Delete"
+                triggers="hover">
+                <i class="fa fa-trash me-1"></i>
+                <span>{{ '::Delete' | abpLocalization }}</span>
+              </button>
+            </ng-container>
+
+            <!-- Discussion Button -->
+            <button
+              class="btn btn-primary position-relative"
+              type="button"
+              (click)="toggleDiscussion()"
+              placement="bottom"
+              ngbTooltip="Discussion"
+              triggers="hover">
+              <i class="bi bi-chat-dots-fill"></i>
+              <span class="ms-1">Discussion</span>
+
+              <span
+                *ngIf="messagesCount"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                style="
+                  font-size: 0.7rem;
+                  min-width: 18px;
+                  height: 18px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                {{ messagesCount }}
+              </span>
+            </button>
+
+            <button
+              class="btn btn-secondary"
+              type="button"
+              (click)="navigateBack()"
+              placement="bottom"
+              ngbTooltip="Back"
+              triggers="hover">
+              <i class="bi bi-arrow-left-circle me-1"></i>
+              <span class="btn-text">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.dpo && !service?.loading; else loadingTemplate">
+      <div class="form-details">
+        <!-- DPO Information Section -->
+        <app-expandable-panel-v2
+          headerText="DPO Information"
+          panelId="basic_info"
+          [defaultCollapsed]="false"
+          icon="bi bi-info-circle"
+          [isDisabled]="false">
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <label class="form-label">DPO No</label>
+              <input autocomplete="off" type="text" class="form-control" [value]="service?.dpo.dpoNo" readonly />
+            </div>
+            <div class="col-md-5">
+              <label class="form-label">Buyer</label>
+              <input
+                autocomplete="off"
+                type="text"
+                class="form-control"
+                [value]="service?.dpo.buyerShortName"
+                readonly />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Confirm Date</label>
+              <input
+                autocomplete="off"
+                type="text"
+                class="form-control"
+                [value]="service?.dpo.orderDate | date: 'dd/MM/yyyy'"
+                readonly />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Material Type</label>
+              <input autocomplete="off" type="text" class="form-control" [value]="service?.dpo.materialType" readonly />
+            </div>
+          </div>
+          <!-- Row 2: Note -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <label class="form-label">Note</label>
+              <textarea class="form-control" rows="3" [value]="service?.dpo.remark" readonly></textarea>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-check">
+                <input
+                  [disabled]="true"
+                  type="checkbox"
+                  class="form-check-input"
+                  id="securityExportControl"
+                  [checked]="true" />
+                <label class="form-check-label" for="securityExportControl">
+                  I have checked Security Export Control
+                </label>
+              </div>
+            </div>
+          </div>
+        </app-expandable-panel-v2>
+
+        <!-- GKR Application section-->
+        <app-expandable-panel-v2
+          *ngIf="service?.dpo?.flags?.canAllocateGKR || service?.gkrAllocations?.length > 0"
+          headerText="GKR Allocations"
+          panelId="gkr_allocations"
+          [defaultCollapsed]="!service?.dpo?.flags?.canAllocateGKR"
+          icon="bi bi-box-seam"
+          [isDisabled]="false">
+          <ng-template #headerActions> </ng-template>
+          <div class="row mb-2 align-items-center">
+            <div class="col-lg-5 col-md-5">
+              <div class="d-flex gap-2 align-items-center">
+                <div class="input-group flex-grow-1">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    [(ngModel)]="gkrSearchText"
+                    #searchInput
+                    [ngbTooltip]="'Search in: GKR No, Material Type, Buyer, Confirm Date, Exp. Date, Remark'"
+                    triggers="focus"
+                    placement="top" />
+                  <button
+                    *ngIf="gkrSearchText"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="clearGkrSearch()"
+                    title="Clear search">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7 col-md-7">
+              <!--Allocate-->
+              <div class="d-flex justify-content-end gap-2">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  *ngIf="service?.dpo?.flags?.canAllocateGKR"
+                  (click)="onAddGkrAllocation()">
+                  <i class="bi bi-plus"></i> Allocate
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngIf="gkrAllocations && !service?.loadingGkrAllocations; else loadingTemplate">
+            <!-- [height]="'400px'" -->
+            <app-gkr-allocation-table
+              [data]="gkrAllocations"
+              [enableSelection]="false"
+              [showLinkedNote]="true"
+              (selectionChange)="onGkrSelectionChange($event)">
+            </app-gkr-allocation-table>
+          </ng-container>
+        </app-expandable-panel-v2>
+
+        <app-expandable-panel-v2
+          headerText="Order Items"
+          panelId="sale_order_items"
+          [defaultCollapsed]="false"
+          icon="bi bi-list-ul"
+          [badgeCount]="filteredDpoDetails?.length || 0"
+          [selectedCount]="service?.selectedItems.length || 0"
+          [isDisabled]="false">
+          <ng-template #headerActions> </ng-template>
+
+          <!-- Search Box and Filters -->
+          <div class="row mb-2 align-items-center">
+            <div class="col-lg-5 col-md-5">
+              <div class="d-flex gap-2 align-items-center">
+                <div class="input-group flex-grow-1">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    autocomplete="off"
+                    [(ngModel)]="searchText"
+                    #searchInput
+                    [ngbTooltip]="'Search in: Material Code, Model, Price, Amount, Extra Fee Note'"
+                    triggers="focus"
+                    placement="top" />
+                  <button
+                    *ngIf="searchText"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    (click)="clearSearch()"
+                    title="Clear search">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+                <!-- Need Order Filter -->
+                <!-- <button
+                  type="button"
+                  class="btn btn-sm text-nowrap"
+                  [class]="needOrderFilter ? 'btn-secondary' : 'btn-outline-secondary'"
+                  (click)="needOrderFilter = !needOrderFilter">
+                  <i class="bi bi-funnel"></i>
+                  Need Order
+                </button> -->
+
+                <!-- Filter Toggle Button -->
+                <button
+                  type="button"
+                  class="btn btn-sm text-nowrap"
+                  [class]="isFilterOpen ? 'btn-secondary' : 'btn-outline-secondary'"
+                  (click)="isFilterOpen = !isFilterOpen">
+                  <i class="bi bi-funnel-fill" *ngIf="isFilterOpen"></i>
+                  <i class="bi bi-funnel" *ngIf="!isFilterOpen"></i>
+                  Filters
+                  <span class="badge bg-primary ms-1" *ngIf="activeFilterCount > 0">
+                    {{ activeFilterCount }}
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div class="col-lg-7 col-md-12">
+              <!--Lock Stock-->
+              <div class="d-flex justify-content-end gap-2">
+                <!-- Manage Stock Button (requires selection) -->
+                <button
+                  *abpPermission="AppPermissions.MovingOrders.DPOs.LockStock"
+                  class="btn btn-outline-primary btn-sm"
+                  type="button"
+                  (click)="onAutoLockStock(); $event.stopPropagation()"
+                  [disabled]="service?.selectedItems.length === 0 || !service?.dpo?.flags?.canLockStock"
+                  [title]="
+                    service?.selectedItems.length === 0
+                      ? 'Please select items first'
+                      : 'Manage stock for ' + service?.selectedItems.length + ' selected items'
+                  ">
+                  <i class="bi bi-gear-fill"></i>
+                  <span class="ms-1">Manage Stock</span>
+                  <span *ngIf="service?.selectedItems.length > 0" class="badge bg-primary ms-1">{{
+                    service?.selectedItems.length
+                  }}</span>
+                </button>
+
+                <!-- Auto Lock On Order Stock Button -->
+                <button
+                  *abpPermission="AppPermissions.MovingOrders.DPOs.LockOnOrderStock"
+                  class="btn btn-outline-warning btn-sm"
+                  type="button"
+                  (click)="onAutoLockOnOrderStock(); $event.stopPropagation()"
+                  [disabled]="service?.selectedItems.length === 0 || !service?.dpo?.flags?.canLockOnOrder"
+                  [title]="
+                    service?.selectedItems.length === 0
+                      ? 'Please select items first'
+                      : 'Manage lock on order stock for ' + service?.selectedItems.length + ' selected items'
+                  ">
+                  <i class="bi bi-box-seam"></i>
+                  <span class="ms-1">Manage On Order Stock</span>
+                  <span *ngIf="service?.selectedItems.length > 0" class="badge bg-warning text-dark ms-1">{{
+                    service?.selectedItems.length
+                  }}</span>
+                </button>
+
+                <!-- Manual Lock Stock Button (requires selection) -->
+                <!-- <button
+                class="btn btn-outline-warning btn-sm"
+                type="button"
+                (click)="onLockStock()"
+                [disabled]="service?.selectedItems.length === 0"
+                [title]="
+                  service?.selectedItems.length === 0
+                    ? 'Please select items first'
+                    : 'Lock stock for ' + service?.selectedItems.length + ' selected items'
+                ">
+                <i class="bi bi-lock"></i>
+                <span class="ms-1">Lock Stock</span>
+                <span *ngIf="service?.selectedItems.length > 0" class="badge bg-warning text-dark ms-1">{{
+                  service?.selectedItems.length
+                }}</span>
+              </button> -->
+
+                <!-- Cancel -->
+                <button
+                  *abpPermission="AppPermissions.MovingOrders.DPOs.CancelItems"
+                  class="btn btn-outline-danger btn-sm"
+                  type="button"
+                  (click)="onCancel(historyActions.Cancelled); $event.stopPropagation()"
+                  [disabled]="service?.selectedItems.length === 0"
+                  [title]="
+                    service?.selectedItems.length === 0
+                      ? 'Please select items first'
+                      : 'Cancel ' + service?.selectedItems.length + ' selected items'
+                  ">
+                  <i class="bi bi-x-circle"></i>
+                  <span class="ms-1">Cancel</span>
+                  <span *ngIf="service?.selectedItems.length > 0" class="badge bg-danger ms-1">{{
+                    service?.selectedItems.length
+                  }}</span>
+                </button>
+
+                <!-- Extra Fee -->
+                <button
+                  *abpPermission="AppPermissions.MovingOrders.DPOs.AddExtraFee"
+                  class="btn btn-outline-info btn-sm"
+                  type="button"
+                  (click)="onExtraFee(); $event.stopPropagation()"
+                  [disabled]="service?.selectedItems.length === 0"
+                  [title]="
+                    service?.selectedItems.length === 0
+                      ? 'Please select items first'
+                      : 'Add extra fee for ' + service?.selectedItems.length + ' selected items'
+                  ">
+                  <i class="bi bi-plus-circle"></i>
+                  <span class="ms-1">Extra Fee</span>
+                  <span *ngIf="service?.selectedItems.length > 0" class="badge bg-info ms-1">{{
+                    service?.selectedItems.length
+                  }}</span>
+                </button>
+
+                <!-- Confirm Note -->
+                <button
+                  *abpPermission="AppPermissions.MovingOrders.DPOs.ConfirmNote"
+                  class="btn btn-outline-primary btn-sm"
+                  type="button"
+                  (click)="onConfirmNote(historyActions.ConfirmNote); $event.stopPropagation()"
+                  [disabled]="service?.selectedItems.length === 0"
+                  [title]="
+                    service?.selectedItems.length === 0
+                      ? 'Please select items first'
+                      : 'Confirm note for ' + service?.selectedItems.length + ' selected items'
+                  ">
+                  <i class="bi bi-check-square"></i>
+                  <span class="ms-1">Confirm Note</span>
+                  <span *ngIf="service?.selectedItems.length > 0" class="badge bg-primary ms-1">{{
+                    service?.selectedItems.length
+                  }}</span>
+                </button>
+              </div>
+            </div>
+            <div>
+              <app-filter-pane
+                [filterFields]="filterFields"
+                [isOpen]="isFilterOpen"
+                [showApplyButton]="false"
+                [showClearButton]="false"
+                (filterChange)="onFilterChange($event)">
+              </app-filter-pane>
+            </div>
+          </div>
+
+          <ng-container *ngIf="service?.dpo && !service?.loadingDetail; else loadingTemplate">
+            <!-- Items Table -->
+            <app-advanced-data-table
+              [data]="filteredDpoDetails"
+              [height]="'650px'"
+              [showGroupHeaders]="false"
+              [showSummary]="false"
+              [enableSelection]="true"
+              [enableClientSidePagination]="true"
+              [pageSize]="100"
+              [pageSizeOptions]="[50, 100, 200, 300]"
+              [showPageSizeSelector]="true"
+              [paginationPosition]="'bottom'"
+              [selectedItems]="service?.selectedItems"
+              [selectionKey]="'id'"
+              [selectionCondition]="canSelectRow"
+              (cellClick)="onCellClick($event)"
+              (selectionChange)="onSelectionChange($event)"
+              (actionClick)="onActionClick($event)">
+              <!-- Item Information Group -->
+              <app-table-column-group name="Item Information" cssClass="group-header item-group">
+                <!-- Action -->
+                <app-table-column
+                  field="action"
+                  header="Action"
+                  width="50px"
+                  textAlign="center"
+                  componentType="action"
+                  *ngIf="
+                    service?.dpo?.flags?.canEditItem &&
+                    this.service.dpo.status !== 'CLOSED' &&
+                    this.service.dpo.status !== 'CANCELLED' &&
+                    this.service.dpo.status !== 'REJECTED'
+                  "
+                  [showEditModal]="true"
+                  [fixed]="true"
+                  [showEditFn]="isEditableRow"></app-table-column>
+                <!-- Row Number Column -->
+                <app-table-column field="rowNo" header="No." width="50px" textAlign="center" [fixed]="true">
+                </app-table-column>
+
+                <!-- Status Column -->
+                <app-table-column
+                  field="status"
+                  header="Status"
+                  width="100px"
+                  textAlign="center"
+                  [fixed]="true"
+                  componentType="status">
+                </app-table-column>
+
+                <!-- Material Code Column -->
+                <app-table-column
+                  field="golfaCode"
+                  header="Material Code"
+                  width="120px"
+                  [fixed]="true"
+                  [warningTooltip]="materialTooltipMessage"
+                  [warningTooltipCondition]="materialTooltipCondition">
+                </app-table-column>
+
+                <!-- Model Column -->
+                <app-table-column field="model" header="Model" width="130px" [fixed]="true"> </app-table-column>
+
+                <!-- Quantity Column -->
+                <app-table-column field="qty" header="Qty" width="60px" textAlign="end" [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Unit Price Column -->
+                <app-table-column
+                  field="unitPrice"
+                  header="Price"
+                  width="110px"
+                  textAlign="end"
+                  [formatter]="formatCurrency">
+                </app-table-column>
+
+                <!-- Extra Fee Column -->
+                <app-table-column
+                  field="extrafee"
+                  header="Extra Fee"
+                  width="85px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="extrafee"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Amount Column -->
+                <app-table-column
+                  field="amountIncludeExtraFee"
+                  header="Amount"
+                  width="110px"
+                  textAlign="end"
+                  [formatter]="formatCurrency">
+                </app-table-column>
+              </app-table-column-group>
+
+              <!-- Delivery Information Group -->
+              <app-table-column-group name="Delivery Information" cssClass="group-header delivery-group">
+                <!-- Need Order Column -->
+                <app-table-column
+                  field="needDelivery"
+                  header="Need Order"
+                  width="50px"
+                  textAlign="end"
+                  [textClass]="getTextClassForNeedOrder"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Stock Available Column -->
+                <app-table-column
+                  field="availableStockQty"
+                  header="Stock Avail."
+                  width="55px"
+                  textAlign="end"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Lock Stock Column -->
+                <app-table-column
+                  field="lockStock"
+                  header="Locked Stock"
+                  width="55px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="lockStock"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- On Order Stock Avail. Column -->
+                <app-table-column
+                  *ngIf="completedLockStock"
+                  field="onOrderStockAvailable"
+                  header="On Ord. Stock"
+                  width="60px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="onOrderStockAvailable"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Lock On Order Stock Column -->
+                <app-table-column
+                  *ngIf="columnLockShipment"
+                  field="lockShipment"
+                  [header]="'Locked Shipment'"
+                  width="70px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="lockShipment"
+                  [formatter]="formatLockStock">
+                </app-table-column>
+
+                <!-- Sale Order Column -->
+                <app-table-column
+                  *ngIf="completedLockStock"
+                  field="lockStockSO"
+                  header="Sale Order"
+                  width="55px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="saleOrder"
+                  [formatter]="formatLockStock">
+                </app-table-column>
+
+                <!-- Delivered Column -->
+                <app-table-column
+                  *ngIf="completedLockOnOrder"
+                  field="delivered"
+                  header="Deliv."
+                  width="50px"
+                  textAlign="end"
+                  componentType="clickCell"
+                  cellClickAction="delivered"
+                  [formatter]="formatLockStock">
+                </app-table-column>
+              </app-table-column-group>
+
+              <!-- Financial Information Group -->
+              <app-table-column-group name="Financial Information" cssClass="group-header financial-group">
+                <!-- Note Column -->
+                <app-table-column field="note" header="Note" width="150px" [showEllipsis]="true"> </app-table-column>
+
+                <!-- SPO Code Column -->
+                <app-table-column field="spoCode" header="SPO Code" width="150px"> </app-table-column>
+
+                <!-- Customer Name Column -->
+                <app-table-column field="customerName" header="Customer Name" width="350px" [showEllipsis]="true">
+                </app-table-column>
+
+                <!-- Confirm Note Column -->
+                <app-table-column field="confirmNoted" header="Confirm Note" width="150px" [showEllipsis]="true">
+                </app-table-column>
+
+                <app-table-column field="requestedETA" header="Requested ETA" width="120px" [formatter]="formatDate" />
+              </app-table-column-group>
+
+              <!-- Additional Information Group -->
+              <app-table-column-group name="Additional Information" cssClass="group-header additional-group">
+                <!-- Extra Fee Used Column
+                <app-table-column
+                  field="extrafeeUsedInSO"
+                  header="Extra Fee Used"
+                  width="85px"
+                  textAlign="end"
+                  [formatter]="formatNumber">
+                </app-table-column>
+
+                <!-- Extra Fee Note Column -->
+                <!--<app-table-column field="extrafeeNote" header="Extra Fee Note" width="120px" [showEllipsis]="true">
+                </app-table-column> -->
+
+                <app-table-column-group name="Additional Information" cssClass="group-header additional-group">
+                  <!-- Audit Info Column -->
+                  <app-table-column
+                    field="auditInfo"
+                    header="Info"
+                    width="50px"
+                    textAlign="center"
+                    componentType="auditInfo">
+                  </app-table-column>
+                </app-table-column-group>
+              </app-table-column-group>
+            </app-advanced-data-table>
+          </ng-container>
+        </app-expandable-panel-v2>
+
+        <ng-template #loadingTemplate>
+          <div class="card">
+            <div class="card-body d-flex justify-content-center align-items-center p-5">
+              <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mb-0">Loading DPO Detail data, please wait...</p>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading DPO data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>
+
+<app-approval-comment-modal
+  *ngIf="service.isPerformActionModalOpen"
+  [(visible)]="service.isPerformActionModalOpen"
+  [busy]="service.isPerformActionModalBusy"
+  [actionTitle]="actionsTitle"
+  [currentAction]="service.currentAction"
+  [showGkrStatus]="service.currentAction === historyActions.ConfirmLockStock"
+  [gkrAllocations]="service.gkrAllocations"
+  [hasAvailableGkrs]="service.hasAvailableGkrsForAllocation"
+  (commentSubmitted)="service.onPerformAction($event)"
+  (cancelClicked)="service.onClosePerformAction()"></app-approval-comment-modal>
+
+<!-- Lock On Order Stock Auto Modal -->
+<app-lock-on-order-stock-modal
+  #lockOnOrderStockModal
+  [(visible)]="showLockOnOrderStockAutoModal"
+  [selectedItemsCount]="service?.selectedItems.length"
+  [selectedItems]="service?.selectedItems"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpo]="service?.dpo"
+  (modalResult)="onLockStockModalResult($event)">
+</app-lock-on-order-stock-modal>
+<!-- <app-approval-comment-modal
+  *ngIf="showLockOnOrderStockAutoModal"
+  [(visible)]="showLockOnOrderStockAutoModal"
+  [busy]="lockOnOrderStockAutoLoading"
+  actionTitle="Lock On Order Stock"
+  [requireComment]="false"
+  [currentAction]="historyActions.ConfirmLockOnOrder"
+  (commentSubmitted)="onLockOnOrderStockAutoModalResult($event)"
+  (cancelClicked)="onCloseLockOnOrderStockAutoModal()"></app-approval-comment-modal> -->
+
+<!-- Lock Stock Modal -->
+<app-lock-stock-modal
+  #lockStockModal
+  [(visible)]="showLockStockModal"
+  [selectedItemsCount]="service?.selectedItems.length"
+  [selectedItems]="service?.selectedItems"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpo]="service?.dpo"
+  (modalResult)="onLockStockModalResult($event)">
+</app-lock-stock-modal>
+
+<!-- Lock Stock Detail Modal -->
+<app-lock-stock-detail-modal
+  *ngIf="showLockStockDetailModal"
+  [(visible)]="showLockStockDetailModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''"
+  [dpo]="service?.dpo"
+  (modalResult)="onLockStockDetailModalResult($event)">
+</app-lock-stock-detail-modal>
+
+<!-- Sale Order Detail Modal -->
+<app-sale-order-detail-modal
+  *ngIf="showSaleOrderDetailModal"
+  [(visible)]="showSaleOrderDetailModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''">
+</app-sale-order-detail-modal>
+
+<!-- Lock On Order Stock Detail Modal -->
+<app-lock-on-order-stock-detail-modal
+  *ngIf="showLockOnOrderStockDetailModal"
+  [(visible)]="showLockOnOrderStockDetailModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''"
+  [dpo]="service?.dpo"
+  (modalResult)="onLockOnOrderStockDetailModalResult($event)">
+</app-lock-on-order-stock-detail-modal>
+
+<!-- Lock On Order Stock Available Detail Modal -->
+<app-lock-on-order-stock-available-detail-modal
+  *ngIf="showLockOnOrderStockAvailableDetailModal"
+  [(visible)]="showLockOnOrderStockAvailableDetailModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''"
+  [allDpoDetails]="service?.dpoDetails || []"
+  [currentDetailIndex]="currentDetailIndex"
+  [dpo]="service?.dpo"
+  (modalResult)="onLockStockAvailableDetailModalResult($event)"
+  (nextDetailRequested)="onNextDetailRequested($event)"
+  (previousDetailRequested)="onPreviousDetailRequested($event)">
+</app-lock-on-order-stock-available-detail-modal>
+
+<!-- Delivered Detail DPO Modal -->
+<app-delivered-detail-modal
+  *ngIf="showDeliveredDetailModal"
+  [(visible)]="showDeliveredDetailModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''">
+</app-delivered-detail-modal>
+
+<!-- Extra Fee Modal -->
+<app-extra-fee-modal
+  *ngIf="showExtraFeeModal"
+  [(visible)]="showExtraFeeModal"
+  [selectedItemsCount]="service?.selectedItems.length"
+  [selectedItems]="service?.selectedItems"
+  (modalResult)="onExtraFeeModalResult($event)">
+</app-extra-fee-modal>
+
+<app-extra-fees-info-modal
+  *ngIf="showExtraFeesInfoModal"
+  [(visible)]="showExtraFeesInfoModal"
+  [dpoDetail]="selectedDpoDetail"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoDetailId]="selectedDpoDetail?.id || ''">
+</app-extra-fees-info-modal>
+
+<!-- Approve Modal -->
+<app-approval-comment-modal
+  *ngIf="showApproveModal"
+  [(visible)]="showApproveModal"
+  [busy]="approveRejectLoading"
+  actionTitle="Confirm DPO"
+  [requireComment]="false"
+  [currentAction]="historyActions.Approved"
+  (commentSubmitted)="onApproveModalResult($event)"
+  (cancelClicked)="onCloseApproveModal()">
+</app-approval-comment-modal>
+
+<!-- Reject Modal -->
+<app-approval-comment-modal
+  *ngIf="showRejectModal"
+  [(visible)]="showRejectModal"
+  [busy]="approveRejectLoading"
+  actionTitle="Reject DPO"
+  [requireComment]="true"
+  [currentAction]="historyActions.Rejected"
+  (commentSubmitted)="onRejectModalResult($event)"
+  (cancelClicked)="onCloseRejectModal()">
+</app-approval-comment-modal>
+
+<!-- Discussion Drawer -->
+<app-dpo-discussion-box
+  [isOpen]="showDiscussionBox"
+  [dpoId]="service?.dpo?.id || ''"
+  [dpoCode]="service?.dpo?.dpoNo || ''"
+  (closeDiscussion)="onCloseDiscussion()"
+  (messagesCount)="getMessagesCount($event)">
+</app-dpo-discussion-box>
+
+<!--Update DPO Detail -->
+<app-edit-dpo-item-dialog
+  *ngIf="isEditDPOItemDialogVisible"
+  [isVisible]="isEditDPOItemDialogVisible"
+  [DPODetail]="selectedDpoDetail"
+  (visibleChange)="isEditDPOItemDialogVisible = $event"
+  (itemUpdated)="onDPOItemUpdated()">
+</app-edit-dpo-item-dialog>
+
+<!-- GKR Allocation Modal -->
+<abp-modal
+  [(visible)]="showGkrAllocationModal"
+  [busy]="service.gkrAllocationBusy"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }">
+  <ng-template #abpHeader>
+    <h3>GKR Allocation</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <!-- [height]="'400px'" -->
+    <app-gkr-allocation-table
+      [data]="service?.availableGkrAllocations"
+      [enableSelection]="true"
+      [showLinkedNote]="false"
+      (selectionChange)="onGkrSelectionChange($event)">
+    </app-gkr-allocation-table>
+
+    <div class="mt-1">
+      <label>Note</label>
+      <textarea [(ngModel)]="gkrAllocationNote" rows="3" class="form-control"></textarea>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="onAllocateGkr()"
+      [disabled]="service.gkrAllocationBusy || !selectedGkrId">
+      {{ '::Allocate' | abpLocalization }}
+    </button>
+  </ng-template>
+</abp-modal>
+<app-history-modal
+  appEscCloseModal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="service.historyDPO"
+  (disappear)="closeHistoryDialog()" />

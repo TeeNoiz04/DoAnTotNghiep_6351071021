@@ -1,0 +1,73 @@
+.three-state-button {
+  .btn-check:checked + .btn,
+  :not(.btn-check) + .btn:active,
+  .btn:first-child:active,
+  .btn.active,
+  .btn.show {
+    background-color: #56c080;
+    box-shadow: none;
+  }
+
+  .btn {
+    position: relative;
+    padding: 2px 6px;
+    font-size: 14px;
+    min-width: 40px;
+    text-align: center;
+    border-color: #dee2e6;
+    color: #6c757d;
+
+    &.active {
+      color: white;
+    }
+
+    &:focus {
+      z-index: 3;
+    }
+
+    &.active {
+      z-index: 1;
+    }
+
+    &:hover:not(:disabled):not(.active) {
+      z-index: 2;
+      // Override Bootstrap's default hover background
+      background-color: transparent !important;
+      color: grey;
+    }
+
+    &:hover:not(:disabled).active {
+      z-index: 2;
+      // Subtle hover effect for active buttons - slight brightness change
+      filter: brightness(1.1);
+    }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+
+  // Ensure proper border handling for button groups
+  .btn + .btn {
+    margin-left: -1px;
+  }
+
+  .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .btn:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+// Two-state mode styling adjustments
+.three-state-button.two-state-mode {
+  .btn:nth-child(3) {
+    // Special styling for the "both" button in two-state mode
+    font-weight: 500;
+  }
+}

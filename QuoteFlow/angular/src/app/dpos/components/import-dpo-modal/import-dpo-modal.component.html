@@ -1,0 +1,145 @@
+<form [formGroup]="importForm">
+  <!-- Row 1: Choose Files 9, Material Type 3 -->
+  <div class="row mb-2">
+    <div class="col-md-8">
+      <label class="form-label" for="file">
+        <span>Choose File</span>
+        <span class="text-danger">*</span>
+      </label>
+      <input
+        #fileInput
+        type="file"
+        class="form-control"
+        id="file"
+        (change)="onFileChange($event)"
+        [class.is-invalid]="f['file']?.invalid && f['file']?.touched"
+        accept=".xlsx,.xls,.csv" />
+      <div *ngIf="f['file']?.invalid && f['file']?.touched" class="invalid-feedback">File is required</div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="materialType">
+        <span>Material Type</span>
+        <span class="text-danger">*</span>
+      </label>
+      <ng-select
+        [items]="materialTypeOptions"
+        bindLabel="displayName"
+        bindValue="displayCode"
+        formControlName="materialType"
+        [clearable]="true"
+        [searchable]="true"
+        appendTo="body"
+        (change)="onMaterialTypeChange($event)"
+        [class.is-invalid]="f['materialType']?.invalid && f['materialType']?.touched">
+      </ng-select>
+      <div *ngIf="f['materialType']?.invalid && f['materialType']?.touched" class="invalid-feedback">
+        Material Type is required
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: BuyerType 3, Buyer 6, Confirm Date 3 -->
+  <div class="row mb-2">
+    <div class="col-md-4">
+      <label class="form-label" for="buyerType">
+        <span>Buyer Type</span>
+        <span class="text-danger">*</span>
+      </label>
+      <ng-select
+        appendTo="body"
+        [items]="buyerTypeOptions"
+        bindLabel="displayName"
+        bindValue="id"
+        formControlName="buyerTypeId"
+        [clearable]="true"
+        [searchable]="true"
+        (change)="onBuyerTypeChange($event)"
+        [class.is-invalid]="f['buyerTypeId']?.invalid && f['buyerTypeId']?.touched">
+      </ng-select>
+      <div *ngIf="f['buyerTypeId']?.invalid && f['buyerTypeId']?.touched" class="invalid-feedback">
+        Buyer Type is required
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="buyer">
+        <span>Buyer</span>
+        <span class="text-danger">*</span>
+      </label>
+      <ng-select
+        [items]="buyerOptions"
+        appendTo="body"
+        bindLabel="displayCode"
+        bindValue="id"
+        formControlName="buyerId"
+        [clearable]="false"
+        [searchable]="true"
+        (change)="onBuyerChange($event)"
+        [class.is-invalid]="f['buyerId']?.invalid && f['buyerId']?.touched">
+      </ng-select>
+      <div *ngIf="f['buyerId']?.invalid && f['buyerId']?.touched" class="invalid-feedback">Buyer is required</div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="confirmDate">
+        <span>Confirm Date</span>
+        <span class="text-danger">*</span>
+      </label>
+      <div class="input-group">
+        <input
+          autocomplete="off"
+          id="confirmDate"
+          class="form-control"
+          name="confirmDate"
+          format="dd/MM/yyyy"
+          #confirmDateInput="ngbDatepicker"
+          ngbDatepicker
+          formControlName="confirmDate"
+          [ngClass]="{
+            'is-invalid': f.confirmDate.invalid && f.confirmDate.touched,
+            'check-view': f.confirmDate.disabled,
+          }"
+          (click)="confirmDateInput.toggle()"
+          container="body" />
+        <button class="btn btn-light bi bi-calendar3" (click)="confirmDateInput?.toggle()" type="button"></button>
+      </div>
+      <div
+        *ngIf="f.confirmDate.invalid && f.confirmDate.touched && f.confirmDate.errors?.required"
+        class="invalid-feedback">
+        Confirm Date is required.
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Security Export Control Checkbox -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          id="securityExportControl"
+          formControlName="securityExportControlChecked" />
+        <label class="form-check-label label-required" for="securityExportControl">
+          <!-- <i> -->
+          I have checked Security Export Control
+          <!-- </i> -->
+        </label>
+        <div
+          *ngIf="f['securityExportControlChecked']?.invalid && f['securityExportControlChecked']?.touched"
+          class="invalid-feedback">
+          This checkbox must be checked
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Row 4: Note -->
+  <!-- <div class="row mb-2">
+    <div class="col-md-12">
+      <label class="form-label" for="note">Note</label>
+      <textarea
+        class="form-control"
+        id="note"
+        rows="3"
+        formControlName="note"></textarea>
+    </div>
+  </div> -->
+</form>

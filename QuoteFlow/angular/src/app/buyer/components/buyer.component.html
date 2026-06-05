@@ -1,0 +1,192 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="filter.onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="filter.onClear()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover">
+        <i class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="create()"
+        *abpPermission="AppPermissions.MasterDatas.CreateBuyer"
+        placement="bottom"
+        ngbTooltip="Add New"
+        triggers="hover">
+        <i class="fa fa-plus me-1"></i>
+        <span>{{ '::AddNew' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <!-- Filter component with template reference -->
+  <app-buyer-filter #filter></app-buyer-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="filterService.data.items"
+        [count]="filterService.data.totalCount"
+        [list]="filterService.list"
+        class="bootstrap"
+        (page)="filter.updatePageThenSearch($event)">
+        <ngx-datatable-column [name]="" [maxWidth]="80" [width]="80" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                *abpPermission="AppPermissions.MasterDatas.EditBuyer"
+                (click)="update(row)"
+                class="btn btn-link p-0">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+              <button
+                (click)="delete(row)"
+                *abpPermission="AppPermissions.MasterDatas.DeleteBuyer"
+                class="btn btn-link p-0">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+              <button
+                *abpPermission="AppPermissions.MasterDatas.AddMaterialGroup"
+                (click)="updateMaterialGroup(row)"
+                class="btn btn-link p-0">
+                <i
+                  class="fa fa-cubes text-muted icon-hover-edit"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Edit Material Group"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Buyer Code" prop="buyerCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.buyerCode }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Short Name" prop="shortName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.shortName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Full Name" prop="fullName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fullName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Tax Code" prop="taxCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.taxCode }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Address" prop="address">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.address }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Phone" prop="contactPhoneNumber">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.contactPhoneNumber }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Email" prop="contactEmail">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.contactEmail }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorName"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-buyer-detail-modal />
+  }
+}
+
+@defer (when serviceMaterialDetail.isVisible) {
+  @if (serviceMaterialDetail.isVisible) {
+    <app-material-group-buyer-modal />
+  }
+}
+
+<abp-modal
+  [(visible)]="showImportCustomer"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    windowClass: 'modal-fullscreen',
+  }">
+  <ng-template #abpHeader>
+    <h3>Import Buyer Data</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-buyer-import-modal />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit">
+      {{ '::Verify Data' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

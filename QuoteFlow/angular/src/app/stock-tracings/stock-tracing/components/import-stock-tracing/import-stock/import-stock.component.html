@@ -1,0 +1,82 @@
+<div class="card mt-1 mb-3">
+  <div class="card-body">
+    <form [formGroup]="importForm">
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="formFile" class="label-required form-label">File</label>
+          <input class="form-control" type="file" (change)="onFileChange($event)" accept=".xls,.xlsx" />
+        </div>
+      </div>
+      <div class="row" *ngIf="!isInventory">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-6">
+          <label for="fromDate" class="form-label label-required">From Date</label>
+          <div class="input-group calendar-input-container">
+            <input
+              id="fromDate"
+              #fromDateInput
+              #fromDateDatepicker="ngbDatepicker"
+              class="form-control"
+              name="fromDate"
+              formControlName="fromDate"
+              ngbDatepicker
+              container="body"
+              readonly
+              (click)="fromDateDatepicker.toggle()" />
+            <button
+              class="btn btn-light bi bi-calendar3 calendar-icon"
+              (click)="fromDateDatepicker?.toggle()"
+              type="button"></button>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-6">
+          <label for="toDate" class="form-label label-required">To Date</label>
+          <div class="input-group calendar-input-container">
+            <input
+              id="toDate"
+              #toDateInput
+              #toDateDatepicker="ngbDatepicker"
+              class="form-control"
+              name="toDate"
+              formControlName="toDate"
+              ngbDatepicker
+              container="body"
+              readonly
+              (click)="toDateDatepicker.toggle()" />
+            <button
+              class="btn btn-light bi bi-calendar3 calendar-icon"
+              (click)="toDateDatepicker?.toggle()"
+              type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="isInventory">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-6">
+          <label for="toDate" class="form-label label-required">Date Entered</label>
+          <div class="input-group calendar-input-container">
+            <input
+              id="toDate"
+              #enteredDate
+              #enteredDateDatepicker="ngbDatepicker"
+              class="form-control"
+              name="toDate"
+              formControlName="entered"
+              ngbDatepicker
+              container="body"
+              readonly
+              (click)="enteredDateDatepicker.toggle()" />
+            <button
+              class="btn btn-light bi bi-calendar3 calendar-icon"
+              (click)="enteredDateDatepicker?.toggle()"
+              type="button"></button>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between gap-3 mb-2">
+        <div class="flex-grow-1">
+          <label for="toDate" class="form-label">Note</label>
+          <textarea class="form-control custom-textarea" id="note" formControlName="note" appAutoResize></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

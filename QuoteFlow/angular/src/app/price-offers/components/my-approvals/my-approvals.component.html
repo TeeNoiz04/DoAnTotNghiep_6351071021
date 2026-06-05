@@ -1,0 +1,191 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="filter.onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="filter.onClear()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-my-approvals-filter #filter />
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        class="bootstrap"
+        default
+        [rows]="data?.items"
+        [count]="data?.totalCount"
+        [list]="list"
+        (page)="filter.updatePageThenSearch($event)">
+        <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <div ngbDropdown container="body" class="d-inline-block">
+                <button
+                  class="btn action-dropdown-toggle-btn"
+                  data-toggle="dropdown"
+                  placement="bottom-end"
+                  aria-haspopup="true"
+                  ngbDropdownToggle></button>
+                <div ngbDropdownMenu>
+                  <button ngbDropdownItem (click)="onViewHistory(row)">
+                    <i class="bi bi-clock-history me-2"></i> History
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="95"
+          headerClass="text-center"
+          cellClass="text-center"
+          name="{{ '::Status' | abpLocalization }}"
+          prop="approvalStatus">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.approvalStatus"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="95"
+          headerClass="text-center"
+          cellClass="text-center"
+          name="Result"
+          prop="projectResultStatus">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label
+              *ngIf="row.priceOfferCode?.substring(0, 2) === 'PP' && row.projectResultStatus"
+              [status]="row.projectResultStatus">
+            </app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [width]="160" name="Code" prop="priceOfferCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a
+              [routerLink]="['/price-offer', row.id, 'details']"
+              class="text-primary text-decoration-none cursor-pointer">
+              {{ row.priceOfferCode }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Buyer' | abpLocalization }}" prop="buyer" [sortable]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.buyer?.fullName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Description' | abpLocalization }}" prop="projectName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.projectName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="120"
+          headerClass="text-end"
+          [cellClass]="'text-end'"
+          name="Total Standard"
+          prop="totalStandardAmount">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="text-end">
+              {{ row.totalStandardAmount | number: '1.0-0' }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          [width]="120"
+          headerClass="text-end"
+          [cellClass]="'text-end'"
+          name="Total Offer"
+          prop="totalMEVNOfferAmount">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="text-end">
+              {{ row.totalMEVNOfferAmount | number: '1.0-0' }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column [width]="110" name="Next Approver" prop="currentApproverRoleName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a class="text-primary text-decoration-none cursor-pointer" (click)="onShowApprovers(row)">
+              {{ row.currentApproverRoleName }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorUsername">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<!-- History Modal -->
+<app-history-modal
+  [isVisible]="showHistory"
+  [approvalHistories]="serviceDetail.approvalHistories"
+  [title]="'History'"
+  (disappear)="closeHistoryDialog()"
+  (submittedMoreItemsClicked)="onSubmittedMoreItems($event)">
+</app-history-modal>
+
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<abp-modal
+  [(visible)]="showHistoryAddMoreItems"
+  [busy]="importBusy"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>{{ 'Add More Item Details' }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="mb-3">
+      <app-data-table [itemEdit]="false" [itemRemove]="false" [records]="service.addMoreItemHistories">
+        <app-header title="Material Code" name="materialCode" [className]="'w-20'"></app-header>
+        <app-header title="Model" name="model"></app-header>
+        <app-header title="Qty" name="qty" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Price" name="standardPriceToDist" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Amount" name="standardAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Buyer Req. Amount" name="requestedAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="MEVN Offer Price" name="priceOffer" [className]="'w-10 text-end'"></app-header>
+
+        <app-column value="materialCode"></app-column>
+        <app-column value="model"></app-column>
+        <app-column value="qty" columnType="int" [cssClass]="'text-end'"></app-column>
+        <app-column value="standardPriceToDist" columnType="int" typeControl="price"></app-column>
+        <app-column value="standardAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="requestedAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="priceOffer" columnType="int" typeControl="price"></app-column>
+      </app-data-table>
+    </div>
+  </ng-template>
+</abp-modal>

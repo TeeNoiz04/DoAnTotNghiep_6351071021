@@ -1,0 +1,223 @@
+<div *ngIf="enableErrorHandling && hasAnyErrors()" class="alert alert-danger mb-1 p-1">
+  <h5 class="alert-heading">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    Validation Errors Found
+  </h5>
+  <p class="mb-0">
+    There are {{ countErrorRows() }} {{ countErrorRows() > 1 ? 'rows' : 'row' }} with validation errors. Please review
+    and fix them before proceeding.
+  </p>
+</div>
+<div class="grouped-table-container" [style.height]="height" #tableContainer>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped mb-0">
+      <thead>
+        <tr class="group-header-row" *ngIf="showGroupNameColumn">
+          <th *ngFor="let group of columnGroups" [attr.colspan]="getColumnSpan(group)" [ngClass]="group.class">
+            {{ group.name }}
+          </th>
+        </tr>
+        <tr>
+          <th
+            *ngFor="let col of allColumns; let i = index"
+            [style.minWidth]="col.width || 'auto'"
+            [ngClass]="getHeaderClass(col, i)">
+            <!-- Header checkbox for select all -->
+            <ng-container *ngIf="col.componentType === 'checkbox' && enableSelection; else normalHeader">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  [checked]="isAllSelected()"
+                  [indeterminate]="isPartiallySelected()"
+                  (change)="toggleAllSelection()"
+                  id="selectAll" />
+                <!-- <label class="form-check-label" for="selectAll">
+                  {{ col.header }}
+                </label> -->
+              </div>
+            </ng-container>
+            <ng-template #normalHeader>
+              {{ col.header }}
+            </ng-template>
+          </th>
+        </tr>
+        <tr class="summary-row" *ngIf="showSummary">
+          <th *ngFor="let col of allColumns; let i = index" [ngClass]="getCellClass(col, i)">
+            {{ getSummaryValue(col) }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let row of data; let i = index">
+          <tr [ngClass]="getRowClass(row)" (click)="toggleRowExpansion(row)">
+            <td
+              *ngFor="let col of allColumns; let j = index"
+              [ngClass]="getCellClass(col, j, row)"
+              [attr.data-column-field]="col.field">
+              <ng-container *ngIf="col.useComponent; else textContent">
+                <ng-container [ngSwitch]="col.componentType">
+                  <ng-container *ngSwitchCase="'status'">
+                    <app-status-label *ngIf="getComponentData(col, row)" [status]="getComponentData(col, row)">
+                    </app-status-label>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'checkbox'">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [checked]="isSelected(row)"
+                        (change)="toggleSelection(row, $event)"
+                        [id]="'checkbox-' + i + '-' + j"
+                        (click)="$event.stopPropagation()" />
+                    </div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'action'">
+                    <div class="d-flex gap-1">
+                      <button
+                        *ngIf="col.showHistory"
+                        class="btn btn-link p-0"
+                        (click)="onHistoryClick(row, $event)"
+                        ngbTooltip="History"
+                        placement="top"
+                        container="body">
+                        <i class="bi bi-clock-history text-muted icon-hover-delete"></i>
+                      </button>
+                      <button
+                        *ngIf="col.showEdit && !isEditing(row)"
+                        class="btn btn-link p-0"
+                        (click)="onActionClick('edit', row, col, $event)"
+                        ngbTooltip="Edit"
+                        placement="top"
+                        container="body">
+                        <i class="bi bi-pencil text-primary icon-hover-edit"></i>
+                      </button>
+                      <button
+                        *ngIf="col.showEdit && isEditing(row)"
+                        class="btn btn-link p-0"
+                        (click)="onActionClick('save', row, col, $event)"
+                        ngbTooltip="Save"
+                        placement="top"
+                        container="body">
+                        <i class="bi bi-check text-success icon-hover-save"></i>
+                      </button>
+                      <button
+                        *ngIf="col.showEdit && isEditing(row)"
+                        class="btn btn-link p-0"
+                        (click)="onActionClick('cancel', row, col, $event)"
+                        ngbTooltip="Cancel"
+                        placement="top"
+                        container="body">
+                        <i class="bi bi-x text-secondary icon-hover-cancel"></i>
+                      </button>
+                      <button
+                        *ngIf="col.showDelete && !isEditing(row)"
+                        class="btn btn-link p-0"
+                        (click)="onActionClick('delete', row, col, $event)"
+                        ngbTooltip="Delete"
+                        placement="top"
+                        container="body">
+                        <i class="bi bi-trash text-danger icon-hover-delete"></i>
+                      </button>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'clickCell'">
+                    <!--basic span that is clickable-->
+                    <span
+                      class="clickable-cell"
+                      (click)="onCellClick(col, row)"
+                      [innerHTML]="formatCellValue(col, row)"></span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'input'">
+                    <ng-container *ngIf="col.editable && isEditing(row); else readOnlyValue">
+                      <input
+                        *ngIf="col.inputType === 'number'; else textInput"
+                        autocomplete="off"
+                        type="number"
+                        class="form-control form-control-sm"
+                        [value]="getCellValue(col, row)"
+                        (input)="onInputEvent($event, col.field, row, col)"
+                        [placeholder]="col.header"
+                        min="0"
+                        step="1" />
+                      <ng-template #textInput>
+                        <input
+                          autocomplete="off"
+                          type="text"
+                          class="form-control form-control-sm"
+                          [value]="getCellValue(col, row)"
+                          (input)="onInputEvent($event, col.field, row, col)"
+                          [placeholder]="col.header" />
+                      </ng-template>
+                    </ng-container>
+                    <ng-template #readOnlyValue>
+                      <span [innerHTML]="formatCellValue(col, row)"></span>
+                    </ng-template>
+                  </ng-container>
+                  <div *ngSwitchDefault>Unknown component type</div>
+                </ng-container>
+              </ng-container>
+              <ng-template #textContent>
+                <ng-container *ngIf="col.editable && isEditing(row); else readOnlyText">
+                  <input
+                    *ngIf="col.inputType === 'number'; else textInputFallback"
+                    type="number"
+                    autocomplete="off"
+                    class="form-control form-control-sm"
+                    [value]="getCellValue(col, row)"
+                    (input)="onInputEvent($event, col.field, row, col)"
+                    [placeholder]="col.header"
+                    min="0"
+                    step="1" />
+                  <ng-template #textInputFallback>
+                    <input
+                      type="text"
+                      autocomplete="off"
+                      class="form-control form-control-sm"
+                      [value]="getCellValue(col, row)"
+                      (input)="onInputEvent($event, col.field, row, col)"
+                      [placeholder]="col.header" />
+                  </ng-template>
+                </ng-container>
+                <ng-template #readOnlyText>
+                  <span [innerHTML]="formatCellValue(col, row)"></span>
+                </ng-template>
+              </ng-template>
+            </td>
+          </tr>
+
+          <tr
+            *ngIf="enableErrorHandling && row[hasErrorsField] && expandedRows[row[rowIndexField] || i]"
+            class="error-details-row">
+            <td [attr.colspan]="allColumns.length" class="error-details p-0">
+              <div class="error-container p-2">
+                <div class="error-header mb-2">
+                  <span class="badge bg-danger me-2">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Validation Errors
+                  </span>
+                </div>
+                <ul class="error-list m-0 ps-4">
+                  <li *ngFor="let error of row[errorField]" class="error-item">
+                    {{ error }}
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+
+        <tr *ngIf="!data || data.length === 0">
+          <td [attr.colspan]="allColumns.length" class="text-center p-3">No data available</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- History Modal -->
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="currentApprovalHistories"
+  [title]="historyModalTitle"
+  (disappear)="closeHistoryModal()">
+</app-history-modal>

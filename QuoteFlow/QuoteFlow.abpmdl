@@ -1,0 +1,117 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXTheme": {
+      "version": "4.1.1",
+      "isInstalled": true
+    },
+    "Volo.Abp.TextTemplateManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.LanguageManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.FileManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.OpenIddict.Pro": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.Gdpr": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.AuditLogging.Pro": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.Identity.Pro": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.Account.Pro": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "9.1.3",
+      "isInstalled": true
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "QuoteFlow.Application": {
+      "path": "src/QuoteFlow.Application/QuoteFlow.Application.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.Application.Tests": {
+      "path": "test/QuoteFlow.Application.Tests/QuoteFlow.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "QuoteFlow.Domain.Shared": {
+      "path": "src/QuoteFlow.Domain.Shared/QuoteFlow.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.Application.Contracts": {
+      "path": "src/QuoteFlow.Application.Contracts/QuoteFlow.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.HttpApi": {
+      "path": "src/QuoteFlow.HttpApi/QuoteFlow.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.HttpApi.Client": {
+      "path": "src/QuoteFlow.HttpApi.Client/QuoteFlow.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.EntityFrameworkCore.Tests": {
+      "path": "test/QuoteFlow.EntityFrameworkCore.Tests/QuoteFlow.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "QuoteFlow.EntityFrameworkCore": {
+      "path": "src/QuoteFlow.EntityFrameworkCore/QuoteFlow.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.TestBase": {
+      "path": "test/QuoteFlow.TestBase/QuoteFlow.TestBase.abppkg",
+      "folder": "test"
+    },
+    "QuoteFlow.Domain.Tests": {
+      "path": "test/QuoteFlow.Domain.Tests/QuoteFlow.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "QuoteFlow.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/QuoteFlow.HttpApi.Client.ConsoleTestApp/QuoteFlow.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "QuoteFlow.DbMigrator": {
+      "path": "src/QuoteFlow.DbMigrator/QuoteFlow.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.HttpApi.Host": {
+      "path": "src/QuoteFlow.HttpApi.Host/QuoteFlow.HttpApi.Host.abppkg",
+      "folder": "src"
+    },
+    "QuoteFlow.Domain": {
+      "path": "src/QuoteFlow.Domain/QuoteFlow.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}

@@ -1,0 +1,1144 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-1">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <div class="content-header-body">
+            <div class="subtext">Price Offer</div>
+            <div class="content-header-content">
+              <h1 class="content-header-title m-0">
+                {{ service?.selected?.priceOfferCode }}
+              </h1>
+            </div>
+          </div>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0 mr-10">
+          <div class="action-request text-end">
+            <div class="action-buttons-wrapper">
+              <!-- Information Actions -->
+              <button
+                class="btn btn-primary"
+                type="button"
+                (click)="viewHistory()"
+                placement="bottom"
+                ngbTooltip="History"
+                triggers="hover">
+                <i class="bi bi-clock-history me-1"></i>
+                <span class="btn-text"> History</span>
+              </button>
+              <button
+                class="btn btn-primary position-relative"
+                type="button"
+                (click)="toggleDiscussionBox()"
+                placement="bottom"
+                ngbTooltip="Discussion"
+                triggers="hover">
+                <i class="bi bi-chat-dots-fill me-1"></i>
+                <span class="btn-text"> Discussion</span>
+                <span
+                  *ngIf="messagesCount"
+                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style="
+                    font-size: 0.7rem;
+                    min-width: 18px;
+                    height: 18px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                  {{ messagesCount }}
+                </span>
+              </button>
+
+              <!-- Import Dropdown -->
+              <div ngbDropdown container="body" class="d-inline-block" *ngIf="hasImportActions()">
+                <button
+                  class="btn btn-blue-light button-115"
+                  data-toggle="dropdown"
+                  placement="bottom"
+                  ngbTooltip="Import"
+                  triggers="hover"
+                  aria-haspopup="true"
+                  ngbDropdownToggle>
+                  <i class="bi bi-upload me-1"></i>
+                  <span class="btn-text">Import</span>
+                </button>
+                <div ngbDropdownMenu>
+                  <button
+                    *ngIf="service?.selected?.flags?.canAddMoreItems"
+                    ngbDropdownItem
+                    (click)="onOpenImportPriceOffer(importPriceOfferType.AddMoreItems)">
+                    <i class="bi bi-file-earmark-arrow-down me-2"></i>
+                    Add More Items
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isDetailPropertiesChangeable"
+                    ngbDropdownItem
+                    (click)="onOpenImportPriceOffer(importPriceOfferType.UpdateItemProperties)">
+                    <i class="bi bi-file-earmark-arrow-down me-2"></i>
+                    Change Item Properties
+                  </button>
+                </div>
+              </div>
+
+              <!-- Export Dropdown -->
+              <div ngbDropdown container="body" class="d-inline-block" *ngIf="hasExportActions()">
+                <button
+                  class="btn btn-blue-light button-115"
+                  data-toggle="dropdown"
+                  placement="bottom"
+                  ngbTooltip="Export"
+                  triggers="hover"
+                  aria-haspopup="true"
+                  ngbDropdownToggle>
+                  <i class="bi bi-download me-1"></i>
+                  <span class="btn-text">Export</span>
+                </button>
+                <div ngbDropdownMenu>
+                  <!-- [disabled]="isExportPriceOfferBusy" -->
+                  <!-- <button ngbDropdownItem [disabled]="true" (click)="exportPriceOffer()">
+                  <i class="bi bi-file-earmark-arrow-down me-2" *ngIf="!isExportPriceOfferBusy"></i>
+                  <div class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isExportPriceOfferBusy">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  Export Price Offer
+                </button> -->
+                  <button
+                    *abpPermission="AppPermissions.PriceOffers.ExportAllDetails"
+                    ngbDropdownItem
+                    [disabled]="isExportAllDetailBusy"
+                    (click)="exportAllDetail()">
+                    <i class="bi bi-file-earmark-arrow-down me-2" *ngIf="!isExportAllDetailBusy"></i>
+                    <div class="spinner-border spinner-border-sm me-2" role="status" *ngIf="isExportAllDetailBusy">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    Export All Detail
+                  </button>
+                </div>
+              </div>
+
+              <!-- Download Dropdown -->
+              <div ngbDropdown container="body" class="d-inline-block" *ngIf="hasDownloadTemplateActions()">
+                <button
+                  class="btn btn-blue-light button-115"
+                  data-toggle="dropdown"
+                  placement="bottom"
+                  ngbTooltip="Download"
+                  triggers="hover"
+                  aria-haspopup="true"
+                  ngbDropdownToggle>
+                  <i class="bi bi-cloud-download me-1"></i>
+                  <span class="btn-text">Download</span>
+                </button>
+                <div ngbDropdownMenu>
+                  <button
+                    *abpPermission="AppPermissions.PriceOffers.Uploads.AddMoreItems"
+                    ngbDropdownItem
+                    (click)="onDownloadTemplate('add-more-items')">
+                    <i class="bi bi-file-earmark-arrow-down me-2"></i>
+                    Add More Items
+                  </button>
+                  <button
+                    *abpPermission="AppPermissions.PriceOffers.Uploads.ChangeItemProperties"
+                    ngbDropdownItem
+                    (click)="onDownloadTemplate('change-item-properties')">
+                    <i class="bi bi-file-earmark-arrow-down me-2"></i>
+                    Change Item Properties
+                  </button>
+                </div>
+              </div>
+
+              <!-- Approval Actions Dropdown -->
+              <div ngbDropdown container="body" class="d-inline-block" *ngIf="hasApprovalActions()">
+                <button
+                  class="btn btn-blue-gradient button-115"
+                  data-toggle="dropdown"
+                  placement="bottom"
+                  ngbTooltip="Action"
+                  triggers="hover"
+                  aria-haspopup="true"
+                  ngbDropdownToggle>
+                  <i class="bi bi-check-circle-fill me-1"></i>
+                  <span class="btn-text">Actions</span>
+                </button>
+                <div ngbDropdownMenu>
+                  <button
+                    *ngIf="service?.selected?.flags?.isApprovable"
+                    ngbDropdownItem
+                    (click)="onActionStart(requestHistoryAction.Approved)">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Approve
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isRejectable"
+                    ngbDropdownItem
+                    (click)="onActionStart(requestHistoryAction.Rejected)">
+                    <i class="bi bi-slash-circle me-2"></i>
+                    Reject
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isCancellable"
+                    ngbDropdownItem
+                    (click)="onActionStart(requestHistoryAction.Cancelled)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancel
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isClosable"
+                    ngbDropdownItem
+                    (click)="onActionStart(requestHistoryAction.Closed)">
+                    <i class="bi bi-slash-circle me-2"></i>
+                    Close
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isProjectResultSubmittable"
+                    ngbDropdownItem
+                    (click)="onOpenSubmitProjectResultModal()">
+                    <i class="bi bi-trophy me-2"></i>
+                    Submit Project Result
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isPreOrderResultConfirmable"
+                    ngbDropdownItem
+                    (click)="onOpenConfirmPreOrderResultModal()">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Confirm Pre-order Result
+                  </button>
+                  <button
+                    *ngIf="service?.selected?.flags?.isSpecialInputPriceApplicable"
+                    ngbDropdownItem
+                    (click)="onOpenApplySpecialPriceModal()">
+                    <i class="bi bi-currency-dollar me-2"></i>
+                    Apply Special Price
+                  </button>
+                </div>
+              </div>
+              <!-- Navigation Actions -->
+              <button
+                class="btn btn-secondary"
+                type="button"
+                (click)="navigateBack()"
+                placement="bottom"
+                ngbTooltip="Back"
+                triggers="hover">
+                <i class="bi bi-arrow-left-circle me-1"></i>
+                <span class="btn-text">Back</span>
+              </button>
+            </div>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.selected; else loadingTemplate">
+      <app-discussion-box
+        [isOpen]="isDiscussionBoxOpen"
+        [priceOfferId]="service?.selected?.id"
+        [priceOfferCode]="service?.selected?.priceOfferCode"
+        (closeDiscussion)="toggleDiscussionBox()"
+        (messagesCount)="getMessagesCount($event)">
+      </app-discussion-box>
+
+      <div class="form-details">
+        <!-- Import Information Form Section -->
+        <div class="card card-enhanced mb-0">
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            (click)="toggleCardCollapse('spoInformation')">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-info-circle me-2"></i>
+              SPO Information
+            </h5>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-icon" type="button">
+                <i class="bi" [ngClass]="isCardCollapsed['spoInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['spoInformation']">
+            <div class="row mb-0">
+              <div class="col-md-3">
+                <label class="form-label">SPO Code</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  readonly
+                  [ngModel]="service?.selected?.priceOfferCode" />
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Approval Status</label>
+                <div class="form-control-plaintext">
+                  <app-status-label [status]="service?.selected?.approvalStatus"></app-status-label>
+                </div>
+              </div>
+              <div class="col-md-3" *ngIf="service.selected?.currentApproverRoleName">
+                <label class="form-label">Current Approver</label>
+                <div class="form-control-plaintext">
+                  <a class="text-primary text-decoration-none cursor-pointer" (click)="onShowApprovers()">
+                    {{ service.selected.currentApproverRoleName }}
+                  </a>
+                </div>
+              </div>
+              <div class="col-md-3" *ngIf="service?.selected?.projectResultStatus">
+                <label class="form-label">Result Status</label>
+                <div class="form-control-plaintext">
+                  <app-status-label [status]="service?.selected?.projectResultStatus"></app-status-label>
+                </div>
+              </div>
+            </div>
+            <app-import-information-form [isReadonly]="true" [useServiceData]="true" [parentDataLoaded]="dataLoaded" />
+          </div>
+        </div>
+        <!-- Project Information Form Section -->
+        <div class="card card-enhanced mb-0" *ngIf="service.selected?.priceOfferCode?.startsWith('PP')">
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            (click)="toggleCardCollapse('projectInformation')">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-info-circle me-2"></i>
+              Project Information
+            </h5>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-icon" type="button">
+                <i
+                  class="bi"
+                  [ngClass]="isCardCollapsed['projectInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['projectInformation']">
+            <app-project-information-form [useServiceData]="true" [parentDataLoaded]="dataLoaded" />
+          </div>
+        </div>
+
+        <!-- Project Result Form Section -->
+        <div class="card card-enhanced mb-0" *ngIf="service.selected?.projectResultStatus">
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            (click)="toggleCardCollapse('projectResult')">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-trophy me-2"></i>
+              Project Result
+            </h5>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-icon" type="button">
+                <i class="bi" [ngClass]="isCardCollapsed['projectResult'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['projectResult']">
+            <div class="form-container">
+              <div class="row mb-0 g-2 mt-0">
+                <div class="col-md-2">
+                  <label class="form-label">Result Status</label>
+                  <div class="form-control-plaintext">
+                    <app-status-label [status]="service?.selected?.projectResultStatus"></app-status-label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Confirmed Date</label>
+                  <input
+                    autocomplete="off"
+                    type="text"
+                    class="form-control"
+                    readonly
+                    [ngModel]="service.selected.projectResultSubmittedAt | date: 'short'" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">User name</label>
+                  <input
+                    autocomplete="off"
+                    class="form-control"
+                    readonly
+                    [ngModel]="service.selected.projectResultSubmitterFullName" />
+                </div>
+              </div>
+              <div class="row mb-0 g-2">
+                <div class="col-md-12">
+                  <label class="form-label">Note</label>
+                  <input
+                    autocomplete="off"
+                    class="form-control"
+                    readonly
+                    [ngModel]="service.selected.projectResultNote" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Special Input Price Form Section -->
+        <div class="card card-enhanced mb-0" *ngIf="service.selected?.flags?.isSpecialInputPriceViewable">
+          <div
+            class="card-header d-flex justify-content-between align-items-center"
+            (click)="toggleCardCollapse('specialInputPrice')">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-currency-dollar me-2"></i>
+              Special Input Price
+            </h5>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-icon" type="button">
+                <i
+                  class="bi"
+                  [ngClass]="isCardCollapsed['specialInputPrice'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['specialInputPrice']">
+            <div class="form-container">
+              <!-- Row 1: Special Account Code and Name -->
+              <div class="row mb-1">
+                <div class="col-md-3">
+                  <label class="form-label">Special Account Code</label>
+                  <input
+                    autocomplete="off"
+                    type="text"
+                    class="form-control"
+                    readonly
+                    [value]="service.selected?.accountNo || ''" />
+                </div>
+                <div class="col-md-9">
+                  <label class="form-label">Special Account Name</label>
+                  <input
+                    autocomplete="off"
+                    type="text"
+                    class="form-control"
+                    readonly
+                    [value]="getSpecialInputPriceDisplayName()" />
+                </div>
+              </div>
+
+              <!-- Row 2: Date and Updated By -->
+              <div class="row mb-1">
+                <div class="col-md-3">
+                  <label class="form-label">Date</label>
+                  <input
+                    autocomplete="off"
+                    type="text"
+                    class="form-control"
+                    readonly
+                    [value]="
+                      service.selected?.specialInputPriceAssignedTime
+                        ? (service.selected.specialInputPriceAssignedTime | date: 'yyyy-MM-dd')
+                        : ''
+                    " />
+                </div>
+                <div class="col-md-9">
+                  <label class="form-label">Updated By</label>
+                  <input
+                    autocomplete="off"
+                    type="text"
+                    class="form-control"
+                    readonly
+                    [value]="getSpecialInputPriceAssignerInfo()" />
+                </div>
+              </div>
+
+              <!-- Row 3: Note -->
+              <div class="row mb-0">
+                <div class="col-12">
+                  <label class="form-label">Note</label>
+                  <textarea
+                    class="form-control custom-textarea"
+                    rows="2"
+                    readonly
+                    [value]="service.selected?.specialInputPriceAssignmentNote || ''"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attachments Section -->
+        <div class="card card-enhanced mb-0">
+          <div
+            class="card-header card-header-custom d-flex justify-content-between align-items-center cursor-pointer"
+            (click)="toggleCardCollapse('attachments')">
+            <h5 class="mb-0 mt-0 d-flex align-items-center">
+              <i class="bi bi-paperclip me-2"></i>
+              Attachments
+              <span class="ms-2 badge bg-secondary">{{ attachmentLength }}</span>
+            </h5>
+            <div class="d-flex align-items-center gap-2">
+              <a
+                (click)="fileInput.click(); $event.stopPropagation()"
+                class="px-1 d-flex align-items-center"
+                title="Add new attachment">
+                <i class="bi bi-plus me-1"></i>Add
+              </a>
+              <div class="card-actions">
+                <button class="btn btn-sm btn-icon" type="button">
+                  <i class="bi" [ngClass]="isCardCollapsed['attachments'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['attachments']">
+            <app-data-table
+              [itemEdit]="false"
+              [itemRemove]="true"
+              [records]="service?.selected?.attachments || []"
+              (removeItemHandler)="deleteAttachment($event)"
+              (clickCellItemHandler)="downloadFile($event?.entry?.id, $event?.entry?.fileName)">
+              <!-- <app-header title="" name="action"></app-header> -->
+              <app-header title="" className="w-5"></app-header>
+              <app-header title="File Name" name="fileName" [className]="'w-60'"></app-header>
+              <app-header title="Created By" name="creatorName" [className]="'w-30'"></app-header>
+
+              <app-column type="action"></app-column>
+              <app-column value="fileName" type="clickCell" columnType="wrapText"></app-column>
+              <app-column value="creatorName"></app-column>
+            </app-data-table>
+            <input
+              type="file"
+              id="attachmentFile"
+              class="form-control"
+              (change)="onFileSelected($event)"
+              multiple
+              style="display: none"
+              #fileInput />
+          </div>
+        </div>
+
+        <div
+          class="card card-enhanced mb-0"
+          [class.card-loading]="isLoading"
+          *ngIf="service.selected?.priceOfferCode?.startsWith('PP')">
+          <div
+            (click)="toggleCardCollapse('customerInformation')"
+            class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-people me-2"></i>
+              Customer Information
+              <span class="ms-2 badge bg-info">{{ service?.customers?.items?.length }} items</span>
+            </h5>
+            <div class="card-actions">
+              <button class="btn btn-sm btn-icon" type="button">
+                <i
+                  class="bi"
+                  [ngClass]="isCardCollapsed['customerInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+              </button>
+            </div>
+          </div>
+          <div class="card-body" [ngbCollapse]="isCardCollapsed['customerInformation']">
+            <div *ngIf="isLoading" class="card-loading-overlay">
+              <div class="spinner-border text-primary"></div>
+            </div>
+            <app-customer-information-table />
+          </div>
+        </div>
+
+        <!-- Price Offer Details Table Section -->
+        <div class="card card-enhanced mb-0" [class.card-loading]="isLoading">
+          <div class="card-header default-cursor d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-table me-2"></i>
+              Price Offer Items
+              <span class="ms-2 badge bg-info">{{ filteredItemsCount }} of {{ totalItemsCount }} items</span>
+              <span *ngIf="rejectedItemsCount > 0" class="ms-1 badge bg-danger">
+                {{ rejectedItemsCount }} rejected
+              </span>
+              <span *ngIf="approvedItemsCount > 0" class="ms-1 badge bg-success">
+                {{ approvedItemsCount }} approved
+              </span>
+              <span *ngIf="inProgressItemsCount > 0" class="ms-1 badge bg-warning">
+                {{ inProgressItemsCount }} in progress
+              </span>
+              <span *ngIf="cancelledItemsCount > 0" class="ms-1 badge bg-danger">
+                {{ cancelledItemsCount }} cancelled
+              </span>
+            </h5>
+          </div>
+          <div class="card-body pb-0">
+            <div *ngIf="isLoading" class="card-loading-overlay">
+              <div class="spinner-border text-primary"></div>
+            </div>
+
+            <!-- Search and Filter Controls -->
+            <div class="row">
+              <div class="col-10 col-md-4">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search Material Code, Model Name..."
+                    [(ngModel)]="searchText" />
+                </div>
+              </div>
+
+              <!-- Show Rejected Items Checkbox -->
+              <div class="col-2 col-md-1">
+                <div class="form-check" *ngIf="rejectedItemsCount > 0">
+                  <input class="form-check-input" type="checkbox" id="showRejected" [(ngModel)]="showRejected" />
+                  <label class="form-check-label fw-bold" for="showRejected">Rejected</label>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-7 d-flex justify-content-end">
+                <!-- Budget Status Indicators -->
+                <app-metrics-panel containerClass="row align-items-center">
+                  <app-metric-range
+                    *ngIf="!service.selected?.priceOfferCode?.startsWith('AP')"
+                    label="Offer Total"
+                    [currentValue]="service?.selected?.totalMEVNOfferAmount || 0"
+                    [minValue]="getOfferBudgetMin()"
+                    [maxValue]="getOfferBudgetMax()"
+                    iconClass="bi bi-graph-up text-primary"
+                    [formatter]="currencyFormatter">
+                  </app-metric-range>
+
+                  <app-metric-range
+                    *ngIf="service?.selected?.hasDPOUsed"
+                    [label]="getDpoUsedLabel()"
+                    [currentValue]="service?.selected?.totalDpoUsedAmount || 0"
+                    [minValue]="0"
+                    [maxValue]="service?.selected?.totalUsableOfferAmount || 0"
+                    iconClass="bi bi-cash-stack text-success"
+                    [formatter]="currencyFormatter"
+                    currentLabel="DPO Used"
+                    minLabel="Minimum"
+                    maxLabel="Usable Amount"
+                    remainingAddLabel="Remaining Usable"
+                    remainingReduceLabel="Amount Used">
+                  </app-metric-range>
+
+                  <app-metric-progress
+                    label="Discount"
+                    [currentValue]="(service?.selected?.discountRatio || 0) * 100"
+                    [maxValue]="getDiscountRatioMax()"
+                    iconClass="bi bi-percent text-success"
+                    [formatter]="percentFormatter"
+                    suffix="%"
+                    [abbreviationDecimalPlaces]="2">
+                  </app-metric-progress>
+                </app-metrics-panel>
+              </div>
+            </div>
+          </div>
+
+          <!-- Batch Actions for SPO.AP -->
+          <div *ngIf="canCancelItem && filteredPriceOfferDetails?.length > 0" class="m-1">
+            <div class="d-flex gap-2 align-items-center">
+              <span class="text-muted small"> {{ selectedItems?.length || 0 }} item(s) selected </span>
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                [disabled]="!selectedItems?.length || cancelBusy"
+                (click)="onCancel()">
+                <i class="bi bi-x-circle me-1"></i>
+                <span *ngIf="!cancelBusy">Cancel Selected</span>
+                <span *ngIf="cancelBusy">
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                  Cancelling...
+                </span>
+              </button>
+            </div>
+          </div>
+          <div class="ms-3 me-3 mb-3">
+            <app-grouped-table
+              [data]="filteredPriceOfferDetails"
+              [isGPViewable]="isGPViewable"
+              [isLandedCostViewable]="isLandedCostViewable"
+              [summaryData]="summaryData"
+              [canCancelItem]="canCancelItem"
+              [selectedItems]="selectedItems"
+              [trackBy]="getTableTrackBy()"
+              (historyClick)="onItemHistoryClick($event)"
+              (selectionChange)="onSelectionChange($event)">
+            </app-grouped-table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading price offer data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>
+
+<!-- History Modal -->
+<app-history-modal
+  [isVisible]="showHistory"
+  [approvalHistories]="service.approvalHistories"
+  [title]="'History'"
+  (disappear)="closeHistoryDialog()"
+  (submittedMoreItemsClicked)="onSubmittedMoreItems($event)">
+</app-history-modal>
+
+<!-- Project Information Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [visible]="showProjectInfo"
+  [options]="{ size: 'lg', animation: true, centered: true }"
+  (disappear)="closeProjectInfoDialog()">
+  <ng-template #abpHeader>
+    <h3>Project Information</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="table-responsive table-af">
+      <table class="table table-bordered table-striped table-actions mb-0">
+        <thead>
+          <tr>
+            <th style="width: 40%">Material Group</th>
+            <th style="width: 30%" class="text-end">Offer Amount</th>
+            <th style="width: 30%" class="text-end">Standard Amount</th>
+          </tr>
+          <tr class="table-summary">
+            <th class="text-end" colspan="2">
+              {{ sumOfferAmount }}
+            </th>
+            <th class="text-end">
+              {{ sumStandardAmount }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="service.projectInfo?.items?.length; else noData">
+            <tr *ngFor="let item of service.projectInfo.items">
+              <td>{{ item.materialGroup }}</td>
+              <td class="text-end">{{ formatCurrency(item.offerAmount) }}</td>
+              <td class="text-end">{{ formatCurrency(item.standardAmount) }}</td>
+            </tr>
+          </ng-container>
+          <ng-template #noData>
+            <tr>
+              <td colspan="3" class="text-center py-3">No project information available</td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter></ng-template>
+</abp-modal>
+
+<!-- Import Price Offer Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="service.showImportPriceOffer"
+  [busy]="importBusy"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    size: 'md',
+  }">
+  <ng-template #abpHeader>
+    <h3>{{ service.importMode === 'UpdateItemProperties' ? 'Change Item Properties' : 'Add More Items' }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-price-offer #importPriceOffer [importMode]="service.importMode" [priceOffer]="service.selected" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+    <abp-button class="btn-primary" iconClass="fa fa-check" type="button" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="service.showResultImportPriceOffer"
+  [busy]="submitBusy"
+  [options]="{
+    centered: true,
+    keyboard: true,
+    fullscreen: true,
+    backdrop: 'static',
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onBackFromResult()">
+  <ng-template #abpHeader>
+    <app-error-display [fileName]="service.resultImport?.fileName" [errors]="service.resultImport?.errors || []">
+    </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-price-offer
+      #resultImportPriceOffer
+      [importMode]="service.importMode"
+      [resultImportItems]="service.resultImport"
+      [importInformation]="importPriceOffer?.importInformation" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="onBackFromResult()">
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <abp-button
+      iconClass="bi bi-send"
+      class="btn-primary"
+      type="submit"
+      [disabled]="service.resultImport?.errors?.length > 0"
+      (click)="onSubmitImport()">
+      {{ 'Submit' }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="service.openCommentRequestModal"
+  [busy]="actionBusy"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  (disappear)="onCloseCommentRequestModal()">
+  <ng-template #abpHeader>
+    <h3>
+      {{ actionTitle }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div>
+      <div class="mb-2">
+        <label class="form-label" [ngClass]="{ 'label-required': service.requiredComment }"> Comment </label>
+        <textarea
+          class="form-control custom-textarea"
+          id="cancel-request-comment"
+          [(ngModel)]="actionComment"
+          [required]="service.requiredComment"
+          appAutoResize></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-secondary" type="button" (click)="onCloseCommentRequestModal()">
+      <i class="bi bi-x-circle"></i>
+      <span>Cancel</span>
+    </button>
+    <abp-button
+      iconClass="bi bi-check-circle"
+      class="btn-primary"
+      [disabled]="isSubmitDisabled"
+      (click)="onActionConfirmed()">
+      {{ 'Submit' }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<!-- Submit Project Result Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showSubmitProjectResultModal"
+  [busy]="projectResultBusy"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  (disappear)="onCloseSubmitProjectResultModal()">
+  <ng-template #abpHeader>
+    <h3>Submit Project Result</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div>
+      <!-- Win/PreOrder/Loss Selection -->
+      <div class="mb-3">
+        <label class="form-label label-required">Project Result</label>
+        <ng-select
+          [(ngModel)]="projectResult.resultStatus"
+          [clearable]="false"
+          (ngModelChange)="onProjectResultChange()">
+          <ng-option value="WON">Win</ng-option>
+          <ng-option value="PRE_ORDER">Pre-Order</ng-option>
+          <ng-option value="LOST">Lost</ng-option>
+        </ng-select>
+      </div>
+
+      <!-- Customer Selection Table (only shown when Win or PreOrder is selected) -->
+      <div class="mb-3" *ngIf="projectResult.resultStatus === 'WON' || projectResult.resultStatus === 'PRE_ORDER'">
+        <label class="form-label label-required">Select one customer per channel</label>
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          You must select exactly one customer per channel. All channels must have a selection.
+          <br />
+          <small class="text-muted">
+            <i class="bi bi-lightbulb me-1"></i>
+            Customers that are the only ones in their channel are automatically selected and cannot be unselected.
+          </small>
+        </div>
+        <div class="table-responsive table-af">
+          <table class="table table-bordered table-striped table-actions mb-0">
+            <thead>
+              <tr>
+                <th class="text-center" style="width: 80px">Select</th>
+                <th class="text-start">Sale Channel</th>
+                <th class="text-center">Customer Tax Code</th>
+                <th class="text-start">Company Official Name</th>
+                <th class="text-start">Official Address</th>
+                <th class="text-start">Customer Nationality</th>
+                <th class="text-start">Customer Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="sortedCustomers?.length; else noCustomerData">
+                <tr *ngFor="let customer of sortedCustomers; let i = index">
+                  <td class="text-center">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [checked]="isCustomerSelected(customer)"
+                      [disabled]="isCustomerDisabled(customer)"
+                      (change)="onCustomerSelectionChange(customer, $event)"
+                      [id]="'customer-' + i" />
+                    <span
+                      *ngIf="isCustomerDisabled(customer)"
+                      class="text-muted ms-1"
+                      title="Auto-selected (only customer in channel)">
+                      <i class="bi bi-lock-fill"></i>
+                    </span>
+                  </td>
+                  <td>{{ customer.saleChannel }}</td>
+                  <td>{{ customer.customerTaxCode }}</td>
+                  <td>{{ customer.customerName }}</td>
+                  <td>{{ customer.customerAddress }}</td>
+                  <td>{{ customer.customerNationality }}</td>
+                  <td>{{ customer.customerType }}</td>
+                </tr>
+              </ng-container>
+              <ng-template #noCustomerData>
+                <tr>
+                  <td colspan="7" class="text-center py-3">No customer data available</td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Validation Messages -->
+        <div
+          class="mt-2"
+          *ngIf="
+            (projectResult.resultStatus === 'WON' || projectResult.resultStatus === 'PRE_ORDER') &&
+            getCustomerSelectionErrors().length > 0
+          ">
+          <div class="alert alert-danger">
+            <ul class="mb-0">
+              <li *ngFor="let error of getCustomerSelectionErrors()">{{ error }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Note Field -->
+      <div class="mb-3">
+        <label class="form-label label-required">Note</label>
+        <textarea class="form-control" [(ngModel)]="projectResult.note" [required]="true" rows="3"></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-secondary" type="button" (click)="onCloseSubmitProjectResultModal()">
+      <i class="bi bi-x-circle"></i>
+      <span>Cancel</span>
+    </button>
+    <abp-button
+      iconClass="bi bi-check-circle"
+      class="btn-primary"
+      [disabled]="!isSubmitProjectResultValid()"
+      (click)="onSubmitProjectResult()">
+      {{ 'Submit' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<!-- Confirm Pre-order Result Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showConfirmPreOrderResultModal"
+  [busy]="preOrderResultBusy"
+  [options]="{
+    size: 'md',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  (disappear)="onCloseConfirmPreOrderResultModal()">
+  <ng-template #abpHeader>
+    <h3>Confirm Pre-order Result</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div>
+      <!-- Win/Lose Selection -->
+      <div class="mb-3">
+        <label class="form-label label-required">Result</label>
+        <ng-select [(ngModel)]="preOrderResult.resultStatus" [clearable]="false" placeholder="Select result" required>
+          <ng-option value="WON">Win</ng-option>
+          <ng-option value="LOST">Lost</ng-option>
+        </ng-select>
+      </div>
+
+      <!-- Note Field -->
+      <div class="mb-3">
+        <label class="form-label label-required">Note</label>
+        <textarea class="form-control" [(ngModel)]="preOrderResult.note" [required]="true" rows="3"></textarea>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button class="btn btn-secondary" type="button" (click)="onCloseConfirmPreOrderResultModal()">
+      <i class="bi bi-x-circle"></i>
+      <span>Cancel</span>
+    </button>
+    <abp-button
+      iconClass="bi bi-check-circle"
+      class="btn-primary"
+      [disabled]="!isConfirmPreOrderResultValid()"
+      (click)="onConfirmPreOrderResult()">
+      {{ 'Confirm' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<!-- Approvers Modal -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<!-- Apply Special Price Modal -->
+<app-apply-special-price-modal
+  [(visible)]="showApplySpecialPriceModal"
+  [priceOfferId]="priceOfferId"
+  [materialType]="materialType"
+  [concurrencyStamp]="service?.selected?.concurrencyStamp"
+  (applyConfirmed)="onApplySpecialPriceConfirmed($event)">
+</app-apply-special-price-modal>
+
+<!-- Cancel Price Offer Details Modal -->
+<app-approval-comment-modal
+  [(visible)]="showCancelModal"
+  [actionTitle]="'Cancel Selected Items'"
+  [busy]="cancelBusy"
+  [requireComment]="true"
+  [currentAction]="historyActions.Cancelled"
+  (commentSubmitted)="onCancelModalResult($event)"
+  (cancelClicked)="onCloseCancelModal()">
+  <div class="mb-3">
+    <p class="mb-2">
+      You are about to cancel <strong>{{ selectedItems?.length || 0 }}</strong> item(s):
+    </p>
+    <ul class="list-unstyled small text-muted">
+      <li *ngFor="let item of selectedItems" class="mb-1">
+        <i class="bi bi-dot"></i>
+        {{ item.golfaCode }} - {{ item.modelName }} (Qty: {{ item.qty }})
+      </li>
+    </ul>
+    <div class="alert alert-warning small">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      This action cannot be undone. Cancelled items will no longer be available for DPO usage.
+    </div>
+  </div>
+</app-approval-comment-modal>
+
+<abp-modal
+  [(visible)]="showHistoryAddMoreItems"
+  [busy]="importBusy"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>{{ 'Add More Item Details' }}</h3>
+  </ng-template>
+  <ng-template #abpBody>
+    <div class="mb-3">
+      <!-- Search Box -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search Material Code, Model..."
+              [(ngModel)]="addMoreItemsSearchText"
+              (ngModelChange)="onAddMoreItemsSearch()" />
+            <button
+              *ngIf="addMoreItemsSearchText"
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="clearAddMoreItemsSearch()">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <span class="text-muted small"> {{ filteredAddMoreItemsCount }} of {{ addMoreItemsTotalCount }} items </span>
+        </div>
+      </div>
+      <app-data-table [itemEdit]="false" [itemRemove]="false" [records]="pagedAddMoreItemHistories">
+        <app-header title="Material Code" name="materialCode" [className]="'w-20'"></app-header>
+        <app-header title="Model" name="model"></app-header>
+        <app-header title="Qty" name="qty" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Price" name="standardPriceToDist" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Amount" name="standardAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Buyer Req. Amount" name="requestedAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="MEVN Offer Price" name="priceOffer" [className]="'w-10 text-end'"></app-header>
+
+        <app-column value="materialCode"></app-column>
+        <app-column value="model"></app-column>
+        <app-column value="qty" columnType="int" [cssClass]="'text-end'"></app-column>
+        <app-column value="standardPriceToDist" columnType="int" typeControl="price"></app-column>
+        <app-column value="standardAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="requestedAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="priceOffer" columnType="int" typeControl="price"></app-column>
+      </app-data-table>
+
+      <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="addMoreItemsTotalCount > 0">
+        <span class="text-muted">
+          Showing {{ (addMoreItemsCurrentPage - 1) * addMoreItemsPageSize + 1 }} -
+          {{ Math.min(addMoreItemsCurrentPage * addMoreItemsPageSize, addMoreItemsTotalCount) }}
+          of {{ addMoreItemsTotalCount }} items
+        </span>
+
+        <ngb-pagination
+          *ngIf="addMoreItemsTotalCount > addMoreItemsPageSize"
+          [(page)]="addMoreItemsCurrentPage"
+          [pageSize]="addMoreItemsPageSize"
+          [collectionSize]="addMoreItemsTotalCount"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="onAddMoreItemsPageChange($event)">
+        </ngb-pagination>
+      </div>
+    </div>
+  </ng-template>
+</abp-modal>

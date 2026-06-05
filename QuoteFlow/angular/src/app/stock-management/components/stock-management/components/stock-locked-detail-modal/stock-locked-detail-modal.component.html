@@ -1,0 +1,79 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-2 text-warning"></i>
+      Stock Locked
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading lock stock SO...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <!-- Information Section -->
+
+          <!-- Detail Section -->
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="stockLockedData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <app-table-column-group name="Stock Locked Information" cssClass="group-header stock-locked-group">
+              <!-- DPO No. Column -->
+              <app-table-column field="dpoNo" header="DPO No." width="200px" textAlign="start"> </app-table-column>
+
+              <!-- Distributor Column -->
+              <app-table-column field="buyerShortName" header="Buyer" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Locked Qty Column -->
+              <app-table-column field="lockedQty" header="Locked Qty" width="200px" textAlign="end"> </app-table-column>
+
+              <!-- Modified Date Column -->
+              <app-table-column
+                field="modified"
+                header="Modified"
+                width="150px"
+                textAlign="center"
+                [formatter]="formatModifiedDate">
+              </app-table-column>
+
+              <!-- Modified By Column -->
+              <app-table-column
+                field="modifiedBy"
+                header="Modified By"
+                width="120px"
+                textAlign="center"
+                [formatter]="formatUsername">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

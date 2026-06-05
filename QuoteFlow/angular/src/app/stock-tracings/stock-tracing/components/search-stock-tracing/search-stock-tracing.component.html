@@ -1,0 +1,162 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="onExport()"
+        [disabled]="service.isImportBusy"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover">
+        <i *ngIf="service.isImportBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isImportBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-search-stock-tracing-filter> </app-search-stock-tracing-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="card-content">
+        <div class="note">For performance reasons, only 10.000 records that meet the condition will be loaded</div>
+      </div>
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="service.data.items"
+          [count]="service.data.totalCount"
+          (page)="service.onPage($event)"
+          [list]="list">
+          <ngx-datatable-column name="{{ '::ReportType' | abpLocalization }}" [maxWidth]="120" prop="reportType">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.reportType | reportType }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Check list code" [maxWidth]="150" prop="checkListCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.checkListCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Packing list code" [maxWidth]="150" prop="packingListCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.packingListCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Date entered" [maxWidth]="120" prop="dateEntered">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.dateEntered | date: 'dd/MM/YYYY hh:mm:ss' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Stock" [maxWidth]="120" prop="stock">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.stock }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="BU" [maxWidth]="120" prop="bu">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.bu }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Customer" prop="customer">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.customer }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Category" [maxWidth]="120" prop="category">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.category }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="GIV" [maxWidth]="120" prop="giv">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.giv }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Invoice" [maxWidth]="120" prop="invoice">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.invoice }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="SKU code" [maxWidth]="150" prop="skuCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.skuCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="SKU name" [maxWidth]="150" prop="skuName">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.skuName }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Quality" [maxWidth]="120" prop="quality">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.quality }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Warranty" [maxWidth]="150" prop="warranty">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.warranty }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Unit" [maxWidth]="120" prop="unit">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.unit }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Series" [maxWidth]="120" prop="series">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.series }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Origin code" [maxWidth]="120" prop="originCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.originCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Production date" [maxWidth]="180" prop="productionDate">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.productionDate | date: 'dd/MM/YYYY' }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Location" [maxWidth]="120" prop="location">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.location }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Material Code" [maxWidth]="150" prop="golfaCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.golfaCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Note" prop="note">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.note }}
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>

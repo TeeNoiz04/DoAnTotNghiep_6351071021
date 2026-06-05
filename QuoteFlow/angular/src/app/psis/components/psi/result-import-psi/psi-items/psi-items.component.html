@@ -1,0 +1,102 @@
+<div>
+  <app-advanced-data-table
+    [data]="data"
+    [height]="height"
+    [showGroupHeaders]="false"
+    [showSummary]="false"
+    [enableErrorHandling]="true"
+    [errorField]="'errors'"
+    [hasErrorsField]="'hasErrors'"
+    [rowIndexField]="'rowIndex'"
+    (rowClick)="onRowClick($event)">
+    <!-- Item Information Group -->
+    <app-table-column-group name="Item Information" cssClass="group-header item-group">
+      <!-- Row Number Column -->
+      <app-table-column
+        field="rowIndex"
+        header="No."
+        width="50px"
+        textAlign="center"
+        [fixed]="true"
+        [formatter]="formatRowIndex">
+      </app-table-column>
+
+      <!-- Material Code Column -->
+      <app-table-column field="rowData.materialGroup" header="Material Group" width="180px" [fixed]="true">
+      </app-table-column>
+    </app-table-column-group>
+
+    <!-- Pricing Information Group -->
+    <app-table-column-group name="Data Information" cssClass="group-header">
+      <!-- April Column -->
+      <app-table-column field="rowData.April" header="April" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- May Column -->
+      <app-table-column field="rowData.May" header="May" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- June Column -->
+      <app-table-column field="rowData.June" header="June" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- July Column -->
+      <app-table-column field="rowData.July" header="July" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- August Column -->
+      <app-table-column field="rowData.August" header="August" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- September Column -->
+      <app-table-column
+        field="rowData.September"
+        header="September"
+        width="180px"
+        textAlign="end"
+        [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- October Column -->
+      <app-table-column
+        field="rowData.October"
+        header="October"
+        width="180px"
+        textAlign="end"
+        [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- November Column -->
+      <app-table-column
+        field="rowData.November"
+        header="November"
+        width="180px"
+        textAlign="end"
+        [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- December Column -->
+      <app-table-column
+        field="rowData.December"
+        header="December"
+        width="180px"
+        textAlign="end"
+        [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- Jan Column -->
+      <app-table-column field="rowData.Jan" header="Jan" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- Feb Column -->
+      <app-table-column field="rowData.Feb" header="Feb" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+
+      <!-- March Column -->
+      <app-table-column field="rowData.March" header="March" width="180px" textAlign="end" [formatter]="formatNumber">
+      </app-table-column>
+    </app-table-column-group>
+  </app-advanced-data-table>
+</div>
+
+<!-- <div *ngIf="!dpoDetailsValidation" class="alert alert-info">No DPO items data available.</div> -->

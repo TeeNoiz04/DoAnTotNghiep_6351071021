@@ -1,0 +1,150 @@
+<form [formGroup]="service.saleOrderForm" class="sale-form-container">
+  <div class="row mt-0 mb-1">
+    <div class="col-12 col-md-3">
+      <label class="form-label label-required" for="buyerType">Buyer Type</label>
+      <ng-select
+        appAutoAddMissing
+        (missingItemDetected)="onMissingBuyerItem($event)"
+        id="buyerType"
+        formControlName="buyerType"
+        [items]="service?.buyerTypeOptions"
+        bindLabel="displayName"
+        bindValue="displayCode"
+        trackBy="displayCode"
+        [clearable]="true"
+        [appendTo]="'body'"
+        [ngClass]="{
+          'is-invalid': f.buyerType?.invalid && f.buyerType?.touched,
+          'check-view': f.buyerType?.disabled,
+        }"
+        (change)="onBuyerTypeChange($event)">
+      </ng-select>
+      <div
+        *ngIf="f?.buyerType?.invalid && f?.buyerType?.touched && f?.buyerType?.errors?.required"
+        class="invalid-feedback">
+        Buyer Type is required.
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <label class="form-label label-required" for="buyer">Buyer</label>
+      <ng-select
+        id="buyer"
+        formControlName="buyer"
+        [items]="service?.buyerOptions"
+        bindLabel="displayCode"
+        bindValue="id"
+        [clearable]="true"
+        [appendTo]="'body'"
+        [ngClass]="{
+          'is-invalid': f.buyer?.invalid && f.buyer?.touched,
+          'check-view': f.buyer?.disabled,
+        }"
+        (change)="onBuyerChange($event)">
+      </ng-select>
+      <div *ngIf="f?.buyer?.invalid && f?.buyer?.touched && f?.buyer?.errors?.required" class="invalid-feedback">
+        Buyer is required.
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <label class="form-label label-required" for="materialTypeFilter"> Material Type </label>
+      <ng-select
+        [items]="service?.materialTypeOptions"
+        name="materialTypeFilter"
+        bindLabel="displayName"
+        bindValue="displayCode"
+        formControlName="materialType"
+        [ngClass]="{
+          'is-invalid': f.materialType?.invalid && f.materialType?.touched,
+          'check-view': f.materialType?.disabled,
+        }"
+        [appendTo]="'body'"
+        clearable="true">
+      </ng-select>
+      <div
+        *ngIf="f?.materialType?.invalid && f?.materialType?.touched && f?.materialType?.errors?.required"
+        class="invalid-feedback">
+        Material Type is required.
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <label class="form-label label-required" for="formDate">Order Date</label>
+      <div class="input-group">
+        <input
+          autocomplete="off"
+          id="formDate"
+          class="form-control"
+          name="formDate"
+          #minFromDateInput="ngbDatepicker"
+          ngbDatepicker
+          format="dd/MM/yyyy"
+          formControlName="orderDate"
+          (click)="minFromDateInput.toggle()"
+          container="body"
+          [ngClass]="{
+            'is-invalid': f.orderDate?.invalid && f.orderDate?.touched,
+            'check-view': f.orderDate?.disabled,
+          }" />
+        <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+      </div>
+      <div
+        *ngIf="f?.orderDate?.invalid && f?.orderDate?.touched && f?.orderDate?.errors?.required"
+        class="invalid-feedback">
+        Order Date is required.
+      </div>
+    </div>
+  </div>
+  <div class="row mt-0 mb-1">
+    <div class="col-12 col-md-3" *ngIf="!isNewRequestPage">
+      <label class="form-label" for="soNoFilter"> SO No </label>
+      <input autocomplete="off" id="soNoFilter" class="form-control" formControlName="soNo" />
+    </div>
+    <div class="col-12 col-md-3">
+      <label class="form-label label-required" for="soVatFilter">VAT</label>
+      <ng-select
+        id="soVatFilter"
+        formControlName="sO_VAT"
+        [items]="vatOptions"
+        bindLabel="label"
+        bindValue="value"
+        [clearable]="false"
+        [appendTo]="'body'"
+        [ngClass]="{
+          'is-invalid': f.sO_VAT?.invalid && f.sO_VAT?.touched,
+          'check-view': f.sO_VAT?.disabled,
+        }">
+      </ng-select>
+      <div *ngIf="f?.sO_VAT?.invalid && f?.sO_VAT?.touched && f?.sO_VAT?.errors?.required" class="invalid-feedback">
+        VAT is required.
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <label class="form-label label-required" for="stockCategoryFilter">Storage Location</label>
+      <ng-select
+        id="stockCategoryFilter"
+        formControlName="stockCategoryId"
+        [items]="service.stockCategoryOptions"
+        bindLabel="displayName"
+        bindValue="id"
+        [clearable]="true"
+        [appendTo]="'body'"
+        [ngClass]="{
+          'is-invalid': f.stockCategoryId?.invalid && f.stockCategoryId?.touched,
+          'check-view': f.stockCategoryId?.disabled,
+        }">
+      </ng-select>
+      <div
+        *ngIf="
+          f?.stockCategoryId?.invalid && f?.stockCategoryId?.touched && f?.buyerstockCategoryIdType?.errors?.required
+        "
+        class="invalid-feedback">
+        Stock Category is required.
+      </div>
+    </div>
+  </div>
+  <div class="row mt-0 mb-0">
+    <div class="col-12">
+      <label class="form-label" for="dpoNoFilter"> Note </label>
+      <textarea class="form-control" id="note" formControlName="note" appAutoResize></textarea>
+    </div>
+  </div>
+</form>

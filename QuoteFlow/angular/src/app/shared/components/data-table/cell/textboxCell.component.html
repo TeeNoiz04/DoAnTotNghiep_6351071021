@@ -1,0 +1,38 @@
+@switch (typeControl) {
+  @case ('number') {
+    <input
+      autocomplete="off"
+      type="number"
+      [disabled]="disabled"
+      class="form-control textbox-cell"
+      [(ngModel)]="value"
+      [name]="name" />
+  }
+  @case ('percent') {
+    <input
+      autocomplete="off"
+      type="text"
+      class="form-control textbox-cell text-end"
+      [disabled]="disabled"
+      [(ngModel)]="value"
+      [name]="name" />
+    <!-- (ngModelChange)="value = $event" -->
+    <!-- [ngModel]="value | formatterPercent" -->
+  }
+
+  <!-- <input type="text" [disabled]="disabled" class="form-control textbox-cell text-end" [(ngModel)]="value" [name]="name" /> -->
+  @case ('price') {
+    <app-input-number [(ngModel)]="value" [name]="name"> </app-input-number>
+  }
+
+  @default {
+    <input
+      autocomplete="off"
+      type="text"
+      [disabled]="disabled"
+      class="form-control textbox-cell"
+      [(ngModel)]="value"
+      [name]="name"
+      [ngClass]="cssClass" />
+  }
+}

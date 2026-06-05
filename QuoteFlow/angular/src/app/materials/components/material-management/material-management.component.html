@@ -1,0 +1,158 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="filter.onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="filter.onClear()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        [disabled]="filterService.isExportToExcelBusy"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover">
+        <i *ngIf="filterService.isExportToExcelBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!filterService.isExportToExcelBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-material-management-filter [filterType]="'management'" #filter></app-material-management-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="data.items"
+          [count]="data.totalCount"
+          [list]="list"
+          (page)="filter.updatePageThenSearch($event)">
+          <ngx-datatable-column [width]="30" [maxWidth]="30" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <button
+                type="button"
+                class="btn btn-sm btn-link p-0 text-info"
+                (click)="onViewMaterialHistoryDetail(row)"
+                title="View Material History">
+                <i class="bi bi-clock-history"></i>
+              </button>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ '::Status' | abpLocalization }}"
+            [width]="100"
+            [maxWidth]="100"
+            prop="materialStatus">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-status-label [status]="row.materialStatus"></app-status-label>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Material Code" prop="golfaCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="openDetails(row)">
+                {{ row.golfaCode }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Model" prop="model">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.model }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Valid To" prop="validTo">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.validTo | date: 'dd/MM/YYYY' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Spec 1" prop="spec1">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.spec1 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Spec 2" prop="spec2">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.spec2 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Description VN" prop="description_VN">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.description_VN }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Type Column -->
+          <ngx-datatable-column name="M.Type" prop="materialType" headerClass="text-center" [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span
+                class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-material-fa': row.materialType === 'FA',
+                  'bg-material-lvs': row.materialType === 'LVS',
+                }">
+                {{ row.materialType }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Material Group" prop="material_Group">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.material_Group }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Reference Lead Time" prop="referenceLeadTime">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div style="text-align: center">
+                {{ row.referenceLeadTime }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Discontinuation Date" prop="destinationDate" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.destinationDate | date: 'dd/MM/YYYY' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            headerClass="text-end"
+            [cellClass]="'text-end'"
+            name="Standard Price"
+            prop="standard_Price">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end">
+                {{ row.standard_Price | number: '1.0-0' }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>
+
+<app-material-details-modal [selected]="serviceDetail.selected" />
+<app-material-history-modal />

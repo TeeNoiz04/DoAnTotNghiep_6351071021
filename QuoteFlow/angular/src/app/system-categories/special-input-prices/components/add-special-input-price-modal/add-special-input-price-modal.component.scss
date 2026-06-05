@@ -1,0 +1,32 @@
+.modal-title {
+  font-weight: 600;
+  color: var(--bs-dark);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.text-danger {
+  font-weight: 600;
+}
+
+.invalid-feedback {
+  font-size: 0.875em;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

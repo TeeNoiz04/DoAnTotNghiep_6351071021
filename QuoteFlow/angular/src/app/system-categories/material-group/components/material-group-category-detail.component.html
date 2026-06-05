@@ -1,0 +1,89 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>{{ (service.selected ? '::Edit' : '::New') | abpLocalization }} Material Group</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="system-category" (ngSubmit)="submitForm()" [validateOnSubmit]="true">
+      <div class="row mt-2 fade-in-top">
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <label class="form-label label-required" for="code"> {{ '::Code' | abpLocalization }}</label>
+          <input autocomplete="off" id="code" formControlName="code" class="form-control" maxlength="50" />
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <label class="form-label label-required" for="name">
+            {{ '::Name' | abpLocalization }}
+          </label>
+          <input autocomplete="off" id="name" formControlName="name" class="form-control" maxlength="500" />
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <label class="form-label label-required" for="name">
+            {{ '::Material Type' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="service.materialTypeOptions"
+            bindLabel="label"
+            bindValue="value"
+            formControlName="materialType"
+            (change)="service.onMaterialTypeChange($event)"
+            [clearable]="true"
+            [searchable]="false">
+          </ng-select>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <label class="form-label" for="name">
+            {{ '::Material Group PSI' | abpLocalization }}
+          </label>
+          <ng-select
+            [items]="service.materialGroupPSIOptions"
+            bindLabel="displayName"
+            bindValue="displayCode"
+            appendTo="body"
+            formControlName="materialGroupPSI"
+            [clearable]="true"
+            [searchable]="true">
+          </ng-select>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <div class="checklist-container">
+            <mat-slide-toggle id="isDeActive" formControlName="isDeActive"> IsDeactive </mat-slide-toggle>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
+          <div class="checklist-container">
+            <mat-slide-toggle id="allowKeyAccount" formControlName="allowKeyAccount">
+              Allow In Key Account Price Offer
+            </mat-slide-toggle>
+          </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-2">
+          <label class="form-label" for="ystem-category-note">
+            {{ '::Note' | abpLocalization }}
+          </label>
+
+          <textarea
+            id="ystem-category-note"
+            formControlName="note"
+            class="form-control"
+            maxlength="4000"
+            rows="3"></textarea>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="system-category">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

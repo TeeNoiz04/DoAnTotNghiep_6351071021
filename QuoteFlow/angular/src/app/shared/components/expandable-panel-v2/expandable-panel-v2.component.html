@@ -1,0 +1,32 @@
+<div [id]="panelId" class="card card-enhanced mb-0" [ngClass]="panelClass" [ngStyle]="panelStyle">
+  <div
+    class="card-header d-flex justify-content-between align-items-center cursor-pointer"
+    (click)="toggle()"
+    [ngStyle]="headerStyle"
+    [class.disabled]="isDisabled">
+    <h5 class="fw-bold font-14 mb-0 mt-0 d-flex align-items-center">
+      <i *ngIf="icon" class="{{ icon }} me-2"></i>
+      {{ headerText }}
+      <span *ngIf="badgeCount !== null" class="ms-2 badge {{ badgeClass }}">{{ badgeCount }} items</span>
+      <span *ngIf="selectedCount" class="ms-2 badge bg-success">{{ selectedCount }} selected</span>
+    </h5>
+
+    <div class="d-flex align-items-center gap-2">
+      <ng-container *ngIf="headerActionsTemplate">
+        <ng-container *ngTemplateOutlet="headerActionsTemplate"></ng-container>
+      </ng-container>
+
+      <div class="card-actions" *ngIf="showIcon">
+        <button class="btn btn-sm btn-icon" type="button" [disabled]="isDisabled">
+          <i class="bi bi-chevron-down" [@rotateIcon]="animationState"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body p-0" [@fadeInOut] *ngIf="!isCollapsed">
+    <div class="p-2">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1472 @@
+<div class="card mb-0">
+  <div class="card-body-custom">
+    <!-- Readonly view for detail page -->
+    <div *ngIf="useServiceData && isReadonly && service.importInfoDetailForm" class="form-container">
+      <form [formGroup]="service.importInfoDetailForm">
+        <!-- Row 1: Project Name 9, Close Date 3 -->
+        <div class="row mb-1">
+          <div class="col-md-9">
+            <div>
+              <label class="form-label" for="projectNameReadonly">SPO Name</label>
+              <input
+                autocomplete="off"
+                id="projectNameReadonly"
+                class="form-control"
+                formControlName="projectName"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="closeDateReadonly">Close Date</label>
+              <input
+                autocomplete="off"
+                id="closeDateReadonly"
+                class="form-control"
+                [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+        <div class="row mb-1">
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="materialTypeReadonly">Material Type</label>
+              <input
+                autocomplete="off"
+                id="materialTypeReadonly"
+                class="form-control"
+                formControlName="materialType"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="submittedDateReadonly">Submitted Date</label>
+              <input
+                autocomplete="off"
+                id="submittedDateReadonly"
+                class="form-control"
+                [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <label class="form-label" for="submittedByReadonly">Submitted By</label>
+              <input
+                autocomplete="off"
+                id="submittedByReadonly"
+                class="form-control"
+                formControlName="saleName"
+                readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 (Hidden for NB type) -->
+        <div class="row mb-1" *ngIf="service.importMode !== 'NoBuyerPriceOffer'">
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="locationReadonly">Location</label>
+              <input
+                autocomplete="off"
+                id="locationReadonly"
+                class="form-control"
+                formControlName="location"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="buyerTypeReadonly">Buyer Type</label>
+              <input
+                autocomplete="off"
+                id="buyerTypeReadonly"
+                class="form-control"
+                formControlName="buyerType"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div>
+              <label class="form-label" for="buyerReadonly">Buyer</label>
+              <input autocomplete="off" id="buyerReadonly" class="form-control" formControlName="buyerName" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3 (NB): Location 12 (Only for NB type - No Buyer fields) -->
+        <div class="row mb-1" *ngIf="service.importMode === 'NoBuyerPriceOffer'">
+          <div class="col-md-12">
+            <div>
+              <label class="form-label" for="locationReadonlyNB">Location</label>
+              <input
+                autocomplete="off"
+                id="locationReadonlyNB"
+                class="form-control"
+                formControlName="location"
+                readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
+        <div class="row mb-1" *ngIf="service.importInfoDetailForm.get('keyAccountName')?.value !== null">
+          <div class="col-md-6">
+            <div>
+              <label class="form-label" for="keyAccountNameReadonly">Key Account Name</label>
+              <input
+                autocomplete="off"
+                id="keyAccountNameReadonly"
+                class="form-control"
+                formControlName="keyAccountName"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="keyAccountTypeReadonly">Key Account Type</label>
+              <input
+                autocomplete="off"
+                id="keyAccountTypeReadonly"
+                class="form-control"
+                formControlName="keyAccountType"
+                readonly />
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div>
+              <label class="form-label" for="keyAccountClassReadonly">Key Account Class</label>
+              <input
+                autocomplete="off"
+                id="keyAccountClassReadonly"
+                class="form-control"
+                formControlName="keyAccountClass"
+                readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 5: Reason to offer this price 12 -->
+        <div class="row mb-1">
+          <div class="col-12">
+            <div>
+              <label class="form-label" for="noteReadonly">Reason to offer this price</label>
+              <textarea id="noteReadonly" class="form-control" formControlName="note" rows="3" readonly></textarea>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Original import forms for non-readonly mode -->
+    <form
+      *ngIf="useServiceData && !isReadonly && service.importInfoDetailForm"
+      [formGroup]="service.importInfoDetailForm"
+      class="form-container">
+      <div [ngSwitch]="service.importMode">
+        <ng-container *ngSwitchCase="'ProjectPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectNameFilter">Project Name</label>
+                <input autocomplete="off" id="projectNameFilter" class="form-control" formControlName="projectName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDateFilter">Close Date</label>
+                <input
+                  autocomplete="off"
+                  id="closeDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialTypeFilter">Material Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="materialTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="materialType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDateFilter">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  id="submittedDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedByFilter">Submitted By</label>
+                <input autocomplete="off" id="submittedByFilter" class="form-control" formControlName="saleName" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label label-required" for="locationFilter">Location</label>
+                <ng-select
+                  name="locationFilter"
+                  [items]="[]"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="location">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerTypeFilter">Buyer Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label label-required" for="buyerFilter">Buyer</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerId">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'KeyAccountPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectNameFilter">Project Name</label>
+                <input autocomplete="off" id="projectNameFilter" class="form-control" formControlName="projectName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDateFilter">Close Date</label>
+                <input
+                  autocomplete="off"
+                  id="closeDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialTypeFilter">Material Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="materialTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="materialType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDateFilter">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  id="submittedDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedByFilter">Submitted By</label>
+                <input autocomplete="off" id="submittedByFilter" class="form-control" formControlName="saleName" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label label-required" for="locationFilter">Location</label>
+                <ng-select
+                  name="locationFilter"
+                  [items]="[]"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="location">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerTypeFilter">Buyer Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label label-required" for="buyerFilter">Buyer</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerId">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="keyAccountNameFilter">Key Account Name</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountNameFilter"
+                  class="form-control"
+                  formControlName="keyAccountName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountTypeFilter">Key Account Type</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountTypeFilter"
+                  class="form-control"
+                  formControlName="keyAccountType" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountClassFilter">Key Account Class</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountClassFilter"
+                  class="form-control"
+                  formControlName="keyAccountClass" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 6: Get Price Automatically 12 -->
+          <div class="row mb-1">
+            <div class="col-md-12">
+              <div class="checkbox-control">
+                <mat-checkbox id="autoGetOfferPrice" formControlName="autoGetOfferPrice">
+                  Get Price Automatically
+                </mat-checkbox>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'BuyerStockPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectNameFilter">Project Name</label>
+                <input autocomplete="off" id="projectNameFilter" class="form-control" formControlName="projectName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDateFilter">Close Date</label>
+                <input
+                  autocomplete="off"
+                  id="closeDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialTypeFilter">Material Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="materialTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="materialType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDateFilter">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  id="submittedDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedByFilter">Submitted By</label>
+                <input autocomplete="off" id="submittedByFilter" class="form-control" formControlName="saleName" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label label-required" for="locationFilter">Location</label>
+                <ng-select
+                  name="locationFilter"
+                  [items]="[]"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="location">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerTypeFilter">Buyer Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label label-required" for="buyerFilter">Buyer</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerId">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'NoBuyerPriceOffer'">
+          <!-- Row 1: Project Name 6, Location 3, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="projectNameFilter">Project Name</label>
+                <input autocomplete="off" id="projectNameFilter" class="form-control" formControlName="projectName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label label-required" for="locationFilter">Location</label>
+                <ng-select
+                  name="locationFilter"
+                  [items]="[]"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="location">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDateFilter">Close Date</label>
+                <input
+                  autocomplete="off"
+                  id="closeDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialTypeFilter">Material Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="materialTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="materialType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDateFilter">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  id="submittedDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedByFilter">Submitted By</label>
+                <input autocomplete="off" id="submittedByFilter" class="form-control" formControlName="saleName" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectNameFilter">Project Name</label>
+                <input autocomplete="off" id="projectNameFilter" class="form-control" formControlName="projectName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDateFilter">Close Date</label>
+                <input
+                  autocomplete="off"
+                  id="closeDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialTypeFilter">Material Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="materialTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="materialType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDateFilter">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  id="submittedDateFilter"
+                  class="form-control"
+                  [value]="service.importInfoDetailForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  type="text"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedByFilter">Submitted By</label>
+                <input autocomplete="off" id="submittedByFilter" class="form-control" formControlName="saleName" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="locationFilter">Location</label>
+                <ng-select
+                  name="locationFilter"
+                  [items]="[]"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="location">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerTypeFilter">Buyer Type</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerTypeFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerType">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="buyerFilter">Buyer</label>
+                <ng-select
+                  [items]="[]"
+                  name="buyerFilter"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  formControlName="buyerId">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="keyAccountNameFilter">Key Account Name</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountNameFilter"
+                  class="form-control"
+                  formControlName="keyAccountName" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountTypeFilter">Key Account Type</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountTypeFilter"
+                  class="form-control"
+                  formControlName="keyAccountType" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountClassFilter">Key Account Class</label>
+                <input
+                  autocomplete="off"
+                  id="keyAccountClassFilter"
+                  class="form-control"
+                  formControlName="keyAccountClass" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  appAutoResize></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+
+    <form *ngIf="!useServiceData" [formGroup]="importInfoForm" class="form-container">
+      <div [ngSwitch]="service.importMode">
+        <ng-container *ngSwitchCase="'AddMoreItems'">
+          <!-- AddMoreItems case - no additional fields needed -->
+        </ng-container>
+        <ng-container *ngSwitchCase="'ProjectPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectName">Project Name</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="projectName"
+                  formControlName="projectName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDate">Close Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="closeDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialType">Material Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control"
+                  [readonly]="isReadonly"
+                  [ngClass]="{ 'is-invalid': enableValidation && validationErrors['materialType'] }" />
+                <div class="invalid-feedback" *ngIf="enableValidation && validationErrors['materialType']">
+                  Material Type is required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDate">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedBy">Submitted By</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedBy"
+                  formControlName="saleName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerType">Buyer Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerType"
+                  formControlName="buyerType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="buyerId">Buyer</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerId"
+                  formControlName="buyerId"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Reason to offer this price 12 -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  [readonly]="isReadonly"></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'KeyAccountPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectName">Project Name</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="projectName"
+                  formControlName="projectName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDate">Close Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="closeDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialType">Material Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control"
+                  [readonly]="isReadonly"
+                  [ngClass]="{ 'is-invalid': enableValidation && validationErrors['materialType'] }" />
+                <div class="invalid-feedback" *ngIf="enableValidation && validationErrors['materialType']">
+                  Material Type is required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDate">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedBy">Submitted By</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedBy"
+                  formControlName="saleName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerType">Buyer Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerType"
+                  formControlName="buyerType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="buyerId">Buyer</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerId"
+                  formControlName="buyerId"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="keyAccountName">Key Account Name</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountName"
+                  formControlName="keyAccountName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountType">Key Account Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountType"
+                  formControlName="keyAccountType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountClass">Key Account Class</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountClass"
+                  formControlName="keyAccountClass"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 5: Note -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  [readonly]="isReadonly"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-1">
+            <div class="col-md-12">
+              <div class="checkbox-control">
+                <mat-checkbox id="autoGetOfferPrice" formControlName="autoGetOfferPrice">
+                  Get Price Automatically
+                </mat-checkbox>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'BuyerStockPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectName">Project Name</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="projectName"
+                  formControlName="projectName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDate">Close Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="closeDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialType">Material Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control"
+                  [readonly]="isReadonly"
+                  [ngClass]="{ 'is-invalid': enableValidation && validationErrors['materialType'] }" />
+                <div class="invalid-feedback" *ngIf="enableValidation && validationErrors['materialType']">
+                  Material Type is required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDate">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedBy">Submitted By</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedBy"
+                  formControlName="saleName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3, Buyer Type 3, Buyer 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerType">Buyer Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerType"
+                  formControlName="buyerType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="buyerId">Buyer</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerId"
+                  formControlName="buyerId"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Note -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  [readonly]="isReadonly"></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'NoBuyerPriceOffer'">
+          <!-- Row 1: Project Name 9, Close Date 3 -->
+          <div class="row mb-1">
+            <div class="col-md-9">
+              <div>
+                <label class="form-label" for="projectName">Project Name</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="projectName"
+                  formControlName="projectName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDate">Close Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="closeDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('closeDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Material Type 3, Submitted Date 3, Submitted By 6 -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialType">Material Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control"
+                  [readonly]="isReadonly"
+                  [ngClass]="{ 'is-invalid': enableValidation && validationErrors['materialType'] }" />
+                <div class="invalid-feedback" *ngIf="enableValidation && validationErrors['materialType']">
+                  Material Type is required
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="submittedDate">Submitted Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedDate"
+                  class="form-control"
+                  [value]="importInfoForm.get('submittedDate')?.value | date: 'dd/MM/yyyy'"
+                  readonly />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="submittedBy">Submitted By</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="submittedBy"
+                  formControlName="saleName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 12 (No Buyer Type and Buyer fields for NB) -->
+          <div class="row mb-1">
+            <div class="col-md-12">
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Note -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  [readonly]="isReadonly"></textarea>
+              </div>
+            </div>
+          </div> </ng-container
+        ><ng-container *ngSwitchDefault>
+          <!-- Row 1: Sale PIC, Close Date, Material Type -->
+          <div class="row mb-1">
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="saleName">Sale PIC</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="saleName"
+                  formControlName="saleName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="closeDate">Close Date</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="closeDate"
+                  formControlName="closeDate"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="materialType">Material Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="materialType"
+                  formControlName="materialType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Location, Buyer Type, Buyer -->
+          <div class="row mb-1">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="location">Location</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="location"
+                  formControlName="location"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="buyerType">Buyer Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerType"
+                  formControlName="buyerType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="form-label" for="buyerId">Buyer</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="buyerId"
+                  formControlName="buyerId"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+          <!-- Row 3: Key Account fields (if present) -->
+          <div class="row mb-1" *ngIf="importInfoForm.get('keyAccountName')?.value">
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountName">Key Account</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountName"
+                  formControlName="keyAccountName"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountType">Key Account Type</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountType"
+                  formControlName="keyAccountType"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div>
+                <label class="form-label" for="keyAccountClass">Key Account Class</label>
+                <input
+                  autocomplete="off"
+                  type="text"
+                  id="keyAccountClass"
+                  formControlName="keyAccountClass"
+                  class="form-control"
+                  [readonly]="isReadonly" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Note -->
+          <div class="row mb-1">
+            <div class="col-12">
+              <div>
+                <label for="note" class="form-label">Reason to offer this price</label>
+                <textarea
+                  class="form-control custom-textarea"
+                  id="note"
+                  formControlName="note"
+                  [readonly]="isReadonly"></textarea>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+</div>

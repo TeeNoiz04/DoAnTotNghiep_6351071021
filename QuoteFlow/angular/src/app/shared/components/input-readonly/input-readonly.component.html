@@ -1,0 +1,8 @@
+<input
+  matInput
+  disabled
+  autocomplete="off"
+  type="text"
+  class="form-control text-end"
+  [ngStyle]="inputStyle"
+  [value]="value === null ? blankValue : (value | appNumberFormat: 2 : allowDecimal)" />

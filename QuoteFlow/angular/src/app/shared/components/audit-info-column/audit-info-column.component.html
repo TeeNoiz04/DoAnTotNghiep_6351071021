@@ -1,0 +1,27 @@
+<div class="audit-info-wrapper d-flex justify-content-center align-items-start">
+  <i
+    class="bi bi-info-circle audit-info-icon"
+    [ngbPopover]="popoverContent"
+    triggers="click"
+    placement="left"
+    container="body"
+    popoverClass="audit-info-popover"
+    #popover="ngbPopover">
+  </i>
+</div>
+
+<ng-template #popoverContent>
+  <div class="audit-info-content">
+    <div class="audit-section">
+      <h6 class="mb-1 text-primary"><i class="bi bi-plus-circle me-2"></i>Created</h6>
+      <div class="audit-item"><strong>Date:</strong> {{ formattedCreationTime || 'N/A' }}</div>
+      <div class="audit-item"><strong>By:</strong> {{ creatorName | username }}</div>
+    </div>
+
+    <div class="audit-section" *ngIf="hasModificationInfo">
+      <h6 class="mb-1 text-primary"><i class="bi bi-pencil-square me-2"></i>Modified</h6>
+      <div class="audit-item"><strong>Date:</strong> {{ formattedModificationTime || 'N/A' }}</div>
+      <div class="audit-item"><strong>By:</strong> {{ lastModifierName | username }}</div>
+    </div>
+  </div>
+</ng-template>

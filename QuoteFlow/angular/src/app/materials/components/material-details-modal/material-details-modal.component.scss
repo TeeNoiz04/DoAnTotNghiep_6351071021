@@ -1,0 +1,35 @@
+.material-details-container {
+  display: flex;
+  flex-direction: column;
+
+  app-expandable-panel {
+    display: block;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    &.label-required::after {
+      content: " *";
+      color: red;
+    }
+  }
+
+  .text-end {
+    text-align: right;
+  }
+
+  .form-check {
+    padding-top: 0.5rem;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}

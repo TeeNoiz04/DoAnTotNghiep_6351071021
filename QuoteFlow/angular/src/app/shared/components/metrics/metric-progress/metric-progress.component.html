@@ -1,0 +1,56 @@
+<div
+  #popoverTrigger="ngbPopover"
+  class="d-flex align-items-start cursor-pointer"
+  [ngClass]="containerClass"
+  [ngbPopover]="showPopover ? popoverTemplate : null"
+  [popoverTitle]="'Metric Details'"
+  [popoverClass]="popoverClass"
+  [placement]="popoverPlacement"
+  triggers="manual"
+  container="body"
+  [closeDelay]="0"
+  [openDelay]="0"
+  (click)="onMetricClick()"
+  (shown)="onPopoverShown()"
+  (hidden)="onPopoverHidden()">
+  <i [ngClass]="iconClass" class="me-1 mt-n1"></i>
+  <div>
+    <div class="d-flex align-items-center mb-1" [ngClass]="labelContainerClass">
+      <span class="me-2 fw-bold small" [ngClass]="labelClass">{{ label }}:</span>
+      <span class="fw-bold small" [ngClass]="[valueClass, statusClass]">
+        {{ formatAbbreviatedValue(currentValue) }} {{ suffix }} / {{ formatAbbreviatedValue(maxValue) }} {{ suffix }}
+      </span>
+    </div>
+    <div class="progress" [ngClass]="progressContainerClass">
+      <div class="progress-bar" [ngClass]="[progressBarClass, statusClass]" [style.width.%]="progressPercentage"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Popover Template -->
+<ng-template #popoverTemplate>
+  <div class="metric-popover-content">
+    <table class="table table-sm mb-0">
+      <tbody>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ maxLabel }}:</td>
+          <td>{{ formatValue(maxValue) }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ currentLabel }}:</td>
+          <td>{{ formatValue(currentValue) }}</td>
+        </tr>
+        <ng-container *ngIf="typeof maxValue === 'number'">
+          <tr *ngIf="currentValue > +maxValue">
+            <td class="fw-bold text-nowrap pe-3">{{ exceededLabel }}:</td>
+            <td>{{ formatValue(currentValue - +maxValue) }}</td>
+          </tr>
+          <tr *ngIf="currentValue <= +maxValue">
+            <td class="fw-bold text-nowrap pe-3">{{ remainingLabel }}:</td>
+            <td>{{ formatValue(+maxValue - currentValue) }}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</ng-template>

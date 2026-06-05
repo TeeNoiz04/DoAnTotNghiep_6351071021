@@ -1,0 +1,45 @@
+<div class="warning-display-container mt-1 mb-1">
+  <!-- Warning Count Badge (click to show popover) -->
+  <h3
+    class="warning-count warning-popover-trigger"
+    #popover="ngbPopover"
+    [ngbPopover]="warningPopoverTemplate"
+    [popoverTitle]="'Warning Details'"
+    [popoverClass]="popoverClass"
+    [placement]="popoverPlacement"
+    [triggers]="'manual'"
+    container="body"
+    [autoClose]="'outside'"
+    [closeDelay]="0"
+    [openDelay]="0"
+    [class.has-warnings]="hasWarnings"
+    (click)="togglePopover(popover)">
+    <i class="bi bi-exclamation-triangle-fill me-2" *ngIf="showIcon && hasWarnings"></i>
+    {{ displayMessage }}
+  </h3>
+</div>
+
+<!-- Warning Popover Template -->
+<ng-template #warningPopoverTemplate>
+  <div
+    class="warning-popover-content"
+    #popoverContent
+    [class.has-scroll-top]="hasScrollTop"
+    [class.has-scroll-bottom]="hasScrollBottom"
+    (scroll)="onPopoverScroll($event)">
+    <div *ngIf="popoverWarnings.length === 0" class="text-muted">No warnings found</div>
+    <table *ngIf="popoverWarnings.length > 0" class="table table-sm mb-0">
+      <tbody>
+        <tr *ngFor="let warning of popoverWarnings">
+          <td *ngIf="!warning.isFullWidth" class="fw-bold text-nowrap pe-3 align-top">{{ warning.where }}</td>
+          <td [attr.colspan]="warning.isFullWidth ? 2 : 1" class="text-break">
+            {{ warning.message }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="warningCount > popoverMaxWarnings" class="text-muted text-center mt-2 small">
+      Showing first {{ popoverMaxWarnings }} of {{ warningCount }} warnings
+    </div>
+  </div>
+</ng-template>

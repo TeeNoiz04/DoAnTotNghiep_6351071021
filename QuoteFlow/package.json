@@ -1,0 +1,10 @@
+{
+	"scripts": {
+		"prepare": "git config core.hooksPath .husky",
+		"postinstall": "git config core.hooksPath .husky"
+	},
+	"devDependencies": {
+		"husky": "^9.1.7",
+		"lint-staged": "^15.5.2"
+	}
+}

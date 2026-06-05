@@ -1,0 +1,208 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+
+      <button
+        *abpPermission="AppPermissions.FAAdmins.CreateBuyerTarget"
+        class="btn btn-primary"
+        type="button"
+        (click)="create()"
+        placement="bottom"
+        ngbTooltip="Add New"
+        triggers="hover">
+        <i class="fa fa-plus me-1" aria-hidden="true"></i>
+        <span>{{ '::AddNew' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <!-- Filter section -->
+  <div class="card mb-3">
+    <!-- <div class="card-header">
+      <h5 class="card-title mb-0">{{ '::Filters' | abpLocalization }}</h5>
+    </div> -->
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm (keyup.enter)="onLoad()">
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="buyerName">
+                  {{ '::Finance Year' | abpLocalization }}
+                </label>
+
+                <ng-select
+                  [(ngModel)]="service.filters.financeYearMax"
+                  [items]="service.fiscalYears"
+                  bindLabel="year"
+                  bindValue="year"
+                  appendTo="body"
+                  [clearable]="false"
+                  [searchable]="false"
+                  [ngModelOptions]="{ standalone: true }">
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <label class="form-label" for="buyer-code">
+                {{ '::Buyer Type' | abpLocalization }}
+              </label>
+              <ng-select
+                id="buyer-price-column"
+                [appendTo]="'body'"
+                [items]="buyerTypeOptions"
+                bindLabel="displayCode"
+                bindValue="id"
+                [clearable]="false"
+                [searchable]="false"
+                (change)="onBuyerTypeChange($event)"
+                [(ngModel)]="service.filters.buyerTypeId"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <label class="form-label" for="buyer-code">
+                {{ '::Buyer' | abpLocalization }}
+              </label>
+              <ng-select
+                id="buyer-price-column"
+                [appendTo]="'body'"
+                [items]="buyerOptions"
+                bindLabel="displayCode"
+                bindValue="id"
+                [clearable]="false"
+                [searchable]="false"
+                [(ngModel)]="service.filters.buyerId"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+              <label class="form-label" for="buyer-code">
+                {{ '::Material Type' | abpLocalization }}
+              </label>
+              <ng-select
+                id="buyer-price-column"
+                [appendTo]="'body'"
+                [items]="projectTypeOption"
+                bindLabel="label"
+                bindValue="value"
+                [clearable]="true"
+                [searchable]="false"
+                [(ngModel)]="service.filters.materialType"
+                [ngModelOptions]="{ standalone: true }">
+              </ng-select>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column
+          [name]=""
+          [maxWidth]="80"
+          [width]="80"
+          [sortable]="false"
+          *abpPermission="AppPermissions.FAAdmins.EditBuyerTarget + '||' + AppPermissions.FAAdmins.DeleteBuyerTarget">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                (click)="update(row)"
+                class="btn btn-link p-0"
+                *abpPermission="AppPermissions.FAAdmins.EditBuyerTarget">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+              <button
+                (click)="delete(row)"
+                class="btn btn-link p-0"
+                *abpPermission="AppPermissions.FAAdmins.DeleteBuyerTarget">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Buyer Code' | abpLocalization }}" prop="distributorCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.buyerCode }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Buyer Name' | abpLocalization }}" prop="distributorName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.buyerName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::First half' | abpLocalization }}" prop="firstHalf" [maxWidth]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="text-end">
+              {{ row.firstFYTarget | number: '1.0-0' }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Second half' | abpLocalization }}" prop="secondHalf" [maxWidth]="140">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="text-end">
+              {{ row.secondFYTarget | number: '1.0-0' }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <!-- Type Column -->
+        <ngx-datatable-column name="M.Type" prop="materialType" headerClass="text-center" [cellClass]="'text-center'">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <span
+              class="badge rounded-pill"
+              [ngClass]="{
+                'bg-material-fa': row.materialType === 'FA',
+                'bg-material-lvs': row.materialType === 'LVS',
+              }">
+              {{ row.materialType }}
+            </span>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Note' | abpLocalization }}" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-distributor-target-detail-modal />
+  }
+}

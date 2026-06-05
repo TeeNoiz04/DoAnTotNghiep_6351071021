@@ -1,0 +1,42 @@
+<div class="table-responsive">
+  <div class="d-flex align-items-center collapse-container" (click)="toggleTable()">
+    <i class="fa" [ngClass]="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'" aria-hidden="true"></i>
+    <h4 class="title-table">{{ title }}</h4>
+  </div>
+  <table class="table table-bordered table-striped table-actions" *ngIf="isExpanded">
+    <tbody *ngIf="records?.length > 0">
+      <tr>
+        <ng-template ngFor let-header [ngForOf]="headers">
+          <td class="header {{ header.className }}">
+            <span>{{ header.key }}</span>
+          </td>
+        </ng-template>
+      </tr>
+      <ng-template ngFor let-row let-i="index" [ngForOf]="records">
+        <tr>
+          <td *ngIf="showActions" class="width-50">
+            <app-action-cell
+              [readOnly]="disableAction"
+              [edit]="itemEdit"
+              [remove]="itemRemove"
+              (removeAction)="removeActionHandler(row)"
+              (editAction)="editActionHandler(row)">
+            </app-action-cell>
+          </td>
+          <td *ngFor="let column of columns" class="{{ column.className }}">
+            @switch (column?.columnType) {
+              @case ('int') {
+                <div class="text-cell-container text-end">
+                  <span [innerHTML]="row[column.key] | appNumberFormat: 0"></span>
+                </div>
+              }
+              @default {
+                <span [innerHTML]="row[column.key]"></span>
+              }
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </tbody>
+  </table>
+</div>

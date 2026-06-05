@@ -1,0 +1,107 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Options
+@using Owl.reCAPTCHA
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Public.Web.Pages.Account;
+@using Volo.Abp.Account.Public.Web.Security.Recaptcha
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.Identity;
+@using Volo.Abp.Settings
+@model Volo.Abp.Account.Public.Web.Pages.Account.LoginModel
+@inject IHtmlLocalizer<AccountResource> L
+@inject Volo.Abp.AspNetCore.Mvc.UI.Layout.IPageLayout PageLayout
+@inject ISettingProvider SettingProvider
+
+@section scripts
+{
+    <abp-script-bundle name="@typeof(LoginModel).FullName">
+        <abp-script src="/Pages/Account/Login.js" />
+    </abp-script-bundle>
+
+}
+@if (Model.VisibleExternalProviders.Any())
+{
+    <label>Sign in with</label>
+
+    <br />
+    <form asp-page="./Login" asp-page-handler="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" asp-route-returnUrlHash="@Model.ReturnUrlHash" method="post">
+        @foreach (var provider in Model.VisibleExternalProviders)
+        {
+            <button type="submit"
+                    class="mt-2 me-2 btn btn-outline-primary btn-sm"
+                    name="provider"
+                    value="@provider.AuthenticationScheme"
+                    data-busy-text="@L["ProcessingWithThreeDot"]">
+                @if (provider.Icon != null)
+                {
+                    <i class="@provider.Icon"></i>
+                }
+                <span>@provider.DisplayName</span>
+            </button>
+        }
+    </form>
+
+    <hr>
+
+    <label>Or Sign in with</label><br><br>
+}
+<div class="account-module-form">
+    
+    @if (Model.EnableLocalLogin)
+    {
+        PageLayout.Content.Title = L["Login"].Value;
+        var reCaptchaVersion = await SettingProvider.GetAsync<int>(AccountSettingNames.Captcha.Version);
+        if (Model.UseCaptcha)
+        {
+            await Model.ReCaptchaOptions.SetAsync(reCaptchaVersion == 3 ? reCAPTCHAConsts.V3 : reCAPTCHAConsts.V2);
+        }
+        <form method="post">
+            @if (Model.UseCaptcha)
+            {
+                <input type="hidden" name="@RecaptchaValidatorBase.RecaptchaResponseKey" id="@RecaptchaValidatorBase.RecaptchaResponseKey" />
+            }
+            <div>
+                <div class="form-floating mb-2">
+                    <input asp-for="LoginInput.UserNameOrEmailAddress" type="text" class="form-control" placeholder="name@example.com">
+                    @Html.LabelFor(m => m.LoginInput.UserNameOrEmailAddress)
+                    <span asp-validation-for="LoginInput.UserNameOrEmailAddress" />
+                </div>
+
+                <div class="form-floating mb-2">
+                    <input asp-for="LoginInput.Password" id="password-input" type="password" class="form-control" placeholder="Password">
+                    @Html.LabelFor(m => m.LoginInput.Password)
+                    <i id="PasswordVisibilityButton" class="bi bi-eye-slash show-pass-icon" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" aria-label="@L["ShowPassword"]" data-bs-original-title="@L["ShowPassword"]"></i>
+                    <i id="capslockicon" class="bi bi-capslock caps-lock-icon" style="display: none;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" aria-label="<i class='bi bi-exclamation-circle'></i> @L["CapsLockOn"]!" data-bs-original-title="<i class='bi bi-exclamation-circle'></i> @L["CapsLockOn"]!"></i>
+                    <span asp-validation-for="LoginInput.Password" />
+                </div>
+            </div>
+            <abp-row>
+                <abp-column>
+                    <abp-input asp-for="LoginInput.RememberMe" class="mb-4" />
+                </abp-column>
+                <abp-column class="text-end">
+                    <a href="@Url.Page("./ForgotPassword", new { returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash })">@L["ForgotPassword"]</a>
+                </abp-column>
+            </abp-row>
+
+            @if (reCaptchaVersion == 2)
+            {
+                <recaptcha-div-v2 callback="(function(){$('#@RecaptchaValidatorBase.RecaptchaResponseKey').val(token)})" />
+            }
+
+            <div class="d-grid gap-2">
+                <abp-button button-type="Primary" type="submit" class="mb-3" name="Action" value="Login">@L["Login"]</abp-button>
+            </div>
+
+            @if (Model.ShowCancelButton)
+            {
+                <div class="d-grid gap-2">
+                    <abp-button button-type="Secondary" type="submit" formnovalidate="formnovalidate" class="mb-3" name="Action" value="Cancel">@L["Cancel"]</abp-button>
+                </div>
+            }
+        </form>
+    }
+
+   
+</div>

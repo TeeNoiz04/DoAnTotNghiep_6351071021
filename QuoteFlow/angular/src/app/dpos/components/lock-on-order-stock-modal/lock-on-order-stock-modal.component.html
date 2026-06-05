@@ -1,0 +1,218 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'lg',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+  }"
+  (disappear)="closeDialog()">
+  <ng-template #abpHeader>
+    <h3 class="d-flex align-items-center">
+      <i class="bi bi-box-seam me-2 text-warning"></i>
+      <span>Manage Lock On Order Stock</span>
+      <span *ngIf="selectedItemsCount > 0" class="badge bg-warning ms-2">{{ selectedItemsCount }}</span>
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-1" role="tablist">
+      <li class="nav-item" role="presentation" *abpPermission="AppPermissions.MovingOrders.DPOs.LockOnOrderStock">
+        <button
+          class="nav-link"
+          [class.active]="activeTab === 'lock'"
+          (click)="activeTab = 'lock'"
+          type="button"
+          role="tab">
+          <i class="bi bi-lock me-1"></i>
+          Lock On Order Stock
+        </button>
+      </li>
+      <li class="nav-item" role="presentation" *abpPermission="AppPermissions.MovingOrders.DPOs.LockOnOrderStock">
+        <button
+          class="nav-link"
+          [class.active]="activeTab === 'release'"
+          (click)="activeTab = 'release'"
+          type="button"
+          role="tab">
+          <i class="bi bi-unlock me-1"></i>
+          Release On Order Stock
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Lock Stock Tab -->
+      <div
+        class="tab-pane fade"
+        [class.show]="activeTab === 'lock'"
+        [class.active]="activeTab === 'lock'"
+        role="tabpanel">
+        <div *ngIf="loading" class="text-center mb-1">
+          <div class="spinner-border spinner-border-sm text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <span class="ms-2">Loading stock categories...</span>
+        </div>
+
+        <form [formGroup]="form" [skipValidation]="true">
+          <div class="mb-2">
+            <label for="comment" class="form-label"> Comment </label>
+            <textarea
+              id="comment"
+              formControlName="comment"
+              class="form-control"
+              rows="3"
+              [disabled]="loading"
+              [ngClass]="{
+                'is-invalid': form.get('comment').invalid && form.get('comment').touched,
+              }">
+            </textarea>
+            <div *ngIf="form.get('comment').invalid && form.get('comment').touched" class="invalid-feedback">
+              <span *ngIf="form.get('comment').errors?.required">Comment is required</span>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Release Stock Tab -->
+      <div
+        class="tab-pane fade"
+        [class.show]="activeTab === 'release'"
+        [class.active]="activeTab === 'release'"
+        role="tabpanel">
+        <!-- Confirmation View -->
+        <div *ngIf="!showProgress">
+          <div class="alert p-1 alert-warning d-flex align-items-center mb-1" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>
+              You are about to unlock on order stock for <strong>{{ selectedItemsCount }}</strong> selected items.
+            </div>
+          </div>
+
+          <!-- <form [formGroup]="releaseForm" [skipValidation]="true">
+            <div>
+              <label for="releaseNote" class="form-label"> Note </label>
+              <textarea
+                class="form-control custom-textarea"
+                id="releaseNote"
+                formControlName="note"
+                rows="4"
+                [ngClass]="{
+                  'is-invalid': releaseForm.get('note').invalid && releaseForm.get('note').touched,
+                }"></textarea>
+              <div *ngIf="releaseForm.get('note').invalid && releaseForm.get('note').touched" class="invalid-feedback">
+                <span *ngIf="releaseForm.get('note').errors?.maxlength">Note cannot exceed 500 characters</span>
+              </div>
+            </div>
+          </form> -->
+        </div>
+
+        <!-- Progress View -->
+        <div *ngIf="showProgress">
+          <!-- Progress Bar -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="fw-bold">Progress</span>
+              <span class="text-muted">{{ currentProgress }} / {{ totalItems }} items processed</span>
+            </div>
+            <div class="progress" style="height: 25px">
+              <div
+                class="progress-bar progress-bar-striped"
+                [class.progress-bar-animated]="isProcessing"
+                [class.bg-success]="!isProcessing && summary"
+                role="progressbar"
+                [style.width.%]="progressPercentage"
+                [attr.aria-valuenow]="currentProgress"
+                [attr.aria-valuemin]="0"
+                [attr.aria-valuemax]="totalItems">
+                {{ progressPercentage | number: '1.0-0' }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Card (shown after completion) -->
+          <div *ngIf="summary" class="alert alert-success mb-1 p-2">
+            <div class="d-flex align-items-center mb-1">
+              <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+              <h6 class="alert-heading m-0 fw-bold">Unlock Complete</h6>
+            </div>
+
+            <div class="d-flex justify-content-around text-center">
+              <div>
+                <span class="d-block text-muted small text-uppercase fw-bold" style="font-size: 0.75rem"
+                  >Processed</span
+                >
+                <span class="fs-4 fw-bold text-success">
+                  {{ summary.succeeded }} <span class="fs-6 text-muted">/ {{ summary.totalProcessed }}</span>
+                </span>
+              </div>
+
+              <div class="vr opacity-25"></div>
+
+              <div>
+                <span class="d-block text-muted small text-uppercase fw-bold" style="font-size: 0.75rem">Failed</span>
+                <span
+                  class="fs-4 fw-bold"
+                  [class.text-danger]="summary.failed > 0"
+                  [class.text-dark]="summary.failed === 0">
+                  {{ summary.failed }}
+                </span>
+              </div>
+
+              <div class="vr opacity-25"></div>
+
+              <div>
+                <span class="d-block text-muted small text-uppercase fw-bold" style="font-size: 0.75rem">Unlocked</span>
+                <span class="fs-4 fw-bold text-dark">
+                  {{ summary.totalUnlocked }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <!-- Show different close button text based on progress state -->
+    <button
+      type="button"
+      class="btn"
+      [ngClass]="showProgress && summary ? 'btn-primary' : 'btn-secondary'"
+      (click)="closeDialog()"
+      [disabled]="isProcessing">
+      <i [ngClass]="showProgress && summary ? 'bi bi-check-circle me-1' : 'bi bi-x-circle me-1'"></i>
+      {{ showProgress && summary ? 'Done' : 'Close' }}
+    </button>
+    <button
+      *ngIf="
+        activeTab === 'lock' && permissionService.getGrantedPolicy(AppPermissions.MovingOrders.DPOs.LockOnOrderStock)
+      "
+      type="button"
+      class="btn btn-warning"
+      [disabled]="isBusy || form?.invalid || hasAnyFinalizedItems || dpo?.flags?.canLockOnOrder == false"
+      (click)="onLockOnOrderStock()">
+      <i class="bi bi-lock me-1"></i>
+      Lock On Order Stock
+    </button>
+    <button
+      *ngIf="
+        activeTab === 'release' &&
+        !showProgress &&
+        permissionService.getGrantedPolicy(AppPermissions.MovingOrders.DPOs.LockOnOrderStock)
+      "
+      type="button"
+      class="btn btn-danger"
+      [disabled]="isBusy || hasAnyFinalizedItems"
+      (click)="onReleaseOnOrderStock()">
+      <i class="bi bi-unlock me-1"></i>
+      Release On Order Stock
+    </button>
+  </ng-template>
+</abp-modal>

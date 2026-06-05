@@ -1,0 +1,39 @@
+<div class="upload-container">
+  <div
+    appDragDrop
+    (filesDropped)="onFilesDropped($event)"
+    (filesHovered)="onFilesHovered($event)"
+    (fileInputClick)="onFileInputClick()"
+    [class.hovered]="isHovered"
+    class="drop-zone">
+    <input
+      type="file"
+      [attr.multiple]="multiple ? true : null"
+      [attr.accept]="accept"
+      (change)="onFilesSelected($event)"
+      #fileInput
+      class="d-none" />
+    <i class="fas fa-cloud-upload-alt cloud-upload"></i>
+    <p class="mb-0" *ngIf="!isDragging">Drop files here or click to upload.</p>
+    <p class="mb-0" *ngIf="isDragging">Drop to upload</p>
+    <p class="mb-0">
+      <small *ngIf="accept">Accepted file types: {{ accept }}</small>
+    </p>
+  </div>
+  <div class="files">
+    <div *ngFor="let file of files" class="file">
+      <div class="file-icon">
+        <i class="fas" [ngClass]="file.name | fileIcon"></i>
+      </div>
+      <div class="file-info">
+        <p class="mb-0 file-name">{{ file.name }}</p>
+        <p class="mb-0 file-size">{{ file.size | fileSize }}</p>
+      </div>
+      <div class="file-actions">
+        <button class="btn btn-link file-remove" (click)="removeFile(file)">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

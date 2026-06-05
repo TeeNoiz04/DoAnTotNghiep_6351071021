@@ -1,0 +1,100 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <!-- <button type="button" class="btn btn-outline-secondary" (click)="clearFilters()">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button> -->
+      <button class="btn btn-primary" (click)="exportToExcel()" placement="bottom" ngbTooltip="Export" triggers="hover">
+        <i *ngIf="service.isExportToExcelBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isExportToExcelBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-dpo-report-filter #dpoReportFilter></app-dpo-report-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row mb-2">
+        <div class="col-md-4">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="text-muted mb-2">Total Amount</div>
+              <h4 class="mb-0">{{ getTotalAmount() | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="text-muted mb-2">Total FA</div>
+              <h4 class="mb-0 text-fa">{{ getTotalByType('FA') | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-light border-0 h-100">
+            <div class="card-body d-flex flex-column">
+              <div class="text-muted mb-2">Total LVS</div>
+              <h4 class="mb-0 text-lvs">{{ getTotalByType('LVS') | number: '1.0-0' }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ngx-datatable
+        class="bootstrap"
+        default
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="50"
+        [rows]="rows"
+        [columns]="columns">
+        <!-- Material Type Template -->
+        <ng-template #materialTypeTpl let-row="row" let-value="value">
+          <span
+            class="badge rounded-pill"
+            [ngClass]="{
+              'bg-material-fa': value === 'FA',
+              'bg-material-lvs': value === 'LVS',
+            }">
+            {{ value }}
+          </span>
+        </ng-template>
+
+        <!-- Number Template for Columns -->
+        <ng-template #numberTpl let-row="row" let-value="value" let-column="column">
+          <div class="text-end" [ngClass]="{ 'highlight-cell': value > 0 }">
+            {{ value | number: '1.0-0' }}
+          </div>
+        </ng-template>
+
+        <!-- Total Template -->
+        <ng-template #totalTpl let-row="row">
+          <div class="text-end fw-bold">
+            {{ getRowTotal(row) | number: '1.0-0' }}
+          </div>
+        </ng-template>
+
+        <!-- Empty State Template -->
+        <ng-template #emptyTemplate>
+          <div class="empty-row text-center py-4">
+            <i class="bi bi-search fs-1 text-muted mb-2"></i>
+            <p class="text-muted">No data found. Please adjust your search criteria.</p>
+          </div>
+        </ng-template>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>

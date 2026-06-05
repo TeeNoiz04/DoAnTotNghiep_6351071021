@@ -1,0 +1,96 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <div class="filter-area">
+    <form class="form-container" [formGroup]="form">
+      <div class="row-4-custom">
+        <div class="col">
+          <label class="form-label" for="fromDate">DPO From Date</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="fromDate"
+              class="form-control"
+              name="fromDate"
+              #minFromDateInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="fromDate"
+              (click)="minFromDateInput.toggle()"
+              container="body"
+              [class.is-invalid]="f['fromDate']?.invalid && f['fromDate']?.touched" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minFromDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+
+        <div class="col">
+          <label class="form-label" for="toDate">DPO Date</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="toDate"
+              class="form-control"
+              name="toDate"
+              format="dd/MM/yyyy"
+              #minToDateInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="toDate"
+              (click)="minToDateInput.toggle()"
+              container="body"
+              [class.is-invalid]="f['toDate']?.invalid && f['toDate']?.touched" />
+            <button class="btn btn-light bi bi-calendar3" (click)="minToDateInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+
+        <div class="col">
+          <label class="form-label" for="invoiceFromDate">Invoice From Date</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="invoiceFromDate"
+              class="form-control"
+              name="invoiceFromDate"
+              #minInvoiceFromInput="ngbDatepicker"
+              ngbDatepicker
+              format="dd/MM/yyyy"
+              formControlName="invoiceFromDate"
+              (click)="minInvoiceFromInput.toggle()"
+              container="body"
+              [class.is-invalid]="f['invoiceFromDate']?.invalid && f['invoiceFromDate']?.touched" />
+            <button
+              class="btn btn-light bi bi-calendar3"
+              (click)="minInvoiceFromInput?.toggle()"
+              type="button"></button>
+          </div>
+        </div>
+
+        <div class="col">
+          <label class="form-label" for="invoiceToDate">Invoice To Date</label>
+          <div class="input-group">
+            <input
+              readonly
+              autocomplete="off"
+              id="invoiceToDate"
+              class="form-control"
+              name="invoiceToDate"
+              format="dd/MM/yyyy"
+              #maxInvoiceToInput="ngbDatepicker"
+              ngbDatepicker
+              formControlName="invoiceToDate"
+              (click)="maxInvoiceToInput.toggle()"
+              container="body"
+              [class.is-invalid]="f['invoiceToDate']?.invalid && f['invoiceToDate']?.touched" />
+            <button class="btn btn-light bi bi-calendar3" (click)="maxInvoiceToInput?.toggle()" type="button"></button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-expandable-panel-v2>

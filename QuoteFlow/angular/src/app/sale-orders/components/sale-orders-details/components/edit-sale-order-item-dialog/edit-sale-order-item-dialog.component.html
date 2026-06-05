@@ -1,0 +1,69 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="isVisible"
+  [busy]="isBusy"
+  [options]="{ size: 'xl', centered: true, backdrop: 'static' }"
+  (disappear)="closeDialog()">
+  <ng-template #abpHeader>
+    <div class="top-header">
+      <h3>Edit Sale Order Item</h3>
+      <app-status-label [status]="saleOrderDetail?.statusCode"></app-status-label>
+    </div>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="content">
+      <form [formGroup]="form" [skipValidation]="true">
+        <div class="row mb-1">
+          <div class="col-md-3">
+            <label class="form-label" for="price">Price</label>
+            <app-input-number [readOnly]="true" id="price" formControlName="price" [allowDecimal]="true" />
+            <!-- <div *ngIf="form.get('price').invalid && form.get('price').touched" class="invalid-feedback"> -->
+            <!-- <span *ngIf="form.get('price').errors?.required">Price is required</span> -->
+            <!-- <span *ngIf="form.get('price').errors?.min">Price must be greater than or equal to 0</span> -->
+            <!-- </div> -->
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="extrafee">Extra Fee</label>
+            <app-input-number [readOnly]="true" id="extrafee" formControlName="extrafee" [allowDecimal]="true" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="qty">Qty</label>
+            <app-input-number [readOnly]="true" id="qty" formControlName="qty" [allowDecimal]="true" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="amount">Amount</label>
+            <app-input-number [readOnly]="true" id="amount" formControlName="amount" [allowDecimal]="true" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <label class="form-label" for="note">Note</label>
+            <textarea
+              id="note"
+              class="form-control"
+              formControlName="note"
+              rows="3"
+              [ngClass]="{ 'is-invalid': form.get('note').invalid && form.get('note').touched }"></textarea>
+            <div *ngIf="form.get('note').invalid && form.get('note').touched" class="invalid-feedback">
+              <span *ngIf="form.get('note').errors?.maxlength">Note cannot exceed 500 characters</span>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="closeDialog()">
+      <i class="bi bi-x-circle me-1"></i>
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="isBusy || form.invalid" (click)="onSave()">
+      <i class="bi bi-save me-1"></i>
+      Save Changes
+    </button>
+  </ng-template>
+</abp-modal>

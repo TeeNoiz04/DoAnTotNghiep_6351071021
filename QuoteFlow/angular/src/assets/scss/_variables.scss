@@ -1,0 +1,159 @@
+// Variables
+// Shadow
+$shadow-sm: 0 0.75rem 6rem rgba(56, 65, 74, 0.03);
+$shadow: 0 0 35px 0 rgba(154, 161, 171, 0.15);
+$shadow-lg: 0 0 45px 0 rgba(0, 0, 0, 0.12);
+
+// Font weight
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-normal: 400;
+
+// stylelint-disable
+$gray-100: #f1f5f7;
+$gray-200: #f7f7f7;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #98a6ad;
+$gray-700: #6c757d;
+$gray-800: #343a40;
+$gray-900: #323a46;
+
+$grays: ();
+$grays: map-merge(
+  (
+    "100": $gray-100,
+    "200": $gray-200,
+    "300": $gray-300,
+    "400": $gray-400,
+    "500": $gray-500,
+    "600": $gray-600,
+    "700": $gray-700,
+    "800": $gray-800,
+    "900": $gray-900,
+  ),
+  $grays
+);
+
+$blue: #4a81d4;
+$indigo: #675aa9;
+$purple: #6658dd;
+$pink: #f672a7;
+$red: #f1556c;
+$orange: #fd7e14;
+$yellow: #f7b84b;
+$green: #1abc9c;
+$teal: #02a8b5;
+$cyan: #4fc6e1;
+$white: #fff;
+
+$colors: ();
+$colors: map-merge(
+  (
+    "blue": $blue,
+    "indigo": $indigo,
+    "purple": $purple,
+    "pink": $pink,
+    "red": $red,
+    "orange": $orange,
+    "yellow": $yellow,
+    "green": $green,
+    "teal": $teal,
+    "cyan": $cyan,
+    "white": $white,
+    "gray": $gray-600,
+    "gray-dark": $gray-800,
+  ),
+  $colors
+);
+
+$colors: ();
+$colors: map-merge(
+  (
+    "blue": $blue,
+    "indigo": $indigo,
+    "purple": $purple,
+    "pink": $pink,
+    "red": $red,
+    "orange": $orange,
+    "yellow": $yellow,
+    "green": $green,
+    "teal": $teal,
+    "cyan": $cyan,
+    "white": $white,
+    "gray": $gray-600,
+    "gray-dark": $gray-800,
+  ),
+  $colors
+);
+
+:root {
+  --ae-gap: 5px;
+  --ae-text-area-border: 1px solid #ddd;
+  --ae-text-area-border-radius: 0;
+  --ae-focus-outline-color: #afaeae auto 1px;
+  --ae-toolbar-padding: 1px;
+  --ae-button-radius: 5px;
+  // --ae-toolbar-bg-color: #b3dca0;
+  // --ae-toolbar-border-radius: 1px solid #ddd;
+  // --ae-button-bg-color: #dadad7;
+  // --ae-button-border: 3px solid #3fb74e;
+  // --ae-button-hover-bg-color: #3fb74e;
+  // --ae-button-active-bg-color: red;
+  // --ae-button-active-hover-bg-color: blue;
+  // --ae-button-disabled-bg-color: gray;
+  // --ae-picker-label-color: rgb(78, 84, 155);
+  // --ae-picker-icon-bg-color: rgb(34, 41, 122);
+  // --ae-picker-option-bg-color: rgba(221, 221, 84, 0.76);
+  // --ae-picker-option-active-bg-color: rgba(237, 237, 62, 0.9);
+  // --ae-picker-option-focused-bg-color: rgb(255, 255, 0);
+}
+
+$material-fa: #f1556c;
+$material-lvs: #4a81d4;
+
+// GIC Type Colors
+$gic-internal: #1abc9c;
+$gic-sponsor: #d64d82;
+$gic-warranty: #e67e22;
+$gic-writeoff: #f1556c;
+
+$gic-internal-asset: #1a9ed4;
+$gic-internal-tool: #1abc6e;
+$gic-internal-reservation-no: #20d4a8;
+$gic-warranty-product-exchange: #d35400;
+$gic-warranty-part-replacement: #f39c12;
+
+$badge-diamond-bg: #4a90e2;
+$badge-diamond-text: #ffffff;
+
+$badge-deluxe-bg: #6c3483;
+$badge-deluxe-text: #ffffff;
+
+$badge-signature-bg: #2c3e50;
+$badge-signature-text: #f7d62b;
+
+$badge-silver-bg: #b7bdc1;
+$badge-silver-text: #1a252f;
+
+$badge-platinum-bg: #8e9ea2;
+$badge-platinum-text: #ffffff;
+
+$badge-gold-bg: #d4b73b;
+$badge-gold-text: #ffffff;
+
+$badge-premium-bg: #0e4d2d;
+$badge-premium-text: #f7d62b;
+
+$badge-global-account-bg: #286ca3;
+$badge-global-account-text: #ffffff;
+
+$badge-si-oem-bg: #13a1ad;
+$badge-si-oem-text: #ffffff;
+
+$badge-eu-bg: #27ae60;
+$badge-eu-text: #ffffff;
+
+$badge-downgraded-bg: #4fc6e1;
+$badge-downgraded-text: #ffffff;

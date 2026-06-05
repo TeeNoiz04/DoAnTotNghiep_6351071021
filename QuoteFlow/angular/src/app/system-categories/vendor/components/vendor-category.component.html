@@ -1,0 +1,179 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="fa fa-search me-1" aria-hidden="true"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="create()"
+        *abpPermission="AppPermissions.MasterDatas.CreateSupplier"
+        placement="bottom"
+        ngbTooltip="Add New"
+        triggers="hover">
+        <i class="fa fa-plus me-1" aria-hidden="true"></i>
+        <span>{{ '::AddNew' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+  <div class="card mb-3">
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm>
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Supplier Code' | abpLocalization }}
+                </label>
+                <input
+                  appTrim
+                  autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters.supplierCode"
+                  [ngModelOptions]="{ standalone: true }" />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Short Name' | abpLocalization }}
+                </label>
+                <input
+                  appTrim
+                  autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters.shortName"
+                  [ngModelOptions]="{ standalone: true }" />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="supplierId">
+                  {{ '::Tax Code' | abpLocalization }}
+                </label>
+                <input
+                  appTrim
+                  autocomplete="off"
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="filters.taxCode"
+                  [ngModelOptions]="{ standalone: true }" />
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="mb-0">
+                <label class="form-label" for="isDeactive">
+                  {{ '::Deactive' | abpLocalization }}
+                </label>
+                <ng-select
+                  id="isDeactive"
+                  [(ngModel)]="filters.isDeactive"
+                  [ngModelOptions]="{ standalone: true }"
+                  [items]="deactiveOptions"
+                  bindLabel="label"
+                  bindValue="value"
+                  clearable="false"
+                  appendTo="body">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column [name]="" [maxWidth]="80" [width]="80" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                *abpPermission="AppPermissions.MasterDatas.EditSupplier"
+                (click)="update(row)"
+                class="btn btn-link p-0">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+              <button
+                (click)="delete(row)"
+                *abpPermission="AppPermissions.MasterDatas.DeleteSupplier"
+                class="btn btn-link p-0">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Code' | abpLocalization }}" prop="code" [maxWidth]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.supplierCode }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Short Name' | abpLocalization }}" prop="description" [maxWidth]="100">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.shortName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Full Name' | abpLocalization }}" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fullName }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::TaxCode' | abpLocalization }}" prop="taxCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.taxCode }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorName"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-vendor-category-detail-modal />
+  }
+}

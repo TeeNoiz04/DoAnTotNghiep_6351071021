@@ -1,0 +1,97 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: false,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-2 text-warning"></i>
+      Lock Shipment
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading lock shipment...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading lock shipment data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="lockShipmentData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <app-table-column-group name="Lock Shipment Information" cssClass="group-header lockShipment-group">
+              <!-- Material Code Column -->
+              <app-table-column field="golfaCode" header="Material Code" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Qty Need Column -->
+              <app-table-column field="qtyNeed" header="Qty Need" width="100px" textAlign="end"> </app-table-column>
+
+              <!-- PO No Column -->
+              <app-table-column field="poNo" header="PO No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- DPO No Column -->
+              <app-table-column field="dpoNo" header="DPO No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- Machine No -->
+              <app-table-column field="machineNo" header="Machine No" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Supplier Reply -->
+              <app-table-column field="supplierReply" header="Supplier Reply" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- mevnAddRequest -->
+              <app-table-column field="mevnAddRequest" header="MEVN Add Request" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Modified Date Column -->
+              <app-table-column
+                field="modified"
+                header="Modified"
+                width="150px"
+                textAlign="center"
+                [formatter]="formatModifiedDate">
+              </app-table-column>
+
+              <!-- Modified By Column -->
+              <app-table-column
+                field="modifiedBy"
+                header="Modified By"
+                width="120px"
+                textAlign="center"
+                [formatter]="formatUsername">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

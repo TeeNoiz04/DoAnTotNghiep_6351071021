@@ -1,0 +1,192 @@
+<abp-page [title]="'::Menu:Dashboard' | abpLocalization">
+  <div class="dashboard-container">
+    <app-expandable-panel-v2
+      headerText="Search With Filters"
+      panelId="search_info"
+      [defaultCollapsed]="false"
+      icon="bi bi-search"
+      [isDisabled]="false"
+      class="mb-0">
+      <form [formGroup]="dateFilterForm" (ngSubmit)="refreshData()">
+        <div class="search-container">
+          <div class="col">
+            <div class="form-group">
+              <label class="form-label">FY</label>
+              <ng-select
+                formControlName="fiscalYear"
+                [items]="fiscalYears"
+                bindLabel="year"
+                bindValue="year"
+                appendTo="body"
+                [clearable]="false"
+                [searchable]="false">
+              </ng-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group refresh-action">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-arrow-repeat me-1"></i>
+                <span>{{ '::Refresh' | abpLocalization }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </app-expandable-panel-v2>
+    <!-- <div class="card mb-0">
+      <div class="card-body">
+      </div>
+    </div> -->
+
+    <div class="row" *abpPermission="AppPermissions.Dashboard.SalesResultBasedOnPlan">
+      <div class="col-md-6 mb-0">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Sales Result Based on Plan - FA</h5>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="!loading; else loadingTemplate">
+              <app-bar-chart [chartData]="FAChartData" [height]="'400px'" [enableScrolling]="true"> </app-bar-chart>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-0">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Sales Result Based on Plan - LVS</h5>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="!loading; else loadingTemplate">
+              <app-bar-chart [chartData]="LVSChartData" [height]="'400px'" [enableScrolling]="true"> </app-bar-chart>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" *abpPermission="AppPermissions.Dashboard.POResultBasedOnPlan">
+      <div class="col-md-6 mb-0">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">PO Result Based on Plan - FA</h5>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="!loading; else loadingTemplate">
+              <app-bar-chart [chartData]="POFAChartData" [height]="'400px'" [enableScrolling]="true"> </app-bar-chart>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-0">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">PO Result Based on Plan - LVS</h5>
+          </div>
+          <div class="card-body">
+            <ng-container *ngIf="!loading; else loadingTemplate">
+              <app-bar-chart [chartData]="POLVSChartData" [height]="'400px'" [enableScrolling]="true"> </app-bar-chart>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="row"
+      *abpPermission="AppPermissions.Dashboard.SalesByMaterialGroup + '||' + AppPermissions.Dashboard.SalesByBuyer">
+      <div class="col-md-6 mb-4" *abpPermission="AppPermissions.Dashboard.SalesByMaterialGroup">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Sales by Material Group</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="chart-container">
+                  <h6 class="text-center mb-2">FA</h6>
+                  <ng-container *ngIf="!loading; else loadingTemplate">
+                    <ng-container *ngIf="hasDataMaterialGroupFA; else noDataTemplate">
+                      <app-pie-chart [data]="materialGroupFAData" [options]="materialGroupFAOptions" [width]="'100%'">
+                      </app-pie-chart>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="chart-container">
+                  <h6 class="text-center mb-2">LVS</h6>
+                  <ng-container *ngIf="!loading; else loadingTemplate">
+                    <ng-container *ngIf="hasDataMaterialGroupLVS; else noDataTemplate">
+                      <app-pie-chart [data]="materialGroupLVSData" [options]="materialGroupLVSOptions" [width]="'100%'">
+                      </app-pie-chart>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4" *abpPermission="AppPermissions.Dashboard.SalesByBuyer">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Sales by Distributor</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="chart-container">
+                  <h6 class="text-center mb-2">FA</h6>
+                  <ng-container *ngIf="!loading; else loadingTemplate">
+                    <ng-container *ngIf="hasDataDistributorFA; else noDataTemplate">
+                      <app-pie-chart
+                        [data]="distributorFAData"
+                        [options]="distributorFAOptions"
+                        [height]="'250px'"
+                        [width]="'100%'">
+                      </app-pie-chart>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="chart-container">
+                  <h6 class="text-center mb-2">LVS</h6>
+                  <ng-container *ngIf="!loading; else loadingTemplate">
+                    <ng-container *ngIf="hasDataDistributorLVS; else noDataTemplate">
+                      <app-pie-chart
+                        [data]="distributorLVSData"
+                        [options]="distributorLVSOptions"
+                        [height]="'250px'"
+                        [width]="'100%'">
+                      </app-pie-chart>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="d-flex justify-content-center align-items-center" style="height: 350px">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #noDataTemplate>
+      <div class="no-data-container d-flex flex-column justify-content-center align-items-center" style="height: 350px">
+        <i class="bi bi-bar-chart-line text-secondary mb-3" style="font-size: 3rem"></i>
+        <p class="text-secondary mb-1">No data available</p>
+        <p class="text-muted small">Try selecting a different time period</p>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>

@@ -1,0 +1,19 @@
+.textbox-cell {
+  width: 100%;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease-in-out 0s,
+    border-color 0.2s ease-in-out 0s;
+  &:hover {
+    background-color: rgb(235, 236, 240);
+  }
+  &:focus {
+    background-color: transparent;
+    border: 1px solid #ced4da;
+  }
+}
+
+.textbox-cell:disabled {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}

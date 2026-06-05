@@ -1,0 +1,96 @@
+<div
+  #popoverTrigger="ngbPopover"
+  class="d-flex align-items-start cursor-pointer"
+  [ngClass]="containerClass"
+  [ngbPopover]="showPopover ? popoverTemplate : null"
+  [popoverTitle]="'Metric Details'"
+  [popoverClass]="popoverClass"
+  [placement]="popoverPlacement"
+  triggers="manual"
+  container="body"
+  [closeDelay]="0"
+  [openDelay]="0"
+  (click)="onMetricClick()"
+  (shown)="onPopoverShown()"
+  (hidden)="onPopoverHidden()">
+  <i [ngClass]="iconClass" class="me-1 mt-n1"></i>
+  <div class="flex-grow-1">
+    <!-- Header with label and current value -->
+    <div class="d-flex align-items-center mb-1" [ngClass]="labelContainerClass">
+      <span class="me-2 fw-bold small" [ngClass]="labelClass">{{ label }}:</span>
+      <span class="fw-bold small" [ngClass]="[valueClass, statusClass]">
+        {{ formatAbbreviatedValue(currentValue) }}
+      </span>
+    </div>
+
+    <!-- Range scale visualization -->
+    <div class="metric-range-scale" [ngClass]="scaleContainerClass">
+      <!-- Scale track -->
+      <div class="scale-track" [ngClass]="statusClass">
+        <!-- Normal range fill -->
+        <div class="range-fill" [ngClass]="statusClass" [style.width.%]="Math.min(currentPosition, 100)"></div>
+
+        <!-- Overflow extension (if needed) -->
+        <div
+          *ngIf="isOverflow && currentValue > maxValue"
+          class="overflow-extension overflow-right"
+          [style.width.%]="overflowExtension"></div>
+
+        <!-- Min position marker -->
+        <div class="min-marker" [style.left.%]="0"></div>
+
+        <!-- Max position marker -->
+        <div class="max-marker" [style.left.%]="100"></div>
+
+        <!-- Current position marker -->
+        <div
+          class="current-marker"
+          [ngClass]="statusClass"
+          [style.left.%]="currentValue < minValue ? 0 : currentValue > maxValue ? 100 : currentPosition"></div>
+
+        <!-- Overflow marker for values below minimum -->
+        <div
+          *ngIf="isOverflow && currentValue < minValue"
+          class="overflow-marker overflow-left"
+          [ngClass]="statusClass"
+          [style.right.%]="100 + overflowExtension"></div>
+      </div>
+
+      <!-- Scale labels -->
+      <div class="scale-labels">
+        <span class="min-label">{{ formatAbbreviatedValue(minValue) }}</span>
+        <span class="max-label">{{ formatAbbreviatedValue(maxValue) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Popover Template -->
+<ng-template #popoverTemplate>
+  <div class="metric-popover-content">
+    <table class="table table-sm mb-0">
+      <tbody>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ minLabel }}:</td>
+          <td>{{ formatValue(minValue) }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ maxLabel }}:</td>
+          <td>{{ formatValue(maxValue) }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ currentLabel }}:</td>
+          <td>{{ formatValue(currentValue) }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ remainingAddLabel }}:</td>
+          <td>{{ formatValue(getRemainingToMax()) }}</td>
+        </tr>
+        <tr>
+          <td class="fw-bold text-nowrap pe-3">{{ remainingReduceLabel }}:</td>
+          <td>{{ formatValue(getRemainingToMin()) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>

@@ -1,0 +1,165 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+
+      <button
+        *abpPermission="AppPermissions.MasterDatas.CreateMaterialGroup"
+        class="btn btn-primary"
+        type="button"
+        (click)="create()"
+        placement="bottom"
+        ngbTooltip="Add New"
+        triggers="hover">
+        <i class="fa fa-plus me-1" aria-hidden="true"></i>
+        <span>{{ '::AddNew' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+  <div class="card mb-3">
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm (keyup.enter)="onLoad()">
+          <div class="row">
+            <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+              <label class="form-label" for="codeFilter">
+                {{ '::Code' | abpLocalization }} <strong >(%)</strong>
+              </label>
+              <input
+                appTrim
+                id="codeFilter"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                [(ngModel)]="filters.code"
+                [ngModelOptions]="{ standalone: true }" />
+            </div>
+            <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+              <label class="form-label" for="nameFilter">
+                {{ '::Name' | abpLocalization }} <strong >(%)</strong>
+              </label>
+              <input
+                appTrim
+                id="nameFilter"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                [(ngModel)]="filters.name"
+                [ngModelOptions]="{ standalone: true }" />
+            </div>
+
+            <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+              <label class="form-label" for="isDeactiveFilter">
+                {{ '::Deactive' | abpLocalization }}
+              </label>
+
+              <select
+                id="isDeactiveFilter"
+                class="form-select form-control"
+                [(ngModel)]="filters.isDeActive"
+                [ngModelOptions]="{ standalone: true }">
+                <option [ngValue]="true">{{ '::Yes' | abpLocalization }}</option>
+                <option [ngValue]="false">{{ '::No' | abpLocalization }}</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column [name]="" [maxWidth]="80" [width]="80" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                *abpPermission="AppPermissions.MasterDatas.EditMaterialGroup"
+                (click)="update(row)"
+                class="btn btn-link p-0">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+              <button
+                *abpPermission="AppPermissions.MasterDatas.DeleteMaterialGroup"
+                (click)="delete(row)"
+                class="btn btn-link p-0">
+                <i
+                  class="fa fa-trash text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="Delete"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Code' | abpLocalization }}" prop="code" [maxWidth]="250">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.code }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Name' | abpLocalization }}" prop="name" [maxWidth]="250">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.name }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Allow Key Account" prop="allowKeyAccount" [width]="150" [maxWidth]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div class="form-check d-flex justify-content-center">
+              <input type="checkbox" class="form-check-input" [checked]="row.allowKeyAccount" [disabled]="true" />
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="{{ '::Note' | abpLocalization }}" prop="note">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.note }}
+          </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorName"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-material-group-category-detail-modal />
+  }
+}

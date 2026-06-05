@@ -1,0 +1,208 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onLoad()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      @if (service.filters; as filters) {
+        <form #filterForm>
+          <div class="row">
+            <!-- Material Type -->
+            <div class="col-12 col-sm-3 col-md-3 col-lg-3 mb-3">
+              <label class="form-label" for="productTypeFilter">
+                {{ '::Material Type' | abpLocalization }}
+              </label>
+              <ng-select
+                id="productTypeFilter"
+                [items]="service.productTypeOptions"
+                bindLabel="displayName"
+                bindValue="displayCode"
+                [(ngModel)]="filters.product_Type"
+                [ngModelOptions]="{ standalone: true }"
+                [clearable]="false"
+                [loading]="service.isLoadingFilters"
+                (ngModelChange)="service.onMaterialTypeChange($event)">
+              </ng-select>
+            </div>
+
+            <!-- SPO Type -->
+            <div class="col-12 col-sm-3 col-md-3 col-lg-3 mb-3">
+              <label class="form-label" for="approvalTypeFilter">
+                {{ '::SPO Type' | abpLocalization }}
+              </label>
+              <ng-select
+                id="approvalTypeFilter"
+                [items]="service.approvalTypeOptions"
+                bindLabel="displayName"
+                bindValue="displayCode"
+                [(ngModel)]="filters.approval_Type"
+                [ngModelOptions]="{ standalone: true }"
+                [clearable]="false"
+                [loading]="service.isLoadingSpoTypes"
+                (ngModelChange)="service.onSpoTypeChange($event)">
+                <ng-template ng-notfound-tmp>
+                  <div class="ng-option disabled text-muted" style="padding: 8px 12px">No items found</div>
+                </ng-template>
+              </ng-select>
+            </div>
+
+            <!-- KA Type -->
+            <div class="col-12 col-sm-3 col-md-3 col-lg-3 mb-3">
+              <label class="form-label" for="kaTypeFilter">
+                {{ '::KA Type' | abpLocalization }}
+              </label>
+              <ng-select
+                id="kaTypeFilter"
+                [items]="service.kaTypeOptions"
+                bindLabel="displayName"
+                bindValue="displayCode"
+                [(ngModel)]="filters.kaType"
+                [ngModelOptions]="{ standalone: true }"
+                [clearable]="false"
+                [loading]="service.isLoadingKATypes"
+                (ngModelChange)="service.onKATypeChange($event)">
+                <ng-template ng-notfound-tmp>
+                  <div class="ng-option disabled text-muted" style="padding: 8px 12px">No items found</div>
+                </ng-template>
+              </ng-select>
+            </div>
+
+            <!--  KA Class -->
+            <div class="col-12 col-sm-3 col-md-3 col-lg-3 mb-3">
+              <label class="form-label" for="accountClassifyFilter">
+                {{ '::KA Class' | abpLocalization }}
+              </label>
+              <ng-select
+                id="accountClassifyFilter"
+                [items]="service.accountClassifyOptions"
+                bindLabel="displayName"
+                bindValue="displayCode"
+                [(ngModel)]="filters.accountClassify"
+                [ngModelOptions]="{ standalone: true }"
+                [clearable]="true"
+                [loading]="service.isLoadingKAClasses">
+                <ng-template ng-notfound-tmp>
+                  <div class="ng-option disabled text-muted" style="padding: 8px 12px">No items found</div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        default
+        [rows]="service.data.items"
+        [count]="service.data.totalCount"
+        [list]="list"
+        class="bootstrap">
+        <ngx-datatable-column [name]="" [maxWidth]="80" [width]="80" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button
+                (click)="update(row)"
+                class="btn btn-link p-0"
+                *abpPermission="AppPermissions.FAAdmins.EditCfgDiscountRatio">
+                <i class="fa fa-edit text-muted icon-hover-edit" placement="top" container="body" ngbTooltip="Edit"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ng-container *ngIf="service.hasKAType"
+          ><ngx-datatable-column [name]="'::KA Type' | abpLocalization" prop="kaType" [maxWidth]="250">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.kaType }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column [name]="'::KA Class' | abpLocalization" prop="accountClassify" [maxWidth]="250">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.accountClassify }}
+            </ng-template>
+          </ngx-datatable-column>
+        </ng-container>
+        <ng-container *ngIf="!service.hasKAType">
+          <ngx-datatable-column [name]="'::From Value' | abpLocalization" prop="value_Min" [maxWidth]="250">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.value_Min | number: '1.0-0' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column [name]="'::To Value' | abpLocalization" prop="value_Max" [maxWidth]="250">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.value_Max | number: '1.0-0' }}
+            </ng-template>
+          </ngx-datatable-column>
+        </ng-container>
+
+        <ngx-datatable-column
+          [name]="'::Discount (%)' | abpLocalization"
+          prop="discountRatio"
+          cellClass="text-right"
+          headerClass="text-right"
+          [maxWidth]="150">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.discountRatio }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column [name]="'::Note' | abpLocalization" prop="note" [width]="200">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <div [title]="row.note" class="text-truncate">
+              {{ row.note }}
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column
+              [creationTime]="row.creationTime"
+              [creatorName]="row.creatorUsername"
+              [lastModificationTime]="row.lastModificationTime"
+              [lastModifierName]="row.lastModifierUsername">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+@defer (when serviceDetail.isVisible) {
+  @if (serviceDetail.isVisible) {
+    <app-spo-discount-detail-modal />
+  }
+}

@@ -1,0 +1,89 @@
+<abp-modal
+  appEscCloseModal
+  [suppressUnsavedChangesWarning]="true"
+  [busy]="service.isBusy"
+  [(visible)]="service.isVisible"
+  [options]="{ size: 'lg', backdrop: 'static' }">
+  <ng-template #abpHeader>
+    <h3>
+      {{ (service.selected ? '::Edit' : '::New') | abpLocalization }}
+    </h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <form [formGroup]="service.form" id="datatable-form" (ngSubmit)="service.submitForm()" [validateOnSubmit]="true">
+      <div class="row mt-0">
+        <ng-container *ngIf="!service.isAP">
+          <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+            <label class="form-label" for="ka-type">
+              {{ '::KA Type' | abpLocalization }}
+            </label>
+            <input id="ka-type" class="form-control" formControlName="kaType" type="text" />
+            <!-- <div *ngIf="isInvalid('kaType')" class="invalid-feedback d-block">
+              <div *ngIf="hasError('kaType', 'required')">KA Type is required</div>
+            </div> -->
+          </div>
+
+          <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+            <label class="form-label" for="ka-class">
+              {{ '::KA Class' | abpLocalization }}
+            </label>
+            <input id="ka-class" class="form-control" formControlName="accountClassify" type="text" />
+            <!-- <div *ngIf="isInvalid('accountClassify')" class="invalid-feedback d-block">
+              <div *ngIf="hasError('accountClassify', 'required')">KA Class is required</div>
+            </div> -->
+          </div>
+        </ng-container>
+        <ng-container *ngIf="service.isAP">
+          <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+            <label class="form-label label-required" for="from-value">
+              {{ '::From Value' | abpLocalization }}
+            </label>
+            <app-input-number id="from-value" formControlName="value_Min"></app-input-number>
+            <!-- <div *ngIf="isInvalid('value_Min')" class="invalid-feedback d-block">
+              <div *ngIf="hasError('value_Min', 'required')">From Value is required</div>
+            </div> -->
+          </div>
+
+          <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+            <label class="form-label" for="to-value">
+              {{ '::To Value' | abpLocalization }}
+            </label>
+            <app-input-number id="to-value" formControlName="value_Max"></app-input-number>
+            <!-- <div *ngIf="isInvalid('value_Max')" class="invalid-feedback d-block">
+              <div *ngIf="hasError('value_Max', 'required')">To Value is required</div>
+            </div> -->
+            <div *ngIf="validateFromTo()" class="invalid-feedback d-block">
+              <div>From Value must be less than To Value</div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-1">
+          <label class="form-label label-required" or="discount-ratio">
+            {{ '::Discount (%)' | abpLocalization }}
+          </label>
+          <app-input-number id="discount-ratio" formControlName="discountRatio"></app-input-number>
+          <!-- <div *ngIf="isInvalid('discountRatio')" class="invalid-feedback d-block">
+            <div *ngIf="hasError('discountRatio', 'required')">Discount (%) is required</div>
+          </div> -->
+        </div>
+
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+          <label for="note" class="form-label">{{ '::Note' | abpLocalization }}</label>
+          <textarea class="form-control custom-textarea" id="note" formControlName="note" appAutoResize></textarea>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+
+    <abp-button iconClass="fa fa-check" buttonType="submit" formName="datatable-form">
+      {{ '::Save' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>

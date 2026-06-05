@@ -1,0 +1,205 @@
+<div class="error-display-container mt-1 mb-1" [ngClass]="'layout-' + layout">
+  <!-- File Name Display -->
+  <h3 *ngIf="showFileName && fileName" class="file-name">File Name: {{ fileName }}</h3>
+
+  <!-- Error Count Display -->
+  <h3
+    class="error-count error-popover-trigger"
+    #popover="ngbPopover"
+    [ngbPopover]="errorPopoverTemplate"
+    [popoverTitle]="'Error Details'"
+    [popoverClass]="popoverClass"
+    [placement]="popoverPlacement"
+    [triggers]="'manual'"
+    container="body"
+    [autoClose]="'outside'"
+    [closeDelay]="0"
+    [openDelay]="0"
+    [class.has-errors]="hasErrors"
+    [class.error-popover-trigger]="hasErrors"
+    (click)="togglePopover(popover)">
+    <i class="bi bi-exclamation-triangle-fill me-2" *ngIf="showIcon && hasErrors"></i>
+    {{ displayMessage }}
+  </h3>
+</div>
+
+<!-- Error Popover Template -->
+<ng-template #errorPopoverTemplate let-popoverRef="popoverRef">
+  <div
+    class="error-popover-content"
+    #popoverContent
+    [class.has-scroll-top]="hasScrollTop"
+    [class.has-scroll-bottom]="hasScrollBottom"
+    (scroll)="onPopoverScroll($event)">
+    <div *ngIf="popoverErrors.length === 0" class="text-muted">No errors found</div>
+    <table *ngIf="popoverErrors.length > 0" class="table table-sm mb-0">
+      <tbody>
+        <tr *ngFor="let error of popoverErrors">
+          <td *ngIf="!error.isFullWidth" class="fw-bold text-nowrap pe-3 align-top">{{ error.where }}</td>
+          <td [attr.colspan]="error.isFullWidth ? 2 : 1" class="text-break">
+            {{ error.message }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="errorCount > popoverMaxErrors" class="text-muted text-center mt-2 small">
+      Showing first {{ popoverMaxErrors }} of {{ errorCount }} errors
+    </div>
+  </div>
+
+  <!-- View All Button (shows when errors > threshold) -->
+  <div *ngIf="shouldShowViewAllButton" class="error-popover-footer">
+    <button type="button" class="btn btn-primary btn-sm btn-view-all" (click)="openErrorModalAndClosePopover()">
+      <i class="bi bi-list-ul me-1"></i>
+      View All {{ errorCount }} Errors
+    </button>
+  </div>
+</ng-template>
+
+<!-- Error Details Modal -->
+<div
+  class="modal fade error-modal"
+  [class.show]="isModalOpen"
+  [style.display]="isModalOpen ? 'block' : 'none'"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="errorModalTitle"
+  (keydown.escape)="closeErrorModal()">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalTitle">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          <span>Error Details{{ fileName ? ': ' + fileName : '' }}</span>
+        </h5>
+        <button type="button" class="btn-close me-1" aria-label="Close" (click)="closeErrorModal()"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Search and Controls -->
+        <div class="error-modal-controls">
+          <!-- Search Input -->
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon" *ngIf="!searchTerm"></i>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search errors..."
+              [(ngModel)]="searchTerm"
+              (input)="filterErrors()"
+              (keydown.ctrl.f)="$event.preventDefault()"
+              #searchInput />
+            <button
+              type="button"
+              class="clear-search"
+              *ngIf="searchTerm"
+              (click)="clearSearch()"
+              aria-label="Clear search">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+
+          <!-- Error Stats and Export Buttons -->
+          <div class="error-stats">
+            <span>
+              Showing {{ startIndex }}-{{ endIndex }} of {{ filteredErrors.length }} errors
+              <span *ngIf="searchTerm" class="text-primary">(filtered from {{ errorCount }})</span>
+              <span *ngIf="!searchTerm && filteredErrors.length < errorCount" class="text-muted"
+                >({{ errorCount }} total)</span
+              >
+            </span>
+            <div class="export-buttons" *ngIf="showExport">
+              <button type="button" class="btn btn-outline-secondary" (click)="exportErrorsAsTXT()">
+                <i class="bi bi-file-earmark-text me-1"></i>
+                Export TXT
+              </button>
+              <button type="button" class="btn btn-outline-primary" (click)="exportErrorsAsCSV()">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+                Export CSV
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error List -->
+        <div class="error-modal-content">
+          <!-- No Errors Found State -->
+          <div *ngIf="paginatedErrors.length === 0" class="no-errors-found">
+            <i class="bi bi-search"></i>
+            <p *ngIf="searchTerm">No errors match your search criteria</p>
+            <p *ngIf="!searchTerm">No errors found</p>
+          </div>
+
+          <!-- Error Table -->
+          <table *ngIf="paginatedErrors.length > 0" class="table table-hover">
+            <thead>
+              <tr>
+                <th class="error-index">#</th>
+                <th class="error-location">Location</th>
+                <th class="error-message">Error Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let error of paginatedErrors; let i = index">
+                <td class="error-index">{{ startIndex + i }}</td>
+                <td class="error-location">
+                  <span *ngIf="error.where">{{ error.where }}</span>
+                  <span *ngIf="!error.where" class="text-muted">—</span>
+                </td>
+                <td class="error-message">{{ error.message }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="error-modal-pagination" *ngIf="totalPages > 1">
+          <nav aria-label="Error list pagination">
+            <ul class="pagination pagination-sm mb-0">
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button class="page-link" (click)="previousPage()" [disabled]="currentPage === 1">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+
+              <li class="page-item" *ngIf="pageNumbers[0] > 1">
+                <button class="page-link" (click)="goToPage(1)">1</button>
+              </li>
+              <li class="page-item disabled" *ngIf="pageNumbers[0] > 2">
+                <span class="page-link">...</span>
+              </li>
+
+              <li class="page-item" *ngFor="let page of pageNumbers" [class.active]="page === currentPage">
+                <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+              </li>
+
+              <li class="page-item disabled" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages - 1">
+                <span class="page-link">...</span>
+              </li>
+              <li class="page-item" *ngIf="pageNumbers[pageNumbers.length - 1] < totalPages">
+                <button class="page-link" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+              </li>
+
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button class="page-link" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeErrorModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade" [class.show]="isModalOpen" *ngIf="isModalOpen" (click)="closeErrorModal()"></div>

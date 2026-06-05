@@ -1,0 +1,170 @@
+<div class="card mb-0 mt-1">
+  <div class="card-body p-0">
+    <div class="form-details">
+      <div class="form-details" [ngSwitch]="importMode">
+        <ng-container *ngSwitchCase="importPriceOfferType.AddMoreItems">
+          <div class="card card-enhanced mb-0 border-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-table me-2"></i>
+                Price Offer Items
+                <span *ngIf="resultImportItems?.listData?.length" class="ms-2 badge bg-info">
+                  {{ resultImportItems?.listData?.length }} items
+                </span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div *ngIf="isLoading" class="card-loading-overlay">
+                <div class="spinner-border text-primary"></div>
+              </div>
+              <app-price-offer-items
+                [resultImportItems]="resultImportItems"
+                [importMode]="importMode"
+                [height]="'100%'" />
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="importPriceOfferType.UpdateItemProperties">
+          <div class="card card-enhanced mb-0 border-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-arrow-repeat me-1"></i>
+                Change Item Properties Review
+                <span *ngIf="resultImportItems?.listData?.length === 1" class="ms-2 badge bg-info">
+                  {{ resultImportItems?.listData?.length }} item
+                </span>
+                <span *ngIf="resultImportItems?.listData?.length > 1" class="ms-2 badge bg-info">
+                  {{ resultImportItems?.listData?.length }} items
+                </span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div *ngIf="isLoading" class="card-loading-overlay">
+                <div class="spinner-border text-primary"></div>
+              </div>
+              <app-price-offer-items [resultImportItems]="resultImportItems" [importMode]="importMode" height="auto" />
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <div class="card card-enhanced mb-0 border-card">
+            <div
+              (click)="toggleCardCollapse('importInformation')"
+              class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                Import Information
+              </h5>
+              <div class="card-actions">
+                <button class="btn btn-sm btn-icon" type="button">
+                  <i
+                    class="bi"
+                    [ngClass]="isCardCollapsed['importInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body p-0" [ngbCollapse]="isCardCollapsed['importInformation']">
+              <app-import-information-form
+                [resultImport]="resultImport"
+                [useServiceData]="false"
+                [enableValidation]="true"
+                [importInformation]="importInformation"
+                [isReadonly]="true">
+              </app-import-information-form>
+            </div>
+          </div>
+          <!-- Project Information Form Section -->
+          <div
+            class="card card-enhanced mb-0 border-card"
+            *ngIf="importMode === importPriceOfferType.ProjectPriceOffer">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+              (click)="toggleCardCollapse('projectInformation')">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                Project Information
+              </h5>
+              <div class="card-actions">
+                <button class="btn btn-sm btn-icon" type="button">
+                  <i
+                    class="bi"
+                    [ngClass]="isCardCollapsed['projectInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body" [ngbCollapse]="isCardCollapsed['projectInformation']">
+              <app-project-information-form [resultImport]="resultImport" [useServiceData]="false">
+              </app-project-information-form>
+            </div>
+          </div>
+
+          <div
+            class="card card-enhanced mb-0 border-card"
+            [class.card-loading]="isLoading"
+            *ngIf="importMode === importPriceOfferType.ProjectPriceOffer">
+            <div
+              (click)="toggleCardCollapse('customerInformation')"
+              class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-people me-2"></i>
+                Customer Information
+                <span class="ms-2 badge bg-info">
+                  <!-- {{service?.customers?.items?.length }} items -->
+                </span>
+              </h5>
+              <div class="card-actions">
+                <button class="btn btn-sm btn-icon" type="button">
+                  <i
+                    class="bi"
+                    [ngClass]="isCardCollapsed['customerInformation'] ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body" [ngbCollapse]="isCardCollapsed['customerInformation']">
+              <div *ngIf="isLoading" class="card-loading-overlay">
+                <div class="spinner-border text-primary"></div>
+              </div>
+              <app-customer-information-table
+                [resultImport]="resultImport"
+                [enableErrorHandling]="true"
+                [useServiceData]="false">
+              </app-customer-information-table>
+            </div>
+          </div>
+
+          <!-- Price Offer Details Table Section -->
+          <div class="card card-enhanced mb-0 border-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 d-flex align-items-center">
+                <i class="bi bi-table me-2"></i>
+                Price Offer Items
+                <span class="ms-2 badge bg-info">
+                  <!-- {{service?.priceOfferDetails?.items?.length || 0 }} items -->
+                </span>
+              </h5>
+            </div>
+            <div class="card-body">
+              <app-metrics-panel>
+                <app-metric-progress
+                  label="Discount"
+                  [currentValue]="(resultImport?.listData[0]?.rowData?.discountRatio || 0) * 100"
+                  [maxValue]="(resultImport?.listData[0]?.rowData?.discountRatioConfigured || 0) * 100"
+                  iconClass="bi bi-percent text-success"
+                  [formatter]="percentFormatter"
+                  suffix="%">
+                </app-metric-progress>
+              </app-metrics-panel>
+
+              <div *ngIf="isLoading" class="card-loading-overlay">
+                <div class="spinner-border text-primary"></div>
+              </div>
+              <app-price-offer-items [resultImport]="resultImport" [importMode]="importMode" />
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

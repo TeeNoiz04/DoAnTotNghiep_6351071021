@@ -1,0 +1,273 @@
+<abp-modal
+  appEscCloseModal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    backdrop: 'static',
+    animation: true,
+    centered: true,
+    keyboard: false,
+  }"
+  [busy]="loading || addLoading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-1 text-warning"></i>
+      Lock Stock Detail
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <!-- <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading stock categories...</span>
+    </div> -->
+
+    <div class="content">
+      <!-- Add Lock Stock Section -->
+      <form [formGroup]="form" [skipValidation]="true">
+        <div class="row align-items-start">
+          <div class="col-xl-3 col-lg-6 col-md-6 relative">
+            <div class="stock-control">
+              <label for="addStockCategory" class="form-label label-required"> Stock </label>
+              <div class="select-control">
+                <ng-select
+                  id="addStockCategory"
+                  class="w-100"
+                  formControlName="selectedStockCategoryId"
+                  [items]="stockCategories"
+                  bindValue="id"
+                  appendTo="body"
+                  [clearable]="false"
+                  [ngClass]="{
+                    'is-invalid':
+                      form.get('selectedStockCategoryId').invalid && form.get('selectedStockCategoryId').touched,
+                  }">
+                  <ng-template ng-label-tmp let-item="item">
+                    {{ item.displayName }} - {{ item.availableQuantity ?? 0 | number }}
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item" let-index="index">
+                    {{ item.displayName }} - {{ item.availableQuantity ?? 0 | number }}
+                  </ng-template>
+                </ng-select>
+              </div>
+              <div
+                *ngIf="form.get('selectedStockCategoryId').invalid && form.get('selectedStockCategoryId').touched"
+                class="invalid-feedback">
+                <span *ngIf="form.get('selectedStockCategoryId').errors?.required">Stock is required</span>
+              </div>
+            </div>
+
+            <div class="refresh-btn">
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm"
+                [disabled]="loading"
+                (click)="reloadStockCategories()"
+                title="Reload stock categories">
+                <i class="bi bi-arrow-clockwise" [class.fa-spin]="loading"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-xl-1 col-lg-3 col-md-6">
+            <label class="form-label" for="stock-available">Available</label>
+            <app-input-number id="stock-available" formControlName="stockAvailable" [allowDecimal]="false" />
+          </div>
+          <div class="col-xl-1 col-lg-3 col-md-6">
+            <label class="form-label" for="need-order">Need Order</label>
+            <app-input-number id="need-order" formControlName="needOrder" [allowDecimal]="false" />
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-5">
+            <label for="qty" class="form-label label-required"> Quantity </label>
+            <app-input-number
+              id="qty"
+              formControlName="lockQty"
+              maxValue="999999999"
+              [allowNegative]="false"
+              [allowDecimal]="false"
+              [ngClass]="{
+                'is-invalid': form.get('lockQty').invalid && form.get('lockQty').touched,
+              }"
+              [abpDisabled]="!canLockStock || isItemFinalized || addLoading">
+            </app-input-number>
+            <div *ngIf="ctrls?.lockQty?.invalid && ctrls?.lockQty?.touched" class="invalid-feedback">
+              <span *ngIf="ctrls?.lockQty?.errors?.required">Quantity is required</span>
+            </div>
+            <div
+              *ngIf="exceedMaxAddQuantity && ctrls?.lockQty?.touched && !ctrls?.lockQty?.disabled"
+              class="invalid-feedback d-block">
+              Max to add: {{ maxAvailableAddQuantity | number }}
+            </div>
+          </div>
+          <div class="col-xl-3 col-lg-6 col-md-5">
+            <label for="addNote" class="form-label">Note</label>
+            <input
+              autocomplete="off"
+              id="addNote"
+              type="text"
+              class="form-control"
+              formControlName="note"
+              [abpDisabled]="!canLockStock || isItemFinalized || addLoading" />
+          </div>
+          <div class="col-xl-2 col-lg-2 col-md-2">
+            <label for="blankLabel" class="form-label">&nbsp;</label>
+            <div>
+              <abp-button
+                *abpPermission="AppPermissions.MovingOrders.DPOs.LockStock"
+                type="button"
+                class="btn-primary width-80"
+                [disabled]="
+                  addLoading || isItemFinalized || !dpo?.flags?.canLockStock || form?.invalid || exceedMaxAddQuantity
+                "
+                [loading]="addLoading"
+                iconClass="bi bi-plus-circle me-1"
+                (click)="onAddLockStock()">
+                Add
+              </abp-button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Current Lock Table -->
+      <div class="mb-1">
+        <h5 class="mb-2">
+          <i class="bi bi-lock-fill text-warning"></i>
+          Current Lock
+        </h5>
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading lock stock data...</span>
+          </div>
+          <app-advanced-data-table
+            #advancedTable
+            *ngIf="!tableLoading"
+            [data]="currentLockData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false"
+            (actionClick)="onActionClick($event)"
+            (inputChange)="onInputChange($event)"
+            (actionError)="onActionError($event)">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group name="Lock Stock Information" cssClass="group-header lock-stock-group">
+              <!-- Action Column -->
+              <app-table-column
+                field="action"
+                header="Action"
+                width="60px"
+                textAlign="center"
+                componentType="action"
+                [showEdit]="false"
+                [showDelete]="!isItemFinalized && canLockStock" />
+
+              <!-- Stock Category Column -->
+              <app-table-column field="stockCategory.stockName" header="Stock Name" width="200px" textAlign="start" />
+
+              <!-- Quantity Column -->
+              <app-table-column
+                field="qty"
+                header="Quantity"
+                width="60px"
+                textAlign="end"
+                [editable]="true"
+                inputType="number"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- Note Column -->
+              <app-table-column
+                field="note"
+                header="Note"
+                width="300px"
+                textAlign="start"
+                [editable]="true"
+                inputType="textarea">
+              </app-table-column>
+
+              <!-- Modified Date Column -->
+              <app-table-column
+                field="lastModificationTime"
+                header="Modified"
+                width="150px"
+                textAlign="center"
+                [formatter]="formatModifiedDate">
+              </app-table-column>
+
+              <!-- Modified By Column -->
+              <app-table-column
+                field="lastModifierUsername"
+                header="Modified By"
+                width="120px"
+                textAlign="center"
+                [formatter]="formatUsername">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+
+      <!-- <div class="mb-1">
+        <h5 class="mb-2">
+          <i class="bi bi-unlock-fill text-success"></i>
+          Released
+        </h5>
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading released data...</span>
+          </div>
+          <app-advanced-data-table
+            #releasedTable
+            *ngIf="!tableLoading"
+            [data]="releasedLockData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <app-table-column-group name="Released Stock Information" cssClass="group-header released-stock-group">
+              <app-table-column field="stockCategory.stockName" header="Stock Name" width="200px" textAlign="start" />
+
+              <app-table-column
+                field="qty"
+                header="Quantity"
+                width="120px"
+                textAlign="end"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <app-table-column field="note" header="Note" width="200px" textAlign="center"> </app-table-column>
+
+              <app-table-column
+                field="lastModificationTime"
+                header="Modified"
+                width="150px"
+                textAlign="center"
+                [formatter]="formatModifiedDate">
+              </app-table-column>
+
+              <app-table-column
+                field="lastModifierUsername"
+                header="Modified By"
+                width="120px"
+                textAlign="center"
+                [formatter]="formatUsername">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div> -->
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

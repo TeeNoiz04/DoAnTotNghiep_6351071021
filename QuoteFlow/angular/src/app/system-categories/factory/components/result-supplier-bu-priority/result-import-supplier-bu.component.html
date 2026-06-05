@@ -1,0 +1,23 @@
+<div class="card mb-0 mt-1 border-none">
+  <div class="card-body p-0">
+    <div class="form-details">
+      <div class="form-details">
+        <!-- Details Table Section -->
+        <div class="card card-enhanced mb-0 border-card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 d-flex align-items-center">
+              <i class="bi bi-table me-2"></i>
+              Supplier BU Items
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="isLoading" class="card-loading-overlay">
+              <div class="spinner-border text-primary"></div>
+            </div>
+            <app-supplier-bu-items [resultImport]="resultImport" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

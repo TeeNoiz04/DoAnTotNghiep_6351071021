@@ -1,0 +1,100 @@
+<abp-modal
+  [(visible)]="visible"
+  [suppressUnsavedChangesWarning]="true"
+  [options]="{
+    size: 'xl',
+    animation: true,
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+  }"
+  [busy]="loading"
+  (disappear)="closeModal()">
+  <ng-template #abpHeader>
+    <h4 class="d-flex align-items-center">
+      <i class="bi bi-lock-fill me-2 text-warning"></i>
+      Sale Order Detail
+    </h4>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div *ngIf="loading" class="text-center mb-3">
+      <div class="spinner-border spinner-border-sm text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="ms-2">Loading sale orders...</span>
+    </div>
+
+    <div class="content">
+      <!-- Lock Stock Table -->
+      <div class="mb-1">
+        <div class="card-body p-0">
+          <div *ngIf="tableLoading" class="text-center py-3">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading sale order data...</span>
+          </div>
+          <app-advanced-data-table
+            *ngIf="!tableLoading"
+            [data]="saleOrderData"
+            [height]="'auto'"
+            [showGroupHeaders]="true"
+            [showSummary]="false"
+            [enableSelection]="false">
+            <!-- Lock Stock Information Group -->
+            <app-table-column-group name="Sale Order Information" cssClass="group-header sale-order-group">
+              <!-- Status Column -->
+              <app-table-column field="status" header="Status" width="100px" textAlign="center" componentType="status">
+              </app-table-column>
+
+              <!-- SO No Column -->
+              <app-table-column field="soNo" header="SO No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- SO SAP No Column -->
+              <app-table-column field="sosapNo" header="SO SAP No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- DO No Column -->
+              <app-table-column field="doNo" header="DO No" width="200px" textAlign="start"> </app-table-column>
+
+              <!-- Stock Name Column -->
+              <app-table-column field="stockName" header="Stock Name" width="200px" textAlign="start">
+              </app-table-column>
+
+              <!-- Quantity Column -->
+              <app-table-column
+                field="quantity"
+                header="Quantity"
+                width="100px"
+                textAlign="end"
+                [editable]="!isItemFinalized"
+                inputType="number"
+                [formatter]="formatQuantity">
+              </app-table-column>
+
+              <!-- Modified Date Column -->
+              <app-table-column
+                field="modified"
+                header="Modified"
+                width="150px"
+                textAlign="center"
+                [formatter]="formatModifiedDate">
+              </app-table-column>
+
+              <!-- Modified By Column -->
+              <app-table-column
+                field="modifiedBy"
+                header="Modified By"
+                width="120px"
+                textAlign="center"
+                [formatter]="formatUsername">
+              </app-table-column>
+            </app-table-column-group>
+          </app-advanced-data-table>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #abpFooter> </ng-template>
+</abp-modal>

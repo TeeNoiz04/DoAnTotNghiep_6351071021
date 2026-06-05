@@ -1,0 +1,294 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover"
+        [disabled]="service.isExportToExcelBusy">
+        <i *ngIf="service.isExportToExcelBusy" class="fa fa-spinner fa-spin me-1"></i>
+        <i *ngIf="!service.isExportToExcelBusy" class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-sale-report-r06-filter #saleReportR06Filter></app-sale-report-r06-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="pagedData ?? service.data.items"
+          [count]="service.data.totalCount"
+          [externalPaging]="true"
+          [offset]="pageNumber"
+          [limit]="pageSize"
+          (page)="onPage($event)">
+          <!-- No -->
+          <!-- <ngx-datatable-column [sortable]="false" name="No" prop="no" [width]="60"></ngx-datatable-column> -->
+
+          <!-- Tax Code -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Tax Code"
+            prop="customerTaxCode"
+            [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Customer Name -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Customer Name"
+            prop="customerName"
+            [minWidth]="180"></ngx-datatable-column>
+
+          <!-- Nationality -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Nationality"
+            prop="nationality"
+            [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Customer Type -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Customer Type"
+            prop="customerType"
+            [minWidth]="130"></ngx-datatable-column>
+
+          <!-- Industry -->
+          <!-- <ngx-datatable-column [sortable]="false" name="Industry" prop="industry" [minWidth]="120"></ngx-datatable-column> -->
+
+          <!-- Type of Business -->
+          <!-- <ngx-datatable-column [sortable]="false" name="Type of Business" prop="typeOfBusiness" [minWidth]="150"></ngx-datatable-column> -->
+
+          <!-- KA Type -->
+          <ngx-datatable-column [sortable]="false" name="KA Type" prop="kaType" [minWidth]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span [class]="getBadgeClass(row.kaType)" class="badge">
+                {{ getDisplayText(row.kaType) }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- KA Class -->
+          <ngx-datatable-column [sortable]="false" name="KA Class" prop="kaClass" [minWidth]="100">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span [class]="getBadgeClass(row.kaClass)" class="badge">
+                {{ getDisplayText(row.kaClass) }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- DPO No -->
+          <ngx-datatable-column [sortable]="false" name="DPO No." prop="dpoNo" [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Distributor -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Distributor"
+            prop="distributor"
+            [minWidth]="150"></ngx-datatable-column>
+
+          <!-- DPO Date -->
+          <ngx-datatable-column [sortable]="false" name="DPO Date" prop="dpoDate" [minWidth]="110">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | date: 'dd/MM/yyyy' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- SPO Code -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="SPO Code"
+            prop="spoCode"
+            [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Golfa Code -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Golfa Code"
+            prop="golfaCode"
+            [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Model -->
+          <ngx-datatable-column [sortable]="false" name="Model" prop="model" [minWidth]="120"></ngx-datatable-column>
+
+          <!-- Material Type -->
+          <ngx-datatable-column [sortable]="false" name="Material Type" prop="materialType" [minWidth]="120">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <span
+                class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-material-fa': row.materialType === 'FA',
+                  'bg-material-lvs': row.materialType === 'LVS',
+                }">
+                {{ row.materialType }}
+              </span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Material Group -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Material Group"
+            prop="materialGroup"
+            [minWidth]="140"></ngx-datatable-column>
+
+          <!-- DPO Qty -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="DPO Qty"
+            prop="dpoQty"
+            [maxWidth]="70"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Std. Price -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Std. Price"
+            prop="unitStandardPrice"
+            [minWidth]="120"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- DPO Unit Price -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="DPO Unit Price"
+            prop="dpoUnitPrice"
+            [minWidth]="120"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- DPO Amount -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="DPO Amount"
+            prop="dpO_Amount"
+            [minWidth]="120"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Discount (%) -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Discount"
+            prop="discountPercent"
+            [minWidth]="80"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | percent: '1.0-1' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Invoice No -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Invoice No."
+            prop="invoiceNo"
+            [minWidth]="130"></ngx-datatable-column>
+
+          <!-- Invoice Date -->
+          <ngx-datatable-column [sortable]="false" name="Invoice Date" prop="invoiceDate" [minWidth]="120">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | date: 'dd/MM/yyyy' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Invoice Qty -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Invoice Qty"
+            prop="invoiceQty"
+            [minWidth]="70"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Amount VAT Invoice -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="VAT Invoice Amount"
+            prop="amountVATInvoice"
+            [minWidth]="120"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Unit Landed Cost -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="Landed Cost"
+            prop="unitLandedCost"
+            [minWidth]="120"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | number: '1.0-0' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- GP (%) -->
+          <ngx-datatable-column
+            [sortable]="false"
+            name="GP (%)"
+            prop="gpPercent"
+            [minWidth]="80"
+            [headerClass]="'text-end'"
+            [cellClass]="'text-end'">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <div>{{ value | percent: '1.0-1' }}</div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Empty State Template -->
+          <ng-template #emptyTemplate>
+            <div class="empty-row text-center py-4">
+              <i class="bi bi-search fs-1 text-muted mb-2"></i>
+              <p class="text-muted">No data found. Please adjust your search criteria.</p>
+            </div>
+          </ng-template>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>

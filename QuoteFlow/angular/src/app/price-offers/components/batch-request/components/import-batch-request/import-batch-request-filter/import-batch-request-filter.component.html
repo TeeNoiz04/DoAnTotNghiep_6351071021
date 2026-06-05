@@ -1,0 +1,50 @@
+@if (service.filters; as filters) {
+  <app-expandable-panel-v2
+    headerText="Search With Filters"
+    panelId="search_info"
+    [defaultCollapsed]="false"
+    icon="bi bi-search"
+    [isDisabled]="false"
+    class="mb-3">
+    <div class="filter-area">
+      <form class="form-container">
+        <div class="row-4-custom">
+          <div class="col">
+            <label class="form-label" for="golfaCodeFilter"> Material Code <strong>(%)</strong></label>
+            <input
+              appTrim
+              autocomplete="off"
+              class="form-control custom-textarea"
+              id="golfaCodeFilter"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="filters.golfaCode" />
+          </div>
+          <div class="col">
+            <label class="form-label" for="modelFilter"> SPO Code <strong>(%)</strong></label>
+            <input
+              appTrim
+              autocomplete="off"
+              class="form-control custom-textarea"
+              id="modelFilter"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="filters.spoCode" />
+          </div>
+
+          <div class="col">
+            <label class="form-label" for="statusFilter"> Status</label>
+            <ng-select
+              id="statusFilter"
+              [items]="status"
+              bindLabel="label"
+              bindValue="value"
+              appendTo="body"
+              [clearable]="true"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="filters.status">
+            </ng-select>
+          </div>
+        </div>
+      </form>
+    </div>
+  </app-expandable-panel-v2>
+}

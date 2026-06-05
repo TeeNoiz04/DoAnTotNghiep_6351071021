@@ -1,0 +1,892 @@
+<div class="card mt-1 mb-1">
+  <div class="card-body">
+    <form [formGroup]="importForm">
+      <div [ngSwitch]="importMode">
+        <ng-container *ngSwitchCase="'AddMoreItems'">
+          <!-- Warning message for DPO usage limit -->
+          <div class="row mb-2" *ngIf="priceOffer?.hasDPOUsed">
+            <div class="col-md-12">
+              <div class="alert alert-warning" *ngIf="priceOfferType === PriceOfferTypes.Project">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>DPO Usage Limit:</strong> This price offer has DPO created and is subject to percentage-based
+                limits for adding more items. The initial amount was
+                <strong>{{ formatCurrency(priceOffer?.initialTotalMEVNOfferAmount || 0) }}</strong
+                >. Please ensure your additions stay within the configured allowable range.
+              </div>
+              <div class="alert alert-warning" *ngIf="priceOfferType === PriceOfferTypes.Distributor">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <strong>DPO Usage Limit:</strong> This price offer has DPO created and is not allowed to add more items.
+              </div>
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="fileAddMoreItems" class="label-required form-label">File</label>
+              <input
+                id="fileAddMoreItems"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+
+            <!--Checkbox "Get Price Automatically, optional for only Key Account Price Offer"-->
+            <div class="col-md-12" *ngIf="priceOfferType === PriceOfferTypes.KeyAccount">
+              <div class="form-check px-0 mx-0">
+                <mat-checkbox id="autoGetOfferPrice" formControlName="autoGetOfferPrice">
+                  Get Price Automatically
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="col-md-12 mb-2">
+              <label for="commentAddMoreItems" class="form-label">Note</label>
+              <textarea
+                id="commentAddMoreItems"
+                formControlName="commentAddMoreItems"
+                class="form-control"
+                type="text"
+                rows="3">
+              </textarea>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'UpdateItemProperties'">
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="fileUpdateItemProperties" class="label-required form-label">File</label>
+              <input
+                id="fileUpdateItemProperties"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'ProjectPriceOffer'">
+          <!-- Row 1: File 9 - Material Type 3 -->
+          <div class="row mb-2">
+            <div class="col-md-9">
+              <label for="fileProjectPriceOffer" class="label-required form-label">File</label>
+              <input
+                id="fileProjectPriceOffer"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="materialType">Material Type</label>
+              <ng-select
+                id="materialType"
+                formControlName="materialType"
+                [items]="materialTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.materialType.invalid && f.materialType.touched,
+                  'check-view': f.materialType.disabled,
+                }"
+                (change)="onMaterialTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.materialType.invalid && f.materialType.touched && f.materialType.errors?.required"
+                class="invalid-feedback">
+                Material Type is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Project Name (Name) 9 - Close Date 3 -->
+          <div class="row mb-2">
+            <div class="col-md-9">
+              <label class="form-label label-required" for="name">Project Name</label>
+              <input
+                autocomplete="off"
+                id="name"
+                class="form-control"
+                formControlName="projectName"
+                [ngClass]="{
+                  'is-invalid': f.projectName.invalid && f.projectName.touched,
+                  'check-view': f.projectName.disabled,
+                }" />
+              <div
+                *ngIf="f.projectName.invalid && f.projectName.touched && f.projectName.errors?.required"
+                class="invalid-feedback">
+                Project Name is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="closeDate">Close Date</label>
+              <div class="input-group">
+                <input
+                  autocomplete="off"
+                  id="closeDate"
+                  class="form-control"
+                  name="closeDate"
+                  format="dd/MM/yyyy"
+                  #closeDateInput="ngbDatepicker"
+                  ngbDatepicker
+                  formControlName="closeDate"
+                  [ngClass]="{
+                    'is-invalid': f.closeDate.invalid && f.closeDate.touched,
+                    'check-view': f.closeDate.disabled,
+                  }"
+                  (click)="closeDateInput.toggle()"
+                  container="body" />
+                <button class="btn btn-light bi bi-calendar3" (click)="closeDateInput?.toggle()" type="button"></button>
+              </div>
+              <div
+                *ngIf="f.closeDate.invalid && f.closeDate.touched && f.closeDate.errors?.required"
+                class="invalid-feedback">
+                Close Date is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3 - Buyer Type 3 - Buyer 6 -->
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <label class="form-label label-required" for="saleLocation">Location</label>
+              <ng-select
+                id="saleLocation"
+                formControlName="saleLocation"
+                [items]="locationOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.saleLocation.invalid && f.saleLocation.touched,
+                  'check-view': f.saleLocation.disabled,
+                }"
+                (change)="onLocationChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.saleLocation.invalid && f.saleLocation.touched && f.saleLocation.errors?.required"
+                class="invalid-feedback">
+                Location is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="buyerType">Buyer Type</label>
+              <ng-select
+                id="buyerType"
+                formControlName="buyerType"
+                [items]="buyerTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyerType.invalid && f.buyerType.touched,
+                  'check-view': f.buyerType.disabled,
+                }"
+                (change)="onBuyerTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.buyerType.invalid && f.buyerType.touched && f.buyerType.errors?.required"
+                class="invalid-feedback">
+                Buyer Type is required.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="buyer">Buyer</label>
+              <ng-select
+                id="buyer"
+                formControlName="buyer"
+                [items]="buyerOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyer.invalid && f.buyer.touched,
+                  'check-view': f.buyer.disabled,
+                }"
+                (change)="onBuyerChange($event)">
+              </ng-select>
+              <div *ngIf="f.buyer.invalid && f.buyer.touched" class="invalid-feedback">
+                <span *ngIf="f.buyer.errors?.required || f.buyer.errors?.buyerRequired"> Please select a buyer. </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reason Note -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="note" class="form-label label-required">Reason to offer this price</label>
+              <textarea
+                class="form-control custom-textarea"
+                id="note"
+                formControlName="note"
+                appAutoResize
+                [minRows]="3"
+                [ngClass]="{
+                  'is-invalid': f.note.invalid && f.note.touched,
+                  'check-view': f.note.disabled,
+                }"></textarea>
+              <div *ngIf="f.note.invalid && f.note.touched && f.note.errors?.required" class="invalid-feedback">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'KeyAccountPriceOffer'">
+          <!-- Row 1: File 9 - Material Type 3 -->
+          <div class="row mb-2">
+            <div class="col-md-9">
+              <label for="fileKeyAccountPriceOffer" class="label-required form-label">File</label>
+              <input
+                id="fileKeyAccountPriceOffer"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="materialType">Material Type</label>
+              <ng-select
+                id="materialType"
+                formControlName="materialType"
+                [items]="materialTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.materialType.invalid && f.materialType.touched,
+                  'check-view': f.materialType.disabled,
+                }"
+                (change)="onMaterialTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.materialType.invalid && f.materialType.touched && f.materialType.errors?.required"
+                class="invalid-feedback">
+                Material Type is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Project Name (Name) 9 - (No Close Date in this mode) -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label class="form-label label-required" for="name">Project Name / Account Price Name</label>
+              <input
+                autocomplete="off"
+                id="name"
+                class="form-control"
+                formControlName="projectName"
+                [ngClass]="{
+                  'is-invalid': f.projectName.invalid && f.projectName.touched,
+                  'check-view': f.projectName.disabled,
+                }" />
+              <div
+                *ngIf="f.projectName.invalid && f.projectName.touched && f.projectName.errors?.required"
+                class="invalid-feedback">
+                Project Name is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3 - Buyer Type 3 - Buyer 6 -->
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <label class="form-label label-required" for="location">Location</label>
+              <ng-select
+                id="location"
+                formControlName="saleLocation"
+                [items]="locationOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.saleLocation.invalid && f.saleLocation.touched,
+                  'check-view': f.saleLocation.disabled,
+                }"
+                (change)="onLocationChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.saleLocation.invalid && f.saleLocation.touched && f.saleLocation.errors?.required"
+                class="invalid-feedback">
+                Location is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="buyerType">Buyer Type</label>
+              <ng-select
+                id="buyerType"
+                formControlName="buyerType"
+                [items]="buyerTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyerType.invalid && f.buyerType.touched,
+                  'check-view': f.buyerType.disabled,
+                }"
+                (change)="onBuyerTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.buyerType.invalid && f.buyerType.touched && f.buyerType.errors?.required"
+                class="invalid-feedback">
+                Buyer Type is required.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="buyer">Buyer</label>
+              <ng-select
+                id="buyer"
+                formControlName="buyer"
+                [items]="buyerOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyer.invalid && f.buyer.touched,
+                  'check-view': f.buyer.disabled,
+                }"
+                (change)="onBuyerChange($event)">
+              </ng-select>
+              <div *ngIf="f.buyer.invalid && f.buyer.touched" class="invalid-feedback">
+                <span *ngIf="f.buyer.errors?.required || f.buyer.errors?.buyerRequired"> Please select a buyer. </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Key Account Name 6 - Key Account Type 3 - Key Account Class 3 -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label label-required" for="keyAccount">Key Account Name</label>
+              <ng-select
+                id="keyAccount"
+                formControlName="keyAccount"
+                [items]="keyAccountOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.keyAccount.invalid && f.keyAccount.touched,
+                  'check-view': f.keyAccount.disabled,
+                }"
+                (change)="onKeyAccountChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.keyAccount.invalid && f.keyAccount.touched && f.keyAccount.errors?.required"
+                class="invalid-feedback">
+                Key Account Name is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="keyAccountType">Key Account Type</label>
+              <input
+                autocomplete="off"
+                id="keyAccountType"
+                class="form-control"
+                formControlName="keyAccountTypeName"
+                [readonly]="true" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="keyAccountClass">Key Account Class</label>
+              <input
+                autocomplete="off"
+                id="keyAccountClass"
+                class="form-control"
+                formControlName="keyAccountClassName"
+                [readonly]="true" />
+            </div>
+          </div>
+
+          <!-- Reason Note -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="note" class="form-label">Reason to offer this price</label>
+              <textarea
+                class="form-control custom-textarea"
+                id="note"
+                formControlName="note"
+                appAutoResize
+                [minRows]="3"
+                [ngClass]="{
+                  'is-invalid': f.note.invalid && f.note.touched,
+                  'check-view': f.note.disabled,
+                }"></textarea>
+              <div *ngIf="f.note.invalid && f.note.touched && f.note.errors?.required" class="invalid-feedback">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+          <!-- Auto Get Price Checkbox -->
+          <div class="row mb-0">
+            <div class="col-md-12">
+              <div class="form-check px-0 mx-0">
+                <mat-checkbox id="autoGetOfferPrice" formControlName="autoGetOfferPrice">
+                  Get Price Automatically
+                </mat-checkbox>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'BuyerStockPriceOffer'">
+          <!-- Row 1: File 9 - Material Type 3 -->
+          <div class="row mb-2">
+            <div class="col-md-9">
+              <label for="fileBuyerStockPriceOffer" class="label-required form-label">File</label>
+              <input
+                id="fileBuyerStockPriceOffer"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="materialType">Material Type</label>
+              <ng-select
+                id="materialType"
+                formControlName="materialType"
+                [items]="materialTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.materialType.invalid && f.materialType.touched,
+                  'check-view': f.materialType.disabled,
+                }"
+                (change)="onMaterialTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.materialType.invalid && f.materialType.touched && f.materialType.errors?.required"
+                class="invalid-feedback">
+                Material Type is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Project Name (Name) 9 - (No Close Date in this mode) -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label class="form-label label-required" for="projectName">Project Name / SPO Name</label>
+              <input
+                autocomplete="off"
+                id="projectName"
+                class="form-control"
+                formControlName="projectName"
+                [ngClass]="{
+                  'is-invalid': f.projectName.invalid && f.projectName.touched,
+                  'check-view': f.projectName.disabled,
+                }" />
+              <div
+                *ngIf="f.projectName.invalid && f.projectName.touched && f.projectName.errors?.required"
+                class="invalid-feedback">
+                Project Name is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Location 3 - Buyer Type 3 - Buyer 6 -->
+          <div class="row mb-2">
+            <div class="col-md-3">
+              <label class="form-label label-required" for="saleLocation">Location</label>
+              <ng-select
+                id="saleLocation"
+                formControlName="saleLocation"
+                [items]="locationOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.saleLocation.invalid && f.saleLocation.touched,
+                  'check-view': f.saleLocation.disabled,
+                }"
+                (change)="onLocationChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.saleLocation.invalid && f.saleLocation.touched && f.saleLocation.errors?.required"
+                class="invalid-feedback">
+                Location is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="buyerType">Buyer Type</label>
+              <ng-select
+                id="buyerType"
+                formControlName="buyerType"
+                [items]="buyerTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyerType.invalid && f.buyerType.touched,
+                  'check-view': f.buyerType.disabled,
+                }"
+                (change)="onBuyerTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.buyerType.invalid && f.buyerType.touched && f.buyerType.errors?.required"
+                class="invalid-feedback">
+                Buyer Type is required.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="buyer">Buyer</label>
+              <ng-select
+                id="buyer"
+                formControlName="buyer"
+                [items]="buyerOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyer.invalid && f.buyer.touched,
+                  'check-view': f.buyer.disabled,
+                }"
+                (change)="onBuyerChange($event)">
+              </ng-select>
+              <div *ngIf="f.buyer.invalid && f.buyer.touched" class="invalid-feedback">
+                <span *ngIf="f.buyer.errors?.required || f.buyer.errors?.buyerRequired"> Please select a buyer. </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reason Note -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="note" class="form-label label-required">Reason to offer this price</label>
+              <textarea
+                class="form-control custom-textarea"
+                id="note"
+                formControlName="note"
+                appAutoResize
+                [minRows]="3"
+                [ngClass]="{
+                  'is-invalid': f.note.invalid && f.note.touched,
+                  'check-view': f.note.disabled,
+                }"></textarea>
+              <div *ngIf="f.note.invalid && f.note.touched && f.note.errors?.required" class="invalid-feedback">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'NoBuyerPriceOffer'">
+          <!-- Row 1: File 9 - Material Type 3 -->
+          <div class="row mb-2">
+            <div class="col-md-9">
+              <label for="fileNoBuyerPriceOffer" class="label-required form-label">File</label>
+              <input
+                id="fileNoBuyerPriceOffer"
+                class="form-control"
+                type="file"
+                (change)="onFileChange($event)"
+                accept=".xls,.xlsx" />
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="materialType">Material Type</label>
+              <ng-select
+                id="materialType"
+                formControlName="materialType"
+                [items]="noBuyerMaterialTypeOptions"
+                bindLabel="displayName"
+                bindValue="displayCode"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.materialType.invalid && f.materialType.touched,
+                  'check-view': f.materialType.disabled,
+                }"
+                (change)="onMaterialTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.materialType.invalid && f.materialType.touched && f.materialType.errors?.required"
+                class="invalid-feedback">
+                Material Type is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Project Name 9 - Close Date 3 -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label label-required" for="projectName">Project Name</label>
+              <input
+                autocomplete="off"
+                id="projectName"
+                class="form-control"
+                formControlName="projectName"
+                [ngClass]="{
+                  'is-invalid': f.projectName.invalid && f.projectName.touched,
+                  'check-view': f.projectName.disabled,
+                }" />
+              <div
+                *ngIf="f.projectName.invalid && f.projectName.touched && f.projectName.errors?.required"
+                class="invalid-feedback">
+                Project Name is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="saleLocation">Location</label>
+              <ng-select
+                id="saleLocation"
+                formControlName="saleLocation"
+                [items]="noBuyerLocationOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                [clearable]="true"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.saleLocation.invalid && f.saleLocation.touched,
+                  'check-view': f.saleLocation.disabled,
+                }"
+                (change)="onLocationChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.saleLocation.invalid && f.saleLocation.touched && f.saleLocation.errors?.required"
+                class="invalid-feedback">
+                Location is required.
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label label-required" for="closeDate">Close Date</label>
+              <div class="input-group">
+                <input
+                  autocomplete="off"
+                  id="closeDate"
+                  class="form-control"
+                  name="closeDate"
+                  format="dd/MM/yyyy"
+                  #closeDateInput="ngbDatepicker"
+                  ngbDatepicker
+                  formControlName="closeDate"
+                  [ngClass]="{
+                    'is-invalid': f.closeDate.invalid && f.closeDate.touched,
+                    'check-view': f.closeDate.disabled,
+                  }"
+                  (click)="closeDateInput.toggle()"
+                  container="body" />
+                <button class="btn btn-light bi bi-calendar3" (click)="closeDateInput?.toggle()" type="button"></button>
+              </div>
+              <div
+                *ngIf="f.closeDate.invalid && f.closeDate.touched && f.closeDate.errors?.required"
+                class="invalid-feedback">
+                Close Date is required.
+              </div>
+            </div>
+          </div>
+          <!-- Reason Note -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="note" class="form-label label-required">Reason to offer this price</label>
+              <textarea
+                class="form-control custom-textarea"
+                id="note"
+                formControlName="note"
+                appAutoResize
+                [minRows]="3"
+                [ngClass]="{
+                  'is-invalid': f.note.invalid && f.note.touched,
+                  'check-view': f.note.disabled,
+                }"></textarea>
+              <div *ngIf="f.note.invalid && f.note.touched && f.note.errors?.required" class="invalid-feedback">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <!-- Row 1: Material Type 6 - Buyer Type 6 -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label label-required" for="materialType">Material Type</label>
+              <ng-select
+                id="materialType"
+                formControlName="materialType"
+                [items]="materialTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.materialType.invalid && f.materialType.touched,
+                  'check-view': f.materialType.disabled,
+                }"
+                (change)="onMaterialTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.materialType.invalid && f.materialType.touched && f.materialType.errors?.required"
+                class="invalid-feedback">
+                Material Type is required.
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="buyerType">Buyer Type</label>
+              <ng-select
+                id="buyerType"
+                formControlName="buyerType"
+                [items]="buyerTypeOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyerType.invalid && f.buyerType.touched,
+                  'check-view': f.buyerType.disabled,
+                }"
+                (change)="onBuyerTypeChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.buyerType.invalid && f.buyerType.touched && f.buyerType.errors?.required"
+                class="invalid-feedback">
+                Buyer Type is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Buyer 6 - Location 6 -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label label-required" for="buyer">Buyer</label>
+              <ng-select
+                id="buyer"
+                formControlName="buyer"
+                [items]="buyerOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.buyer.invalid && f.buyer.touched,
+                  'check-view': f.buyer.disabled,
+                }"
+                (change)="onBuyerChange($event)">
+              </ng-select>
+              <div *ngIf="f.buyer.invalid && f.buyer.touched" class="invalid-feedback">
+                <span *ngIf="f.buyer.errors?.required || f.buyer.errors?.buyerRequired"> Please select a buyer. </span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="saleLocation">Location</label>
+              <ng-select
+                id="saleLocation"
+                formControlName="saleLocation"
+                [items]="locationOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                [ngClass]="{
+                  'is-invalid': f.saleLocation.invalid && f.saleLocation.touched,
+                  'check-view': f.saleLocation.disabled,
+                }"
+                (change)="onLocationChange($event)">
+              </ng-select>
+              <div
+                *ngIf="f.saleLocation.invalid && f.saleLocation.touched && f.saleLocation.errors?.required"
+                class="invalid-feedback">
+                Location is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Sale Name 6 - Close Date 6 -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label" for="saleName">Sale Name</label>
+              <input autocomplete="off" id="saleName" class="form-control" formControlName="saleName" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label label-required" for="closeDate">Close Date</label>
+              <div class="input-group">
+                <input
+                  autocomplete="off"
+                  id="closeDate"
+                  class="form-control"
+                  name="closeDate"
+                  format="dd/MM/yyyy"
+                  #closeDateInput="ngbDatepicker"
+                  ngbDatepicker
+                  formControlName="closeDate"
+                  [ngClass]="{
+                    'is-invalid': f.closeDate.invalid && f.closeDate.touched,
+                    'check-view': f.closeDate.disabled,
+                  }"
+                  (click)="closeDateInput.toggle()"
+                  container="body" />
+                <button class="btn btn-light bi bi-calendar3" (click)="closeDateInput?.toggle()" type="button"></button>
+              </div>
+              <div
+                *ngIf="f.closeDate.invalid && f.closeDate.touched && f.closeDate.errors?.required"
+                class="invalid-feedback">
+                Close Date is required.
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 4: Key Account Name 4 - Key Account Type 4 - Key Account Class 4 -->
+          <div class="row mb-2">
+            <div class="col-md-4">
+              <label class="form-label" for="keyAccount">Key Account Name</label>
+              <ng-select
+                id="keyAccount"
+                formControlName="keyAccount"
+                [items]="keyAccountOptions"
+                bindLabel="displayName"
+                bindValue="id"
+                clearable="false"
+                [appendTo]="'body'"
+                (change)="onKeyAccountChange($event)">
+              </ng-select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="keyAccountType">Key Account Type</label>
+              <input
+                autocomplete="off"
+                id="keyAccountType"
+                class="form-control"
+                formControlName="keyAccountType"
+                [readonly]="true" />
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="keyAccountClass">Key Account Class</label>
+              <input
+                autocomplete="off"
+                id="keyAccountClass"
+                class="form-control"
+                formControlName="keyAccountClass"
+                [readonly]="true" />
+            </div>
+          </div>
+
+          <!-- Reason Note -->
+          <div class="row mb-2">
+            <div class="col-md-12">
+              <label for="note" class="form-label label-required">Reason to offer this price</label>
+              <textarea
+                class="form-control custom-textarea"
+                id="note"
+                formControlName="note"
+                appAutoResize
+                [minRows]="3"
+                [ngClass]="{
+                  'is-invalid': f.note.invalid && f.note.touched,
+                  'check-view': f.note.disabled,
+                }"></textarea>
+              <div *ngIf="f.note.invalid && f.note.touched && f.note.errors?.required" class="invalid-feedback">
+                Reason is required.
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,228 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-3">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <div class="content-header-body">
+            <h1 [ngClass]="'subtext'">
+              {{ title }}
+            </h1>
+            <div class="content-header-content">
+              <h1 class="content-header-title m-0">
+                {{ service?.selected?.psiCode }}
+              </h1>
+
+              <app-status-label [status]="service?.selected?.status"></app-status-label>
+            </div>
+          </div>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0">
+          <div class="action-request text-end">
+            <button
+              class="btn btn-info"
+              type="button"
+              (click)="showHistory()"
+              placement="bottom"
+              ngbTooltip="History"
+              triggers="hover">
+              <i class="bi bi-clock-history"></i>
+              <span class="ms-1">History</span>
+            </button>
+            <button
+              class="btn btn-success"
+              type="button"
+              *ngIf="service.selected?.flags?.isApprovable"
+              (click)="performAction('Approved')"
+              placement="bottom"
+              ngbTooltip="Approve"
+              triggers="hover">
+              <i class="bi bi-check-circle"></i>
+              <span class="ms-1">Approve</span>
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              *ngIf="service.selected?.flags?.isRejectable"
+              (click)="performAction('Rejected')"
+              placement="bottom"
+              ngbTooltip="Reject"
+              triggers="hover">
+              <i class="bi bi-slash-circle"></i>
+              <span class="ms-1">Reject</span>
+            </button>
+            <button
+              class="btn btn-danger"
+              type="button"
+              *ngIf="service.selected?.flags?.isCancellable"
+              (click)="performAction('Cancelled')"
+              placement="bottom"
+              ngbTooltip="Cancel"
+              triggers="hover">
+              <i class="bi bi-x-circle"></i>
+              <span class="ms-1">Cancel</span>
+            </button>
+            <button
+              class="btn btn-secondary"
+              type="button"
+              (click)="goBack()"
+              placement="bottom"
+              ngbTooltip="Back"
+              triggers="hover">
+              <i class="bi bi-arrow-left-circle"></i>
+              <span class="ms-1">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.form; else loadingTemplate">
+      <div class="form-details">
+        <app-expandable-panel-v2
+          headerText="PSI Information"
+          panelId="basic_info"
+          [defaultCollapsed]="false"
+          icon="bi bi-info-circle"
+          [isDisabled]="false">
+          <form [formGroup]="service?.form">
+            <div class="row">
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="fileName">{{ '::File Name' | abpLocalization }}</label>
+                  <input autocomplete="off" id="fileName" formControlName="fileName" readonly class="form-control" />
+                </div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="psiCode">{{ '::PSI Code' | abpLocalization }}</label>
+                  <input autocomplete="off" id="psiCode" formControlName="psiCode" readonly class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="fy">{{ '::Finance Year' | abpLocalization }}</label>
+                  <input autocomplete="off" id="fy" formControlName="financeYear" readonly class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-3" *ngIf="service.selected?.currentApproverRoleName">
+                <label class="form-label">Current Approver</label>
+                <div class="form-control-plaintext">
+                  <a class="text-primary text-decoration-none cursor-pointer" (click)="loadApprovalList()">
+                    {{ service?.selected?.currentApproverRoleName }}
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="mb-0">
+                  <label class="form-label" for="materialType">{{ '::Material Type' | abpLocalization }}</label>
+                  <input
+                    autocomplete="off"
+                    id="materialType"
+                    formControlName="materialType"
+                    readonly
+                    class="form-control" />
+                </div>
+              </div>
+
+              <div class="col-12 col-md-12">
+                <div class="mb-0">
+                  <label class="form-label" for="importType">{{ '::Note' | abpLocalization }}</label>
+                  <textarea id="note" rows="3" formControlName="note" readonly class="form-control"></textarea>
+                </div>
+              </div>
+            </div>
+          </form>
+        </app-expandable-panel-v2>
+
+        <app-expandable-panel-v2
+          headerText="PSI Items"
+          panelId="psi_items"
+          [defaultCollapsed]="false"
+          icon="bi bi-list-ul"
+          [isDisabled]="false">
+          <ngx-datatable
+            default
+            class="bootstrap custom-datatable"
+            columnMode="force"
+            [rowHeight]="'auto'"
+            [rows]="rows"
+            [count]="rows.length"
+            [columnMode]="'force'"
+            [reorderable]="false"
+            [scrollbarH]="true"
+            [scrollbarV]="false"
+            [rowClass]="getRowClass">
+            <ngx-datatable-column
+              *ngFor="let col of columns"
+              [prop]="col.prop"
+              [name]="col.name"
+              [sortable]="col.sortable"
+              [minWidth]="col.minWidth"
+              [frozenLeft]="col.frozenLeft"
+              [cellClass]="col.frozenLeft ? 'frozen-cell' : ''"
+              [headerClass]="col.format === 'number' ? 'text-right' : ''">
+              <ng-template ngx-datatable-cell-template let-value="value">
+                <ng-container *ngIf="col.format === 'number'">
+                  <div class="text-right">
+                    {{ value !== null && value !== undefined ? (value | number: '1.0-2') : '-' }}
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="!col.format">
+                  {{ value ?? '-' }}
+                </ng-container>
+              </ng-template>
+            </ngx-datatable-column>
+          </ngx-datatable>
+        </app-expandable-panel-v2>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card mt-0 mb-0">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading form data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>
+
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="approvalHistories"
+  (disappear)="closeHistoryDialog()" />
+
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<app-approval-comment-modal
+  [(visible)]="service.isPerformActionModalOpen"
+  [busy]="service.isPerformActionModalBusy"
+  [actionTitle]="
+    service.actionOptions === 'Approved'
+      ? 'PSI - Approve'
+      : service.actionOptions === 'Cancelled'
+        ? 'PSI - Cancel'
+        : service.actionOptions === 'Rejected'
+          ? 'PSI - Reject'
+          : null
+  "
+  [currentAction]="
+    service.actionOptions === 'Approved'
+      ? service.approvedAction
+      : service.actionOptions === 'Cancelled'
+        ? service.cancelledAction
+        : service.actionOptions === 'Rejected'
+          ? service.rejectedAction
+          : null
+  "
+  [requireComment]="service.actionOptions !== 'Approved'"
+  (commentSubmitted)="service.onPerformAction($event)"
+  (cancelClicked)="service.onClosePerformAction()"></app-approval-comment-modal>

@@ -1,0 +1,217 @@
+<abp-page>
+  <div class="page-content">
+    <div class="card shadow sticky-header">
+      <div class="header-content mx-3">
+        <abp-page-title-container class="col-md-12 col-lg-auto content-header-container">
+          <h1 class="content-header-title m-0">{{ title }}</h1>
+        </abp-page-title-container>
+        <abp-page-toolbar-container class="col-12 col-xl mt-xl-0">
+          <div class="action-request text-end">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              (click)="navigateBack()"
+              placement="bottom"
+              ngbTooltip="Back"
+              triggers="hover">
+              <i class="bi bi-arrow-left-circle"></i>
+              <span class="ms-1">Back</span>
+            </button>
+          </div>
+        </abp-page-toolbar-container>
+      </div>
+    </div>
+
+    <ng-container *ngIf="service?.form; else loadingTemplate">
+      <div class="form-details">
+        <div class="card mt-0 mb-0">
+          <div class="card-body">
+            <form [formGroup]="service?.form" class="form-horizontal">
+              <div class="row g-2">
+                <div class="col-12 col-md-6">
+                  <div class="mb-0">
+                    <label class="form-label" for="file-name">{{ '::FileName' | abpLocalization }}</label>
+                    <input autocomplete="off" id="file-name" formControlName="fileName" readonly class="form-control" />
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <div class="mb-0">
+                    <label class="form-label" for="report-type">{{ '::ReportType' | abpLocalization }}</label>
+                    <input
+                      autocomplete="off"
+                      id="report-type"
+                      formControlName="reportType"
+                      readonly
+                      class="form-control" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <span class="two-line-clamp">{{ '::Note' | abpLocalization }}</span>
+                  <textarea
+                    autocomplete="off"
+                    id="note"
+                    formControlName="note"
+                    readonly
+                    class="form-control"
+                    rows="2"></textarea>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card mt-0 mb-0">
+          <div class="card-body">
+            <div class="card-content">
+              <div class="note">
+                For performance reasons, only 10.000 records that meet the condition will be loaded
+              </div>
+              <div class="search-result">
+                <span>
+                  <input
+                    autocomplete="off"
+                    matInput
+                    appTrim
+                    id="keyword"
+                    placeholder="Search ..."
+                    class="form-control"
+                    [(ngModel)]="keyword" />
+                </span>
+              </div>
+            </div>
+            <ngx-datatable
+              default
+              class="bootstrap custom-datatable"
+              columnMode="force"
+              [rowHeight]="'auto'"
+              [rows]="service?.selected?.items | tableFilter: keyword : searchableColumns"
+              [count]="(service?.selected?.items | tableFilter: keyword : searchableColumns)?.length"
+              [scrollbarH]="true"
+              [limit]="50">
+              <ngx-datatable-column name="No" [maxWidth]="75" [sortable]="false">
+                <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+                  {{ i + 1 }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column
+                name="Checklist code"
+                [minWidth]="120"
+                prop="checklistCode"
+                *ngIf="typeReport === 'Delivery'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.checkListCode }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Date entered" [minWidth]="120" prop="dateEntered">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.dateEntered | date: 'dd/MM/YYYY hh:mm:ss' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Stock" [minWidth]="120" prop="stock">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.stock }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="BU" [minWidth]="120" prop="bu">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.bu }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Customer" [minWidth]="250" prop="customer">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.customer }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Category" prop="category">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.category }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="GIV" [minWidth]="120" prop="giv" *ngIf="typeReport === 'Delivery'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.giv }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Invoice" [minWidth]="120" prop="invoice" *ngIf="typeReport === 'Delivery'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.invoice }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="SKU code" [minWidth]="200" prop="skuCode">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.skuCode }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="SKU name" prop="skuName">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.skuName }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Quantity" [minWidth]="120" prop="quantity">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.quality }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Warranty" [minWidth]="120" prop="warranty">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.warranty }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Unit" [maxWidth]="120" prop="unit">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.unit }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Series" prop="series">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.series }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Material Code" prop="golfaCode">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.golfaCode }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Origin code" prop="originCode">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.originCode }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Production date" prop="productionDate">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.productionDate | date: 'dd/MM/YYYY' }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Location" prop="location" [minWidth]="200" *ngIf="typeReport !== 'Inventory'">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.location }}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Note" prop="note" [minWidth]="200">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  {{ row.note }}
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #loadingTemplate>
+      <div class="card mt-0 mb-0">
+        <div class="card-body d-flex justify-content-center align-items-center p-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0">Loading form data, please wait...</p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</abp-page>

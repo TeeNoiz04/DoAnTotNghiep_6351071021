@@ -1,0 +1,11 @@
+<div class="row align-items-center m-0">
+  <div class="d-flex flex-row text-start p-0 align-items-end">
+    <div class="d-flex flex-column">
+      <span class="fw-bold amount-label">{{ label }}</span>
+      <span *ngIf="subLabel" class="fw-bold amount-sublabel">{{ subLabel }}</span>
+    </div>
+    <span class="px-1 fw-bold amount-value {{ textColor }}">
+      {{ value | appNumberFormat: decimalPlaces }}
+    </span>
+  </div>
+</div>

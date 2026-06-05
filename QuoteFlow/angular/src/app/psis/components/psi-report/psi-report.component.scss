@@ -1,0 +1,160 @@
+.psi-report-wrapper {
+  overflow-x: auto;
+  position: relative;
+}
+
+.psi-report-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+
+  thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+  }
+
+  th,
+  td {
+    border: 1px solid #d0d0d0;
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+
+  // Frozen columns
+  .frozen-col {
+    position: sticky;
+    background: #fff;
+    z-index: 5;
+
+    &.col-material-group {
+      left: 0;
+      min-width: 120px;
+      font-weight: 600;
+    }
+
+    &.col-description {
+      left: 120px;
+      min-width: 120px;
+    }
+  }
+
+  // Header styling
+  thead {
+    .header-row-1 {
+      background: #fff;
+      color: white;
+      font-weight: 600;
+
+      th {
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+
+        &.frozen-col {
+          background: #fff;
+          z-index: 15;
+          font-weight: bold;
+        }
+      }
+    }
+
+    .header-row-2 {
+      background: #5b9bd5;
+      color: white;
+      font-weight: 500;
+
+      th {
+        text-align: center;
+        font-size: 8px;
+
+        &.plan-header {
+          background: #fff;
+          color: #6698dd;
+        }
+
+        &.result-header {
+          background: #fff;
+        }
+      }
+    }
+  }
+
+  // Data rows
+  tbody {
+    .data-row {
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      td {
+        font-size: 12px;
+
+        &.frozen-col {
+          background: #fff;
+          font-weight: 500;
+
+          &.col-material-group {
+            z-index: 6;
+          }
+
+          &.col-description {
+            z-index: 6;
+            color: #666;
+          }
+        }
+      }
+
+      // Stock row - different background
+      &.stock-row {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #aaa;
+      }
+    }
+
+    // Alternate row colors for Plan/Result
+    td:nth-child(odd):not(.frozen-col) {
+      background-color: #fff;
+    }
+
+    td:nth-child(even):not(.frozen-col) {
+      background-color: #ffffff;
+    }
+  }
+
+  // Number formatting
+  .text-end {
+    text-align: right;
+  }
+}
+
+// Empty state
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+
+  i {
+    display: block;
+    font-size: 48px;
+    margin-bottom: 16px;
+    color: #999;
+  }
+
+  p {
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .psi-report-table {
+    font-size: 11px;
+
+    th,
+    td {
+      padding: 6px 8px;
+    }
+  }
+}

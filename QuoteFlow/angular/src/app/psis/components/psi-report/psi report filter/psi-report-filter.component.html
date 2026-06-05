@@ -1,0 +1,25 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <form [formGroup]="form">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="fiscalYear" class="form-label">Fiscal Year</label>
+          <select id="fiscalYear" class="form-select" formControlName="fiscalYear">
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label for="materialType" class="form-label">Material Type</label>
+          <select id="materialType" class="form-select" formControlName="materialType">
+            <option value="FA">FA</option>
+            <option value="LVS">LVS</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

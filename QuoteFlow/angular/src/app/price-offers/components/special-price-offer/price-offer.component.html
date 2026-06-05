@@ -1,0 +1,391 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="filter.onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="filter.onClear()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importPriceOfferOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Upload"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-upload me-1"></i>
+          <span>{{ '::Upload' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importPriceOfferOptions" (click)="onOpenImportPriceOffer(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+      <div ngbDropdown container="body" class="d-inline-block">
+        <button
+          *ngIf="importPriceOfferOptions?.length > 0"
+          class="btn btn-primary"
+          data-toggle="dropdown"
+          placement="bottom"
+          ngbTooltip="Download Template"
+          triggers="hover"
+          aria-haspopup="true"
+          ngbDropdownToggle>
+          <i class="bi bi-download me-1"></i>
+          <span>{{ '::Download Template' | abpLocalization }}</span>
+        </button>
+        <div ngbDropdownMenu>
+          <button ngbDropdownItem *ngFor="let item of importPriceOfferOptions" (click)="onDownloadTemplate(item)">
+            {{ item.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-special-price-offer-filter #filter />
+
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-end align-items-center">
+        <label class="me-1 mb-0 fw-semibold form-label">Sort by:</label>
+        <ng-select
+          class="w-10"
+          [items]="[
+            { label: 'Newest', value: 'creationTime desc' },
+            { label: 'Latest Action', value: 'lastApprovalRouteCreationTime desc' },
+          ]"
+          bindLabel="label"
+          bindValue="value"
+          [(ngModel)]="filter.filters.sorting"
+          (change)="filter.onSearch()"
+          [clearable]="false"
+          [searchable]="false">
+        </ng-select>
+      </div>
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="data.items"
+          [count]="data.totalCount"
+          [list]="filterService.list"
+          (page)="filter.updatePageThenSearch($event)">
+          <ngx-datatable-column name="" [width]="40" [maxWidth]="40" [sortable]="false">
+            <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+              <div class="d-flex justify-content-center align-items-center gap-1">
+                <div ngbDropdown container="body" class="d-inline-block">
+                  <button
+                    class="btn action-dropdown-toggle-btn"
+                    data-toggle="dropdown"
+                    placement="bottom-end"
+                    aria-haspopup="true"
+                    ngbDropdownToggle></button>
+                  <div ngbDropdownMenu>
+                    <button ngbDropdownItem (click)="onViewHistory(row)">
+                      <i class="bi bi-clock-history me-2"></i> History
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button *ngIf="row.flags.canAddMoreItems" ngbDropdownItem (click)="onAddMoreItems(row)">
+                      <i class="bi bi-plus-circle me-2"></i> Add More Items
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button ngbDropdownItem (click)="onExport(row)"><i class="bi bi-download me-2"></i> Export</button>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="95"
+            headerClass="text-center"
+            cellClass="text-center"
+            name="{{ '::Status' | abpLocalization }}"
+            prop="approvalStatus">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-status-label [status]="row.approvalStatus"></app-status-label>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="80"
+            headerClass="text-center"
+            cellClass="text-center"
+            name="Result"
+            prop="projectResultStatus">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-status-label
+                *ngIf="row.priceOfferCode?.substring(0, 2) === 'PP' && row.projectResultStatus"
+                [status]="row.projectResultStatus">
+              </app-status-label>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [width]="135" name="Code" prop="priceOfferCode">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a
+                [routerLink]="['/price-offer', row.id, 'details']"
+                class="text-primary text-decoration-none cursor-pointer">
+                {{ row.priceOfferCode }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="SPO Name" [width]="200" prop="projectName">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.projectName }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="{{ '::Buyer' | abpLocalization }}" [width]="80" prop="buyer" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.buyer?.buyerCode }}
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="120"
+            headerClass="text-end"
+            [cellClass]="'text-end'"
+            name="Total Standard"
+            prop="totalStandardAmount">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end">
+                {{ row.totalStandardAmount | number: '1.0-0' }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="120"
+            headerClass="text-end"
+            [cellClass]="'text-end'"
+            name="Total Offer"
+            prop="totalMEVNOfferAmount">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end">
+                {{ row.totalMEVNOfferAmount | number: '1.0-0' }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            [width]="120"
+            headerClass="text-end"
+            [cellClass]="'text-end'"
+            name="DPO Used"
+            prop="totalDpoUsedAmount">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="text-end">
+                <span *ngIf="row.totalDpoUsedAmount !== null && row.totalDpoUsedAmount !== undefined">
+                  {{ row.totalDpoUsedAmount | number: '1.0-0' }}
+                </span>
+                <span
+                  *ngIf="row.totalDpoUsedAmount === null || row.totalDpoUsedAmount === undefined"
+                  class="text-muted">
+                  -
+                </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column [width]="110" name="Next Approver" prop="currentApproverRoleName">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onShowApprovers(row)">
+                {{ row.currentApproverRoleName }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column
+            name="{{ '::Info' | abpLocalization }}"
+            headerClass="text-center"
+            [sortable]="false"
+            [canAutoResize]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorUsername">
+              </app-audit-info-column>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>
+
+<!-- Import Price Offer Modal -->
+<abp-modal
+  [(visible)]="showImportPriceOffer"
+  [busy]="importBusy"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true"
+  (disappear)="onCloseImportForm()">
+  <ng-template #abpHeader>
+    <h3>{{ titleImportKeyAccount }}</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-import-price-offer #importPriceOffer [importMode]="importMode" [priceOffer]="selectedRowForHistory" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" abpClose>
+      {{ '::Cancel' | abpLocalization }}
+    </button>
+    <abp-button class="btn-primary" iconClass="fa fa-check" (click)="verifyData()">
+      {{ '::Verify' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<!-- Result Import Price Offer Modal -->
+<abp-modal
+  [suppressUnsavedChangesWarning]="true"
+  [(visible)]="showResultImportPriceOffer"
+  [busy]="submitBusy"
+  [options]="{
+    centered: true,
+    keyboard: false,
+    fullscreen: true,
+    backdrop: 'static',
+    windowClass: 'modal-fullscreen modal-max-fullscreen',
+  }"
+  (disappear)="onBackFromResult()">
+  <ng-template #abpHeader>
+    <app-error-display [fileName]="resultImport?.fileName" [errors]="resultImport?.errors || []"> </app-error-display>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <app-result-import-price-offer
+      #resultImportPriceOffer
+      [importMode]="importMode"
+      [resultImport]="resultImportMain"
+      [resultImportItems]="resultImportItems"
+      [importInformation]="importPriceOffer?.importInformation" />
+  </ng-template>
+
+  <ng-template #abpFooter>
+    <button type="button" class="btn btn-secondary" (click)="onBackFromResult()">
+      {{ '::Back' | abpLocalization }}
+    </button>
+    <abp-button
+      iconClass="bi bi-send"
+      class="btn-primary"
+      type="submit"
+      [disabled]="resultImport?.errors?.length > 0"
+      (click)="onSubmitImport()">
+      {{ 'Submit' | abpLocalization }}
+    </abp-button>
+  </ng-template>
+</abp-modal>
+
+<!-- History Modal -->
+<app-history-modal
+  [isVisible]="showHistory"
+  [approvalHistories]="serviceDetail.approvalHistories"
+  [title]="'History'"
+  (disappear)="closeHistoryDialog()"
+  (submittedMoreItemsClicked)="onSubmittedMoreItems($event)">
+</app-history-modal>
+
+<!-- Approvers Modal -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
+
+<!-- Add More Items History Modal with Pagination -->
+<abp-modal
+  [(visible)]="showHistoryAddMoreItems"
+  [busy]="importBusy"
+  [options]="{
+    centered: true,
+    backdrop: 'static',
+    keyboard: true,
+    size: 'xl',
+  }"
+  [suppressUnsavedChangesWarning]="true">
+  <ng-template #abpHeader>
+    <h3>Add More Item Details</h3>
+  </ng-template>
+
+  <ng-template #abpBody>
+    <div class="mb-3">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search Material Code, Model..."
+              [(ngModel)]="addMoreItemsSearchText"
+              (ngModelChange)="onAddMoreItemsSearch()" />
+            <button
+              *ngIf="addMoreItemsSearchText"
+              class="btn btn-outline-secondary"
+              type="button"
+              (click)="clearAddMoreItemsSearch()">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <span class="text-muted small"> {{ filteredAddMoreItemsCount }} of {{ addMoreItemsTotalCount }} items </span>
+        </div>
+      </div>
+      <!-- Data Table -->
+      <app-data-table [itemEdit]="false" [itemRemove]="false" [records]="pagedAddMoreItemHistories">
+        <app-header title="Material Code" name="materialCode" [className]="'w-20'"></app-header>
+        <app-header title="Model" name="model"></app-header>
+        <app-header title="Qty" name="qty" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Price" name="standardPriceToDist" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Standard Amount" name="standardAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Buyer Req. Amount" name="requestedAmount" [className]="'w-10 text-end'"></app-header>
+        <app-header title="MEVN Offer Price" name="priceOffer" [className]="'w-10 text-end'"></app-header>
+
+        <app-column value="materialCode"></app-column>
+        <app-column value="model"></app-column>
+        <app-column value="qty" columnType="int" [cssClass]="'text-end'"></app-column>
+        <app-column value="standardPriceToDist" columnType="int" typeControl="price"></app-column>
+        <app-column value="standardAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="requestedAmount" columnType="int" typeControl="price"></app-column>
+        <app-column value="priceOffer" columnType="int" typeControl="price"></app-column>
+      </app-data-table>
+
+      <!-- Pagination Controls -->
+      <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="addMoreItemsTotalCount > 0">
+        <span class="text-muted">
+          Showing {{ (addMoreItemsCurrentPage - 1) * addMoreItemsPageSize + 1 }} -
+          {{ Math.min(addMoreItemsCurrentPage * addMoreItemsPageSize, addMoreItemsTotalCount) }}
+          of {{ addMoreItemsTotalCount }} items
+        </span>
+
+        <ngb-pagination
+          *ngIf="addMoreItemsTotalCount > addMoreItemsPageSize"
+          [(page)]="addMoreItemsCurrentPage"
+          [pageSize]="addMoreItemsPageSize"
+          [collectionSize]="addMoreItemsTotalCount"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="onAddMoreItemsPageChange($event)">
+        </ngb-pagination>
+      </div>
+    </div>
+  </ng-template>
+</abp-modal>

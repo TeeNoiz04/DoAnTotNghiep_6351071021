@@ -1,0 +1,37 @@
+name: Deploy QuoteFlow ABP App via PowerShell Script
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Please select env (dev: build & deploy to devbox; prod: build package from branch main'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - prod
+      reason:
+        description: 'Reason to deploy (not required)'
+        required: false
+        default: 'Update new features...'
+jobs:
+  deploy:
+    name: Execute Deployment Script
+    runs-on: self-hosted
+
+    steps:          
+      - name: Run Deployment Script
+        shell: pwsh
+        run: |
+
+          $selectedBranch = "${{ github.ref_name }}"
+          $targetEnv = "${{ github.event.inputs.environment }}"          
+          
+          Write-Host "Detected branch: $selectedBranch *** Setting environment : ${{ github.event.inputs.environment }}" -ForegroundColor Cyan
+
+          # Establish enforcement policy
+          Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process          
+          
+          # Run scripts with dynamic parameters
+          pwsh -ExecutionPolicy Bypass -File "C:\Storm12\Deployment\QuoteFlow\mevn.fa.wf2025_run.deploy.ps1" -env $targetEnv -git_branch $selectedBranch 

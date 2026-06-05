@@ -1,0 +1,159 @@
+<app-expandable-panel-v2
+  headerText="Search With Filters"
+  panelId="search_info"
+  [defaultCollapsed]="false"
+  icon="bi bi-search"
+  [isDisabled]="false"
+  class="mb-2">
+  <form [formGroup]="searchForm!" (ngSubmit)="onSearch()" *ngIf="searchForm">
+    <div class="row">
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="buyerTypeId">
+            {{ '::Buyer Type' | abpLocalization }}
+          </label>
+          <ng-select
+            id="buyerTypeId"
+            formControlName="buyerTypeId"
+            [items]="buyerTypeOptions"
+            bindLabel="label"
+            bindValue="value"
+            clearable="true">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="buyerCode">
+            {{ '::Code' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="buyerCode" class="form-control" formControlName="buyerCode" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="shortName">
+            {{ '::Short Name' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="shortName" class="form-control" formControlName="shortName" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="fullName">
+            {{ '::Full Name' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="fullName" class="form-control" formControlName="fullName" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="taxCode">
+            {{ '::TaxCode' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="taxCode" class="form-control" formControlName="taxCode" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="address">
+            {{ '::Address' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="address" class="form-control" formControlName="address" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="contactPerson">
+            {{ '::Contact Person' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="contactPerson" class="form-control" formControlName="contactPerson" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="contactEmail">
+            {{ '::Contact Email' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input appTrim autocomplete="off" id="contactEmail" class="form-control" formControlName="contactEmail" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="contactPhoneNumber">
+            {{ '::Contact Phone' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input
+            appTrim
+            autocomplete="off"
+            id="contactPhoneNumber"
+            class="form-control"
+            formControlName="contactPhoneNumber" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="paymentTermCode">
+            {{ '::Payment Term Code' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input
+            appTrim
+            autocomplete="off"
+            id="paymentTermCode"
+            class="form-control"
+            formControlName="paymentTermCode" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="paymentTermDescription">
+            {{ '::Payment Term Description' | abpLocalization }}
+            <strong>(%)</strong>
+          </label>
+          <input
+            appTrim
+            autocomplete="off"
+            id="paymentTermDescription"
+            class="form-control"
+            formControlName="paymentTermDescription" />
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-4 col-lg-4">
+        <div class="mb-1">
+          <label class="form-label" for="deactive">
+            {{ '::Deactive' | abpLocalization }}
+          </label>
+          <ng-select
+            id="deactive"
+            formControlName="deactive"
+            [items]="deactiveOptions"
+            bindLabel="label"
+            bindValue="value"
+            clearable="false"
+            [appendTo]="'body'">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-expandable-panel-v2>

@@ -1,0 +1,285 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        triggers="hover"
+        ngbTooltip="Clear">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+      <!-- <button type="button" class="btn btn-danger" *ngIf="this.service?.selected?.length > 0">
+        <span>{{ '::Deactive' | abpLocalization }}</span>
+      </button> -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="exportToExcel()"
+        placement="bottom"
+        ngbTooltip="Export"
+        triggers="hover">
+        <i class="bi bi-download me-1"></i>
+        <span>{{ '::Export' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-stock-management-filter #filter></app-stock-management-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <app-table-edge-scroller>
+        <ngx-datatable
+          default
+          class="bootstrap"
+          [rows]="service.data.items"
+          [count]="service.data.totalCount"
+          [list]="list"
+          (page)="service.onPage($event)"
+          [selected]="service.selected">
+          <!-- Header Checkbox -->
+          <!-- <ngx-datatable-column [width]="30" [maxWidth]="30" [sortable]="false">
+            <ng-template ngx-datatable-header-template>
+              <div class="checkbox-container">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="isAllSelected()"
+                    (change)="toggleSelectAll($event)" />
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-row="row" let-isSelected="isSelected">
+              <div class="checkbox-container">
+                <div class="checkbox-control">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="isSelected"
+                    (change)="
+                      isSelected
+                        ? service.selected.splice(service.selected.indexOf(row), 1)
+                        : service.selected.push(row)
+                    " />
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column> -->
+
+          <!-- History Column -->
+          <ngx-datatable-column [width]="30" [maxWidth]="30" [sortable]="false">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <button
+                type="button"
+                class="btn btn-sm btn-link p-0 text-info"
+                (click)="onViewStockHistoryDetail(row)"
+                title="View Stock History">
+                <i class="bi bi-clock-history"></i>
+              </button>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="{{ '::Status' | abpLocalization }}"
+            [width]="90"
+            [maxWidth]="90"
+            prop="materialStatus">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <app-status-label [status]="row.materialStatus"></app-status-label>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="" [width]="30" [maxWidth]="30" prop="isExist" [sortable]="false">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <i
+                *ngIf="row.isExist"
+                class="fa fa-warning text-red"
+                placement="top"
+                container="body"
+                ngbTooltip="Warning Stock"></i>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Material Code" prop="golfaCode" headerClass="text-left" [cellClass]="'text-left'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="openDetails(row)">
+                {{ row.golfaCode }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Model" prop="model" headerClass="text-left" [cellClass]="'text-left'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.model }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column name="Spec 1" prop="spec1" headerClass="text-left" [cellClass]="'text-left'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.spec1 }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Standard Price"
+            prop="standard_Price"
+            [width]="120"
+            headerClass="text-right"
+            [cellClass]="'text-right'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.standard_Price | number: '1.0-0' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Reference LeadTime"
+            prop="referenceLeadTime"
+            [width]="150"
+            headerClass="text-right"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.referenceLeadTime | number: '1.0-0' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Stock Qty"
+            prop="stock_Qty"
+            headerClass="text-center"
+            [width]="100"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onViewStockQtyDetail(row)">
+                {{ row.stock_Qty | number: '1.0-0' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Locked"
+            prop="locked_Qty"
+            headerClass="text-center"
+            [width]="80"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onViewStockLockedDetail(row)">
+                {{ row.locked_Qty | number: '1.0-0' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Stock for SO"
+            prop="lockStockSO_Qty"
+            headerClass="text-center"
+            [width]="120"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onViewLockStockSODetail(row)">
+                {{ row.lockStockSO_Qty | number: '1.0-0' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Available"
+            prop="available_Qty"
+            headerClass="text-center"
+            [width]="90"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              {{ row.available_Qty | number: '1.0-0' }}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="On-order Stock"
+            prop="onOderStock"
+            headerClass="text-center"
+            [width]="130"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onViewOnOrderStockDetail(row)">
+                {{ row.onOderStock | number: '1.0-0' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column
+            name="Lock Shipment"
+            prop="lockshipment_Qty"
+            headerClass="text-center"
+            [width]="130"
+            [cellClass]="'text-center'">
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <a class="text-primary text-decoration-none cursor-pointer" (click)="onViewLockShipmentDetail(row)">
+                {{ row.lockshipment_Qty | number: '1.0-0' }}
+              </a>
+            </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+      </app-table-edge-scroller>
+    </div>
+  </div>
+</abp-page>
+
+<app-stock-details-modal [selected]="serviceDetail.selected" />
+
+<!-- Stock Qty Detail Modal -->
+<app-stock-qty-detail-modal
+  *ngIf="showStockQtyDetailModal"
+  [(visible)]="showStockQtyDetailModal"
+  [materialItem]="materialItem">
+</app-stock-qty-detail-modal>
+
+<!-- Stock Locked Detail Modal -->
+<app-stock-locked-detail-modal
+  *ngIf="showStockLockedDetailModal"
+  [(visible)]="showStockLockedDetailModal"
+  [materialItem]="materialItem">
+</app-stock-locked-detail-modal>
+
+<!-- On Order Stock Detail Modal -->
+<app-lock-stock-so-detail-modal
+  *ngIf="showLockStockSODetailModal"
+  [(visible)]="showLockStockSODetailModal"
+  [materialItem]="materialItem">
+</app-lock-stock-so-detail-modal>
+
+<!-- On Order Stock Detail Modal -->
+<app-on-order-stock-detail-modal
+  *ngIf="showOnOrderStockDetailModal"
+  [(visible)]="showOnOrderStockDetailModal"
+  [materialItem]="materialItem">
+</app-on-order-stock-detail-modal>
+
+<!-- Lock Shipment Detail Modal -->
+<app-lock-shipment-detail-modal
+  *ngIf="showLockShipmentDetailModal"
+  [(visible)]="showLockShipmentDetailModal"
+  [materialItem]="materialItem">
+</app-lock-shipment-detail-modal>
+
+<!-- Stock History Detail Modal -->
+<app-stock-history-detail-modal
+  *ngIf="showStockHistoryDetailModal"
+  [(visible)]="showStockHistoryDetailModal"
+  [materialItem]="materialItem"
+  [stockCode]="selectedStockCode"
+  [golfaCode]="selectedGolfaCode">
+</app-stock-history-detail-modal>

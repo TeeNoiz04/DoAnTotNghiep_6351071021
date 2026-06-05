@@ -1,0 +1,283 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.angular-editor-textarea {
+  min-height: 150px;
+  background-color: #ffffff;
+  padding: 0.5rem;
+  resize: vertical;
+}
+
+.angular-editor-toolbar {
+  font-size: 0.9rem;
+}
+
+.lpx-content-container {
+  margin-right: 0px;
+}
+
+.lpx-toolbar-container {
+  display: none;
+}
+
+.lpx-toolbar-container {
+  position: relative;
+}
+
+/* Modify the menu item link to use flexbox for better alignment */
+.lpx-menu-item-link {
+  display: flex;
+  align-items: flex-end;
+  /* Align items to the bottom */
+  text-decoration: none;
+  color: #333;
+  gap: 10px;
+  /* Space between avatar and text */
+}
+
+/* Enhance avatar styles */
+.lpx-avatar {
+  width: 60px;
+  /* Bigger avatar */
+  height: 60px;
+  /* Bigger avatar */
+  border-radius: 50%;
+  /* Optional: make it circular */
+  overflow: hidden;
+}
+
+.lpx-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Ensures image covers entire avatar area */
+}
+
+/* Username text styles */
+.lpx-menu-item-text {
+  font-size: 18px;
+  /* Larger text */
+  max-width: 150px;
+  /* Limit width before overflow */
+  width: auto !important;
+  white-space: nowrap;
+  /* Prevent wrapping */
+  overflow: visible !important;
+  /* Hide overflowing text */
+  text-overflow: ellipsis;
+  /* Add ellipsis for overflow */
+}
+
+.lpx-brand-logo {
+  background-size: contain;
+}
+
+:root .lpx-theme-dark {
+  --lpx-logo: url("/assets/images/logo/logo-mevn.png");
+  --lpx-logo-icon: url("/assets/images/logo/logo-mevn.png");
+
+  .abp-support {
+    background-image: url("/assets/images/getting-started/abp-support-white.svg");
+  }
+
+  .abp-community {
+    background-image: url("/assets/images/getting-started/abp-community-white.svg");
+  }
+
+  .abp-blog {
+    background-image: url("/assets/images/getting-started/abp-blog-white.svg");
+  }
+
+  .logo-x {
+    background-image: url("/assets/images/getting-started/x-white.svg");
+  }
+}
+
+:root {
+  --lpx-logo: url("/assets/images/logo/logo-mevn.png");
+  --lpx-logo-icon: url("/assets/images/logo/logo-mevn.png");
+  --lpx-theme-light-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+  --lpx-theme-dim-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+  --lpx-theme-dark-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+
+  .lpx-theme-light .full.ng-star-inserted {
+    --lpx-logo: url("/assets/images/logo/logo-mevn.png");
+    --lpx-logo-icon: url("/assets/images/logo/logo-mevn.png");
+
+    .lpx-logo-container {
+      padding: 10px;
+
+      .lpx-brand-logo {
+        width: auto;
+        background-size: auto 100%;
+        height: 50px;
+        margin-left: 13px;
+      }
+    }
+  }
+
+  .lpx-theme-light .full.ng-star-inserted.hover-trigger {
+    --lpx-logo: url("/assets/images/logo/logo-mevn-icon-only.svg");
+    --lpx-logo-icon: url("/assets/images/logo/logo-mevn-icon-only.svg");
+
+    .lpx-logo-container {
+      padding: 10px;
+
+      .lpx-brand-logo {
+        width: auto;
+        background-size: auto 80%;
+        height: 50px;
+        margin: 0;
+        margin-left: 3px;
+      }
+    }
+  }
+
+  .lpx-theme-light .full.ng-star-inserted.hover-trigger :hover {
+    --lpx-logo: url("/assets/images/logo/logo-mevn.png");
+    --lpx-logo-icon: url("/assets/images/logo/logo-mevn.png");
+
+    .lpx-logo-container {
+      padding: 10px;
+
+      .lpx-brand-logo {
+        width: auto;
+        background-size: auto 100%;
+        height: 50px;
+        margin-left: 13px;
+      }
+    }
+  }
+
+  .lpx-theme-light .full.ng-star-inserted.hover-trigger.initial-hover {
+    --lpx-logo: url("/assets/images/logo/logo-mevn-icon-only.svg");
+    --lpx-logo-icon: url("/assets/images/logo/logo-mevn-icon-only.svg");
+
+    .lpx-logo-container {
+      padding: 10px;
+
+      .lpx-brand-logo {
+        width: auto;
+        background-size: auto 80%;
+        height: 50px;
+        margin: 0;
+        margin-left: 3px;
+      }
+    }
+  }
+
+  .lpx-theme-light .full.ng-star-inserted.hover-trigger.initial-hover :hover {
+    --lpx-logo: url("/assets/images/logo/logo-mevn.png");
+    --lpx-logo-icon: url("/assets/images/logo/logo-mevn.png");
+
+    .lpx-logo-container {
+      padding: 10px;
+      width: 280px;
+
+      .lpx-brand-logo {
+        width: 280px;
+        background-size: auto 100%;
+        height: 50px;
+        margin-left: 13px;
+      }
+    }
+  }
+}
+
+:root {
+  --lpx-theme-light-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+  --lpx-theme-dim-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+  --lpx-theme-dark-bg: url("/assets/images/logo/logo-mevn-icon-only.svg");
+
+  .abp-logo {
+    background-repeat: no-repeat;
+  }
+
+  .abp-support {
+    width: 172px;
+    height: 30px;
+    background-image: url("/assets/images/getting-started/abp-support.svg");
+  }
+
+  .abp-community {
+    width: 215px;
+    height: 30px;
+    background-image: url("/assets/images/getting-started/abp-community.svg");
+  }
+
+  .abp-blog {
+    width: 142px;
+    height: 30px;
+    background-image: url("/assets/images/getting-started/abp-blog.svg");
+  }
+
+  .logo-x {
+    width: 20px;
+    height: 20px;
+    background-image: url("/assets/images/getting-started/x.svg");
+  }
+}
+
+.lpx-side-bar-container {
+  width: 300px;
+}
+
+.lpx-nav-menu .group-menu-item {
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-bottom: 5px;
+  font-weight: bold;
+}
+
+.lpx-inner-menu {
+  .lpx-inner-menu {
+    .lpx-menu-item-text {
+      width: 250px;
+    }
+
+    .lpx-menu-item-link {
+      width: 280px;
+    }
+
+    .lpx-inner-menu {
+      .lpx-menu-item-text {
+        width: 250px;
+      }
+
+      .lpx-menu-item-link {
+        padding-left: 90px;
+        width: 280px;
+      }
+    }
+  }
+}
+
+.custom-ng-select-dropdown ::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items {
+  max-height: unset !important;
+  overflow: visible !important;
+}
+
+.tooltip-inner {
+  white-space: pre-wrap;
+  max-width: fit-content;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: #1f317a;
+  opacity: 1;
+}
+
+#lpx-wrapper.hover-trigger .lpx-content-container {
+  .drawer-modal.open {
+    width: calc(100% - 72px);
+    left: 72px;
+  }
+}
+
+.ellipsis-tooltip {
+  z-index: 9999;
+}
+
+.lpx-breadcrumb-container {
+  display: none;
+}

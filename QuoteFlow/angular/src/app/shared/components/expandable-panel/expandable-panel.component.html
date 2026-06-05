@@ -1,0 +1,34 @@
+<div class="expandable-panel {{ panelClass }}" [attr.id]="panelId + '-container'">
+  <!-- Panel Header -->
+  <div
+    class="panel-header d-flex align-items-center {{ headerClasses }}"
+    [attr.style]="headerStyle"
+    (click)="toggle($event)"
+    [attr.aria-expanded]="!isCollapsed"
+    [attr.aria-controls]="panelId">
+    <!-- Icon at start position -->
+    <div *ngIf="showIcon && iconPosition === 'start'" class="icon-container me-2">
+      <i class="bi" [ngClass]="isCollapsed ? 'bi-plus' : 'bi-dash'"></i>
+    </div>
+
+    <!-- Header title -->
+    <h5 class="panel-title">{{ headerText }}</h5>
+
+    <!-- Icon at end position -->
+    <div *ngIf="showIcon && iconPosition === 'end'" class="icon-container ms-auto">
+      <i class="bi" [ngClass]="isCollapsed ? 'bi-plus' : 'bi-dash'"></i>
+    </div>
+
+    <!-- Custom header actions slot -->
+    <div class="ms-auto">
+      <ng-content select="[header-actions]"></ng-content>
+    </div>
+  </div>
+
+  <!-- Panel Content -->
+  <div [ngbCollapse]="isCollapsed" [id]="panelId" class="panel-content" [attr.style]="panelStyle">
+    <div class="panel-body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

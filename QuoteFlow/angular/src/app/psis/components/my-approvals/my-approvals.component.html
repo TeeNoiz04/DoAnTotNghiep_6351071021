@@ -1,0 +1,108 @@
+<abp-page [title]="title | abpLocalization">
+  <abp-page-toolbar-container class="col">
+    <div class="text-lg-end top-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSearch()"
+        placement="bottom"
+        ngbTooltip="Search"
+        triggers="hover">
+        <i class="bi bi-search me-1"></i>
+        <span>{{ '::Search' | abpLocalization }}</span>
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        (click)="clearFilters()"
+        placement="bottom"
+        ngbTooltip="Clear"
+        triggers="hover">
+        <i class="bi bi-arrow-repeat me-1"></i>
+        <span>{{ '::Clear' | abpLocalization }}</span>
+      </button>
+    </div>
+  </abp-page-toolbar-container>
+
+  <app-my-approvals-filter></app-my-approvals-filter>
+
+  <div class="card">
+    <div class="card-body">
+      <ngx-datatable
+        class="bootstrap"
+        default
+        [rows]="service.dataApproval.items"
+        [count]="service?.dataApproval?.totalCount"
+        [list]="list">
+        <ngx-datatable-column name="" [maxWidth]="40" [sortable]="false">
+          <ng-template let-row="row" let-i="rowIndex" ngx-datatable-cell-template>
+            <div class="d-flex justify-content-center align-items-center gap-1">
+              <button class="btn btn-link p-0" (click)="showHistory(row)">
+                <i
+                  class="bi bi-clock-history text-muted icon-hover-delete"
+                  placement="top"
+                  container="body"
+                  ngbTooltip="History"></i>
+              </button>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Status' | abpLocalization }}" [maxWidth]="100" prop="status">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-status-label [status]="row.status"></app-status-label>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::PSI Code' | abpLocalization }}" prop="psiCode">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a [routerLink]="getDetailUrl(row)" class="text-primary text-decoration-none cursor-pointer">
+              {{ row.psiCode }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::FY' | abpLocalization }}" [maxWidth]="80" prop="fy">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fy }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::FileName' | abpLocalization }}" [minWidth]="250" prop="fileName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            {{ row.fileName }}
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="{{ '::Approvers' | abpLocalization }}" prop="currentApproverRoleName">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <a style="color: #355dff; text-decoration: none" class="cursor-pointer" (click)="loadApprovalList(row)">
+              {{ row.currentApproverRoleName }}
+            </a>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column
+          name="{{ '::Info' | abpLocalization }}"
+          headerClass="text-center"
+          [maxWidth]="50"
+          [sortable]="false"
+          [canAutoResize]="false">
+          <ng-template let-row="row" ngx-datatable-cell-template>
+            <app-audit-info-column [creationTime]="row.creationTime" [creatorName]="row.creatorName">
+            </app-audit-info-column>
+          </ng-template>
+        </ngx-datatable-column>
+      </ngx-datatable>
+    </div>
+  </div>
+</abp-page>
+
+<!-- History List -->
+<app-history-modal
+  [isVisible]="showHistoryModal"
+  [approvalHistories]="approvalHistories"
+  (disappear)="closeHistoryDialog()" />
+
+<!-- Approver popup -->
+<app-approvers-modal #approversModalComponent></app-approvers-modal>
