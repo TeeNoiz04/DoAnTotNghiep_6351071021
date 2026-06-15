@@ -1,6 +1,5 @@
 ﻿using QuoteFlow.BuyerAccess;
 using QuoteFlow.Buyers;
-using QuoteFlow.GICs;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.Permissions;
 using QuoteFlow.RequesterContexts;
@@ -390,139 +389,60 @@ public class SaleOrdersAppService : QuoteFlowAppService, ISaleOrdersAppService
             throw new UserFriendlyException($"{error}");
         }
     }
-    public async Task<IRemoteStreamContent> GetListGICAsExcelFileAsync(GetSaleOrdersInput input)
+
+    private async Task WriteHistoryAsync(List<SaleOrderSapImportCreateParams> createParams, bool? isUIChange = false, bool? isUI = false)
     {
-        string fileName, sheetName;
-        Dictionary<int, string> columnMapping;
+        var soNoDistinct = createParams
+                    .Where(x => !string.IsNullOrWhiteSpace(x.SONo))
+                    .Select(x => x.SONo)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
 
-        //if (string.IsNullOrWhiteSpace(input.GicType))
-        //{
-        //    throw new UserFriendlyException("Please select GIC type.");
-        //}
-        //check same GIC Type
-        var type = await _saleOrderManager.CheckSameGICTypeAsync(input.LstSO, exportSAP: true);
-        input.GicType = type;
+        var saleOrders = await _saleOrderRepository.GetListAsync(
+            x => soNoDistinct.Contains(x.SONo) && x.IsDeleted == false
+        );
 
-        // Xác định file template và column mapping dựa vào GIC Type
-        switch (type)
+        var saleOrderDict = saleOrders.ToDictionary(
+            x => x.SONo,
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        foreach (var soNo in soNoDistinct)
         {
-            case GICTypeCodes.Internal:
-                fileName = "SO_SAP_Export_GIC_Internal.xlsx";
-                sheetName = "Data_IU";
-                columnMapping = GetInternalColumnMapping();
-                break;
+            if (!saleOrderDict.TryGetValue(soNo, out var saleOrder))
+                continue;
 
-            case GICTypeCodes.GivingSponsor:
-                fileName = "SO_SAP_Export_GIC_Sponsor.xlsx";
-                sheetName = "Data_FOC";
-                columnMapping = GetSponsorColumnMapping();
-                break;
-
-            case GICTypeCodes.Warranty:
-                fileName = "SO_SAP_Export_GIC_Warranty.xlsx";
-                sheetName = "Data_WR";
-                columnMapping = GetWarrantyColumnMapping();
-                break;
-
-            case GICTypeCodes.WriteOff:
-                fileName = "SO_SAP_Export_GIC_WriteOff.xlsx";
-                sheetName = "Data_WO";
-                columnMapping = GetWriteOffColumnMapping();
-                break;
-
-            default:
-                throw new InvalidOperationException($"Unknown GIC type: {input.GicType}");
-        }
-
-        var filterParams = ObjectMapper.Map<GetSaleOrdersInput, SaleOrderListExportSAPDataParams>(input);
-        filterParams.Username = _currentUser.Username;
-        var buyerAccess = await _buyerAccessService.GetBuyerAccessAsync();
-        var items = await _saleOrderRepository.ExportSAPGICDataAsync(filterParams);
-
-        var fileDescriptor = await _fileDescriptorRepository
-            .FirstOrDefaultAsync(fd => fd.Name == fileName)
-            ?? throw new UserFriendlyException("Template Excel not found.");
-
-        var templateBytes = await _fileDescriptorAppService.GetContentAsync(fileDescriptor.Id);
-
-        using var originalStream = new MemoryStream(templateBytes);
-        var tempStream = new MemoryStream();
-        await originalStream.CopyToAsync(tempStream);
-        tempStream.Position = 0;
-
-        using var workbook = new ClosedXML.Excel.XLWorkbook(tempStream);
-        var ws = workbook.Worksheet(sheetName);
-
-        int startRow = 3;
-        if (items.Count > 1)
-        {
-            ws.Row(startRow).InsertRowsBelow(items.Count - 1);
-        }
-        bool canViewLanding = await AuthorizationService.IsGrantedAsync(QuoteFlowPermissions.SaleOrders.SAPLandingCost);
-        for (int i = 0; i < items.Count; i++)
-        {
-            var item = items[i];
-            var row = ws.Row(startRow + i);
-
-            foreach (var mapping in columnMapping)
+            if (isUIChange == true)
             {
-                int columnIndex = mapping.Key;
-                string propertyName = mapping.Value;
-                if(canViewLanding == false && (propertyName == nameof(SaleOrderExportSAPGICData.SAPLandingCost) || propertyName == nameof(SaleOrderExportSAPGICData.AmountInLandingCost)))
-                {
-                    // write into cell
-                    var celll = row.Cell(columnIndex);
-                    celll.Value = 0;
-                    continue; // Skip these columns if user doesn't have permission
-                }
-                // get value from property
-                var value = GetPropertyValue(item, propertyName);
+                var status = HistoryActions.SaleOrder.ImportIUChange;
+                var history = SetSOHistory(saleOrder.Id, status, "Info updated by IU Change");
+                saleOrder.RecordAction(history);
+            }
+            else if (isUI == true)
+            {
+                var status = saleOrder.StatusCode == QuoteFlowStatuses.InProgress
+                ? HistoryActions.SaleOrder.Update
+                : HistoryActions.SaleOrder.ImportSAPData;
+                string note = saleOrder.StatusCode == QuoteFlowStatuses.InProgress
+                    ? "Update SO"
+                    : "SO Closed by SAP Import";
 
-                // write into cell
-                var cell = row.Cell(columnIndex);
+                var history = SetSOHistory(saleOrder.Id, status, note);
+                saleOrder.RecordAction(history);
+            }
+            else
+            {
+                var status = saleOrder.StatusCode == QuoteFlowStatuses.Closed
+                ? HistoryActions.SaleOrder.Update
+                : HistoryActions.SaleOrder.ImportSAPData;
+                string note = saleOrder.StatusCode == QuoteFlowStatuses.Closed
+                    ? "Update SO"
+                    : "SO Closed by SAP Import";
 
-                // Format Date
-                if (value is DateTime dateValue)
-                {
-                    cell.Value = dateValue;
-                    //cell.Style.DateFormat.Format = "dd/MM/yyyy";
-                }
-                // Format for number
-                else if (value is decimal || value is double || value is float)
-                {
-                    if (propertyName == "VAT")
-                    {
-                        cell.Value = Convert.ToDouble(value);
-                        //cell.Style.NumberFormat.Format = "0%";
-                    }
-                    else
-                    {
-                        cell.Value = Convert.ToDouble(value);
-                        //cell.Style.NumberFormat.Format = "#,##0";
-                    }
-                }
-                else
-                {
-                    cell.Value = value?.ToString() ?? string.Empty;
-                }
+                var history = SetSOHistory(saleOrder.Id, status, note);
+                saleOrder.RecordAction(history);
             }
         }
-
-        foreach (var worksheet in workbook.Worksheets)
-        {
-            worksheet.CellsUsed().Style.Font.FontName = "Arial";
-        }
-
-        // save and return to file
-        var output = new MemoryStream();
-        workbook.SaveAs(output);
-        output.Position = 0;
-
-        return new RemoteStreamContent(
-            output,
-            fileName,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
     }
     [Authorize(QuoteFlowPermissions.SaleOrders.ImportInternalUseChange)]
     public async Task<IRemoteStreamContent> GetListGICInternalUseChangeAsExcelFileAsync(GetSaleOrdersInput input)
@@ -809,327 +729,7 @@ public class SaleOrdersAppService : QuoteFlowAppService, ISaleOrdersAppService
             { 21, nameof(SaleOrderExportSAPGICData.DeliveryRemarks) },       // U - Delivery remarks
         };
     }
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public virtual async Task<ExcelValidationResult<SaleOrderGICWriteOffExcelDto>> ValidateAndParseGICWriteOffAsync(IRemoteStreamContent file, string gicType)
-    {
-        var validator = _excelImportFactory.CreateValidator<SaleOrderGICWriteOffExcelDto>(ExcelImporters.SaleOrderGICWriteOff);
-
-        await using var stream = file.GetStream();
-        var result = await validator.ValidateAsync(stream, file.FileName ?? "");
-
-        foreach (var item in result.ListData)
-        {
-            item.RowData.SOType = gicType;
-        }
-        return result;
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public async Task ImportSOGICWriteOffAsync(ExcelValidationResult<SaleOrderGICWriteOffExcelDto> data)
-    {
-        var dataObjects = _excelImportFactory.CreateCreateParamsConverter<SaleOrderGICWriteOffExcelDto, SaleOrderSapImportCreateParams>(ExcelImporters.SaleOrderGICWriteOff);
-
-        var context = new ExcelImportContext();
-        var createdGuid = GuidGenerator.Create();
-
-        List<SaleOrderSapImportCreateParams> createParams = (await Task.WhenAll(
-        data.ListData.Select(async x =>
-        {
-            var item = await dataObjects.ConvertToCreateParamsAsync(x, context, default);
-            if (item != null)
-            {
-                item.ImportKey = createdGuid;
-                item.FileName = data.FileName;
-
-            }
-            return item;
-        })
-        )).Where(x => x != null)
-        .ToList()!;
-
-        await _saleOrdersSapImportManager.CreateBatchAsync(createParams);
-        await WriteHistoryAsync(createParams);
-        await UnitOfWorkManager.Current!.SaveChangesAsync();
-
-        var error = await _saleOrderRepository.ImportSAPDataGICAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-        if (!string.IsNullOrWhiteSpace(error))
-        {
-            throw new UserFriendlyException($"{error}");
-        }
-
-
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public virtual async Task<ExcelValidationResult<SaleOrderGICWarrantyExcelDto>> ValidateAndParseGICWarrantyAsync(IRemoteStreamContent file, string gicType)
-    {
-        var validator = _excelImportFactory.CreateValidator<SaleOrderGICWarrantyExcelDto>(ExcelImporters.SaleOrderGICWarranty);
-
-        await using var stream = file.GetStream();
-        var result = await validator.ValidateAsync(stream, file.FileName ?? "");
-
-        foreach (var item in result.ListData)
-        {
-            item.RowData.SOType = gicType;
-        }
-        return result;
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public async Task ImportSOGICWarrantyAsync(ExcelValidationResult<SaleOrderGICWarrantyExcelDto> data)
-    {
-        var dataObjects = _excelImportFactory.CreateCreateParamsConverter<SaleOrderGICWarrantyExcelDto, SaleOrderSapImportCreateParams>(ExcelImporters.SaleOrderGICWarranty);
-
-        var context = new ExcelImportContext();
-        var createdGuid = GuidGenerator.Create();
-
-        List<SaleOrderSapImportCreateParams> createParams = (await Task.WhenAll(
-        data.ListData.Select(async x =>
-        {
-            var item = await dataObjects.ConvertToCreateParamsAsync(x, context, default);
-            if (item != null)
-            {
-                item.ImportKey = createdGuid;
-                item.FileName = data.FileName;
-
-            }
-            return item;
-        })
-        )).Where(x => x != null)
-        .ToList()!;
-
-        await _saleOrdersSapImportManager.CreateBatchAsync(createParams);
-        await UnitOfWorkManager.Current!.SaveChangesAsync();
-        await WriteHistoryAsync(createParams);
-
-        var error = await _saleOrderRepository.ImportSAPDataGICAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-        if (!string.IsNullOrWhiteSpace(error))
-        {
-            throw new UserFriendlyException($"{error}");
-        }
-
-    }
-
-    private async Task WriteHistoryAsync(List<SaleOrderSapImportCreateParams> createParams, bool? isUIChange = false, bool? isUI = false)
-    {
-        var soNoDistinct = createParams
-                    .Where(x => !string.IsNullOrWhiteSpace(x.SONo))
-                    .Select(x => x.SONo)
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
-
-        var saleOrders = await _saleOrderRepository.GetListAsync(
-            x => soNoDistinct.Contains(x.SONo) && x.IsDeleted == false
-        );
-
-        var saleOrderDict = saleOrders.ToDictionary(
-            x => x.SONo,
-            StringComparer.OrdinalIgnoreCase
-        );
-
-        foreach (var soNo in soNoDistinct)
-        {
-            if (!saleOrderDict.TryGetValue(soNo, out var saleOrder))
-                continue;
-
-            if (isUIChange == true)
-            {
-                var status = HistoryActions.SaleOrder.ImportIUChange;
-                var history = SetSOHistory(saleOrder.Id, status, "Info updated by IU Change");
-                saleOrder.RecordAction(history);
-            }
-            else if (isUI == true)
-            {
-                var status = saleOrder.StatusCode == QuoteFlowStatuses.InProgress
-                ? HistoryActions.SaleOrder.Update
-                : HistoryActions.SaleOrder.ImportSAPData;
-                string note = saleOrder.StatusCode == QuoteFlowStatuses.InProgress
-                    ? "Update SO"
-                    : "SO Closed by SAP Import";
-
-                var history = SetSOHistory(saleOrder.Id, status, note);
-                saleOrder.RecordAction(history);
-            }
-            else
-            {
-                var status = saleOrder.StatusCode == QuoteFlowStatuses.Closed
-                ? HistoryActions.SaleOrder.Update
-                : HistoryActions.SaleOrder.ImportSAPData;
-                string note = saleOrder.StatusCode == QuoteFlowStatuses.Closed
-                    ? "Update SO"
-                    : "SO Closed by SAP Import";
-
-                var history = SetSOHistory(saleOrder.Id, status, note);
-                saleOrder.RecordAction(history);
-            }
-        }
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public virtual async Task<ExcelValidationResult<SaleOrderGICInternalUseExcelDto>> ValidateAndParseGICInternalUseAsync(IRemoteStreamContent file, string gicType)
-    {
-        var validator = _excelImportFactory.CreateValidator<SaleOrderGICInternalUseExcelDto>(ExcelImporters.SaleOrderGICInternalUse);
-
-        await using var stream = file.GetStream();
-        var result = await validator.ValidateAsync(stream, file.FileName ?? "");
-        foreach (var item in result.ListData)
-        {
-            item.RowData.SOType = gicType;
-        }
-        return result;
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public async Task ImportSOGICInternalUseAsync(ExcelValidationResult<SaleOrderGICInternalUseExcelDto> data)
-    {
-        var dataObjects = _excelImportFactory.CreateCreateParamsConverter<SaleOrderGICInternalUseExcelDto, SaleOrderSapImportCreateParams>(ExcelImporters.SaleOrderGICInternalUse);
-
-        var context = new ExcelImportContext();
-        var createdGuid = GuidGenerator.Create();
-
-        List<SaleOrderSapImportCreateParams> createParams = (await Task.WhenAll(
-        data.ListData.Select(async x =>
-        {
-            var item = await dataObjects.ConvertToCreateParamsAsync(x, context, default);
-            if (item != null)
-            {
-                item.ImportKey = createdGuid;
-                item.FileName = data.FileName;
-
-            }
-            return item;
-        })
-        )).Where(x => x != null)
-        .ToList()!;
-
-        await _saleOrdersSapImportManager.CreateBatchAsync(createParams);
-        await UnitOfWorkManager.Current!.SaveChangesAsync();
-        if (data.ListData.Select(x => x.RowData.GICProcess).Distinct().Count() == 1)
-        {
-
-            if (data.ListData.First().RowData.GICProcess == GICProcessCodes.ReservationNo)
-            {
-
-
-                var error = await _saleOrderRepository.ImportSAPDataGICAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-                if (!string.IsNullOrWhiteSpace(error))
-                {
-                    throw new UserFriendlyException($"{error}");
-                }
-            }
-            else if (data.ListData.First().RowData.GICProcess == GICProcessCodes.Asset || data.ListData.First().RowData.GICProcess == GICProcessCodes.Tool)
-            {
-
-                var error = await _saleOrderRepository.ImportSAPDataGICInternalUseAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-                if (!string.IsNullOrWhiteSpace(error))
-                {
-                    throw new UserFriendlyException($"{error}");
-                }
-            }
-        }
-        else
-        {
-
-            throw new UserFriendlyException("Please ensure all rows have the same GIC Process.");
-        }
-        await WriteHistoryAsync(createParams, isUI: true);
-    }
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportInternalUseChange)]
-    public virtual async Task<ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto>> ValidateAndParseGICInternalUseChangeAsync(IRemoteStreamContent file, string gicType)
-    {
-        var validator = _excelImportFactory.CreateValidator<SaleOrderGICInternalUseChangeExcelDto>(ExcelImporters.SaleOrderGICInternalUseChange);
-
-        await using var stream = file.GetStream();
-        var result = await validator.ValidateAsync(stream, file.FileName ?? "");
-        foreach (var item in result.ListData)
-        {
-            item.RowData.SOType = gicType;
-        }
-        return result;
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportInternalUseChange)]
-    public async Task ImportSOGICInternalUseChangeAsync(ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto> data)
-    {
-        var dataObjects = _excelImportFactory.CreateCreateParamsConverter<SaleOrderGICInternalUseChangeExcelDto, SaleOrderSapImportCreateParams>(ExcelImporters.SaleOrderGICInternalUseChange);
-
-        var context = new ExcelImportContext();
-        var createdGuid = GuidGenerator.Create();
-
-        List<SaleOrderSapImportCreateParams> createParams = (await Task.WhenAll(
-        data.ListData.Select(async x =>
-        {
-            var item = await dataObjects.ConvertToCreateParamsAsync(x, context, default);
-            if (item != null)
-            {
-                item.ImportKey = createdGuid;
-                item.FileName = data.FileName;
-
-            }
-            return item;
-        })
-        )).Where(x => x != null)
-        .ToList()!;
-
-        await _saleOrdersSapImportManager.CreateBatchAsync(createParams);
-        await WriteHistoryAsync(createParams, isUIChange: true);
-        await UnitOfWorkManager.Current!.SaveChangesAsync();
-        var error = await _saleOrderRepository.ImportInternalUseChangeDataGICAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-        if (!string.IsNullOrWhiteSpace(error))
-        {
-            throw new UserFriendlyException($"{error}");
-        }
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public virtual async Task<ExcelValidationResult<SaleOrderGICFOCExcelDto>> ValidateAndParseGICFOCAsync(IRemoteStreamContent file, string gicType)
-    {
-        var validator = _excelImportFactory.CreateValidator<SaleOrderGICFOCExcelDto>(ExcelImporters.SaleOrderGICFOC);
-
-        await using var stream = file.GetStream();
-        var result = await validator.ValidateAsync(stream, file.FileName ?? "");
-        foreach (var item in result.ListData)
-        {
-            item.RowData.SOType = gicType;
-        }
-        return result;
-    }
-
-    [Authorize(QuoteFlowPermissions.SaleOrders.ImportSAPSO)]
-    public async Task ImportSOGICFOCAsync(ExcelValidationResult<SaleOrderGICFOCExcelDto> data)
-    {
-        var dataObjects = _excelImportFactory.CreateCreateParamsConverter<SaleOrderGICFOCExcelDto, SaleOrderSapImportCreateParams>(ExcelImporters.SaleOrderGICFOC);
-
-        var context = new ExcelImportContext();
-        var createdGuid = GuidGenerator.Create();
-
-        List<SaleOrderSapImportCreateParams> createParams = (await Task.WhenAll(
-        data.ListData.Select(async x =>
-        {
-            var item = await dataObjects.ConvertToCreateParamsAsync(x, context, default);
-            if (item != null)
-            {
-                item.ImportKey = createdGuid;
-                item.FileName = data.FileName;
-
-            }
-            return item;
-        })
-        )).Where(x => x != null)
-        .ToList()!;
-
-        await _saleOrdersSapImportManager.CreateBatchAsync(createParams);
-        await WriteHistoryAsync(createParams);
-        await UnitOfWorkManager.Current!.SaveChangesAsync();
-        var error = await _saleOrderRepository.ImportSAPDataGICAsync(createdGuid, _currentUser.Username!, _currentUser.FullName!);
-        if (!string.IsNullOrWhiteSpace(error))
-        {
-            throw new UserFriendlyException($"{error}");
-        }
-    }
-
-
-
+  
     [Authorize(QuoteFlowPermissions.SaleOrders.ExportSAPData)]
     public async Task<IRemoteStreamContent> GetListAsExcelFileAsync(GetSaleOrdersInput input)
     {
@@ -1355,4 +955,8 @@ public class SaleOrdersAppService : QuoteFlowAppService, ISaleOrdersAppService
         );
     }
 
+    public Task<IRemoteStreamContent> GetListGICAsExcelFileAsync(GetSaleOrdersInput input)
+    {
+        throw new NotImplementedException();
+    }
 }

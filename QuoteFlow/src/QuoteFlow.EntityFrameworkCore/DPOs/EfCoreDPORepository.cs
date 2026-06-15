@@ -7,10 +7,7 @@ using QuoteFlow.Extensions;
 using QuoteFlow.Helper;
 using QuoteFlow.Materials;
 using QuoteFlow.PriceOffers;
-using QuoteFlow.PurchaseOrderLockShipments;
 using QuoteFlow.Shared.Models;
-using QuoteFlow.SpecialInputPrices;
-using QuoteFlow.SpecialInputPrices.SpecialInputPriceDetails;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,12 +46,11 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var dbContext = await GetDbContextAsync();
 
         var materials = dbContext.Set<Material>();
-        var specialDetails = dbContext.Set<SpecialInputPriceDetail>();
-        var specials = dbContext.Set<SpecialInputPrice>();
+    
         var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
+  
 
-        query = ApplyFilter(query, filterParams, materials, specials, priceOffers, purchaseOrderLockShipments);
+        query = ApplyFilter(query, filterParams, materials, priceOffers);
 
         query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? DPOConsts.GetDefaultSorting(false) : sorting);
         return await query.PageBy(skipCount, maxResultCount).ToListNoLockAsync(dbContext, cancellationToken);
@@ -75,33 +71,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     }
 
 
-    public virtual async Task<List<DPO>> GetListGKRAsync(
-        GKRFilterParams filterParams,
-        string? sorting = null,
-        int maxResultCount = int.MaxValue,
-        int skipCount = 0,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var materials = dbContext.Set<Material>();
-        var specialDetails = dbContext.Set<SpecialInputPriceDetail>();
-        var specials = dbContext.Set<SpecialInputPrice>();
-        var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
-        var query = ApplyFilterGKR(
-            (await GetQueryableAsync()),
-            filterParams,
-            materials,
-            specials,
-            priceOffers,
-            purchaseOrderLockShipments
-        );
 
-        query = query
-            .Include(x => x.ApprovalRoutes)
-            .OrderBy(string.IsNullOrWhiteSpace(sorting) ? DPOConsts.GetDefaultSorting(false) : sorting);
-        return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
-    }
 
 
     public override async Task<DPO> GetAsync(Guid id, bool includeDetails = true, CancellationToken cancellationToken = default)
@@ -123,11 +93,11 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var dbContext = await GetDbContextAsync();
 
         var materials = dbContext.Set<Material>();
-        var specials = dbContext.Set<SpecialInputPrice>();
+    
         var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
+       
 
-        var query = ApplyFilter((await GetDbSetAsync()), filterParams, materials, specials, priceOffers, purchaseOrderLockShipments);
+        var query = ApplyFilter((await GetDbSetAsync()), filterParams, materials, priceOffers);
         return await query.CountNoLockAsync(dbContext, GetCancellationToken(cancellationToken));
     }
 
@@ -135,9 +105,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     IQueryable<DPO> query,
     DPOFilterParams filterParams,
     IQueryable<Material> materials,
-    IQueryable<SpecialInputPrice> specials,
-    IQueryable<PriceOffer> priceOffers,
-    IQueryable<PurchaseOrderLockShipment> purchaseOrderLockShipment)
+    IQueryable<PriceOffer> priceOffers)
     {
         var filterText = filterParams.FilterText;
         var dPONo = filterParams.DPONo;
@@ -236,15 +204,15 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         }
 
         // PONO filter
-        if (!string.IsNullOrWhiteSpace(poNo) && purchaseOrderLockShipment is not null)
-        {
-            query = query.Where(e =>
-                e.Details.Any(dpod =>
-                    purchaseOrderLockShipment.Any(pol =>
-                        pol.DPODetailId == dpod.Id &&
-                        pol.PONo != null &&
-                        pol.PONo.Contains(poNo))));
-        }
+        //if (!string.IsNullOrWhiteSpace(poNo) && purchaseOrderLockShipment is not null)
+        //{
+        //    query = query.Where(e =>
+        //        e.Details.Any(dpod =>
+        //            purchaseOrderLockShipment.Any(pol =>
+        //                pol.DPODetailId == dpod.Id &&
+        //                pol.PONo != null &&
+        //                pol.PONo.Contains(poNo))));
+        //}
 
         return query;
     }
@@ -582,26 +550,24 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     }
 
     // GIC-specific methods
-    public virtual async Task<long> GetGKRCountAsync(
-        GKRFilterParams filterParams,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var materials = dbContext.Set<Material>();
-        var specials = dbContext.Set<SpecialInputPrice>();
-        var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
+    //public virtual async Task<long> GetGKRCountAsync(
+    //    GKRFilterParams filterParams,
+    //    CancellationToken cancellationToken = default)
+    //{
+    //    var dbContext = await GetDbContextAsync();
+    //    var materials = dbContext.Set<Material>();
+    //    //var specials = dbContext.Set<SpecialInputPrice>();
+    //    var priceOffers = dbContext.Set<PriceOffer>();
+    //    //var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
 
-        var query = ApplyFilterGKR(
-            (await GetQueryableAsync()),
-            filterParams,
-            materials,
-            specials,
-            priceOffers,
-            purchaseOrderLockShipments
-        );
-        return await query.CountNoLockAsync(dbContext, GetCancellationToken(cancellationToken));
-    }
+    //    var query = ApplyFilterGKR(
+    //        (await GetQueryableAsync()),
+    //        filterParams,
+    //        materials,
+    //        priceOffers
+    //    );
+    //    return await query.CountNoLockAsync(dbContext, GetCancellationToken(cancellationToken));
+    //}
 
     public virtual async Task<List<DPO>> GetListPendingAsync(
         GKRFilterParams filterParams,
@@ -613,17 +579,12 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     {
         var dbContext = await GetDbContextAsync();
         var materials = dbContext.Set<Material>();
-        var specialDetails = dbContext.Set<SpecialInputPriceDetail>();
-        var specials = dbContext.Set<SpecialInputPrice>();
         var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
         var query = ApplyFilterGKR(
             (await GetQueryableAsync()),
             filterParams,
             materials,
-            specials,
-            priceOffers,
-            purchaseOrderLockShipments
+            priceOffers
         );
 
         query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? DPOConsts.GetDefaultSorting(false) : sorting);
@@ -644,12 +605,11 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var dbContext = await GetDbContextAsync();
 
         var materials = dbContext.Set<Material>();
-        var specialDetails = dbContext.Set<SpecialInputPriceDetail>();
-        var specials = dbContext.Set<SpecialInputPrice>();
+       
         var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
+       
 
-        var query = ApplyFilter(await GetQueryableAsync(), filterParams, materials, specials, priceOffers, purchaseOrderLockShipments);
+        var query = ApplyFilter(await GetQueryableAsync(), filterParams, materials, priceOffers);
         var result = await query
             .GroupBy(x => x.Status)
             .Select(g => new StatusCount(g.Key!, g.LongCount()))
@@ -672,31 +632,31 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     }
 
 
-    public virtual async Task<List<StatusCount>> GetGKRGroupedCountAsync(
-        GKRFilterParams filterParams,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var materials = dbContext.Set<Material>();
-        var specials = dbContext.Set<SpecialInputPrice>();
-        var priceOffers = dbContext.Set<PriceOffer>();
-        var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
+    //public virtual async Task<List<StatusCount>> GetGKRGroupedCountAsync(
+    //    GKRFilterParams filterParams,
+    //    CancellationToken cancellationToken = default)
+    //{
+    //    var dbContext = await GetDbContextAsync();
+    //    var materials = dbContext.Set<Material>();
+    //    var specials = dbContext.Set<SpecialInputPrice>();
+    //    var priceOffers = dbContext.Set<PriceOffer>();
+    //    var purchaseOrderLockShipments = dbContext.Set<PurchaseOrderLockShipment>();
 
-        var query = ApplyFilterGKR(
-            (await GetQueryableAsync()),
-            filterParams,
-            materials,
-            specials,
-            priceOffers,
-            purchaseOrderLockShipments
-        );
-        var result = await query
-            .GroupBy(x => x.Status)
-            .Select(g => new StatusCount(g.Key!, g.LongCount()))
-            .ToListAsync(cancellationToken: cancellationToken);
+    //    var query = ApplyFilterGKR(
+    //        (await GetQueryableAsync()),
+    //        filterParams,
+    //        materials,
+    //        specials,
+    //        priceOffers,
+    //        purchaseOrderLockShipments
+    //    );
+    //    var result = await query
+    //        .GroupBy(x => x.Status)
+    //        .Select(g => new StatusCount(g.Key!, g.LongCount()))
+    //        .ToListAsync(cancellationToken: cancellationToken);
 
-        return result;
-    }
+    //    return result;
+    //}
 
     public async Task<List<DPOReportDto>> GetListDPOReportAsync(Guid? buyerTypeId, Guid? buyerId, DateTime fromDate, DateTime toDate, bool hasFullBuyerAccess, string userName)
     {
@@ -1063,9 +1023,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         IQueryable<DPO> query,
         GKRFilterParams filterParams,
         IQueryable<Material> materials,
-    IQueryable<SpecialInputPrice> specials,
-    IQueryable<PriceOffer> priceOffers,
-    IQueryable<PurchaseOrderLockShipment> purchaseOrderLockShipment)
+    IQueryable<PriceOffer> priceOffers)
     {
         var gkrNo = filterParams.GKRNo;
         var materialCode = filterParams.MaterialCode;
@@ -1143,15 +1101,15 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         }
 
         // PONo filter
-        if (!string.IsNullOrWhiteSpace(poNo) && purchaseOrderLockShipment is not null)
-        {
-            query = query.Where(e =>
-                e.Details.Any(d =>
-                    purchaseOrderLockShipment.Any(pol =>
-                        pol.DPODetailId == d.Id &&
-                        pol.PONo != null &&
-                        pol.PONo.Contains(poNo))));
-        }
+        //if (!string.IsNullOrWhiteSpace(poNo) && purchaseOrderLockShipment is not null)
+        //{
+        //    query = query.Where(e =>
+        //        e.Details.Any(d =>
+        //            purchaseOrderLockShipment.Any(pol =>
+        //                pol.DPODetailId == d.Id &&
+        //                pol.PONo != null &&
+        //                pol.PONo.Contains(poNo))));
+        //}
 
         return query;
     }
@@ -1308,4 +1266,8 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         return result.ToList();
     }
 
+    public Task<List<DPO>> GetListGKRAsync(GKRFilterParams filterParams, string? sorting = null, int maxResultCount = int.MaxValue, int skipCount = 0, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
 }

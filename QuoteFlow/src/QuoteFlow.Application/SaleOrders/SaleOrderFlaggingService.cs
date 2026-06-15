@@ -1,4 +1,3 @@
-using QuoteFlow.GICs;
 using QuoteFlow.Permissions;
 using QuoteFlow.Shared.Flagging;
 using System;
@@ -23,7 +22,7 @@ public class SaleOrderFlaggingService : BaseFlaggingService<SaleOrder, SaleOrder
         {
             bool isInProgress = saleOrder.IsInProgress;
             bool canConfirmDelivery = hasConfirmDeliveryPermission && isInProgress;
-            bool canReopenSO = hasReopenPermission && saleOrder.IsClosed && saleOrder.GICType != GICTypeCodes.WriteOff;
+            bool canReopenSO = hasReopenPermission && saleOrder.IsClosed;
             bool canEditSAPInfo = (hasEditSAPInfoPermission && saleOrder.IsClosed) || (saleOrder.IsDraft || saleOrder.IsInProgress);
 
 

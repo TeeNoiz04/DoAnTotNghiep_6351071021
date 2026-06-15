@@ -1,8 +1,6 @@
 using QuoteFlow.BuyerAccess;
 using QuoteFlow.DPOs;
 using QuoteFlow.DPOs.ParameterObjects;
-using QuoteFlow.GICs;
-using QuoteFlow.GKRs;
 using QuoteFlow.Permissions;
 using QuoteFlow.Shared.Models;
 using QuoteFlow.WorkflowConfigurations;
@@ -20,14 +18,12 @@ public class DashboardAppService : QuoteFlowAppService, IDashboardAppService
     protected IDPORepository _dpoRepository;
     protected IWorkflowConfigurationRepository _workflowConfigurationRepository;
     protected IBuyerAccessService _buyerAccessService;
-    protected IGICPermissionService _gicPermissionService;
 
-    public DashboardAppService(IDPORepository dpoRepository, IWorkflowConfigurationRepository workflowConfigurationRepository, IBuyerAccessService buyerAccessService, IGICPermissionService gicPermissionService)
+    public DashboardAppService(IDPORepository dpoRepository, IWorkflowConfigurationRepository workflowConfigurationRepository, IBuyerAccessService buyerAccessService)
     {
         _dpoRepository = dpoRepository;
         _workflowConfigurationRepository = workflowConfigurationRepository;
         _buyerAccessService = buyerAccessService;
-        _gicPermissionService = gicPermissionService;
     }
 
     public virtual async Task<DPOStatusSummaryDto> GetDPOStatusSummaryAsync(GetDPOsInput input)
@@ -55,57 +51,6 @@ public class DashboardAppService : QuoteFlowAppService, IDashboardAppService
 
         return summary;
     }
-
-    public virtual async Task<GICStatusSummaryDto> GetGICStatusSummaryAsync(GetGICsInput input)
-    {
-        var summary = new GICStatusSummaryDto();
-        var filterParams = ObjectMapper.Map<GetGICsInput, GICFilterParams>(input);
-        filterParams.RestrictedGICTypes = await _gicPermissionService.GetRestrictedGICTypes();
-
-        var statusCounts = await _dpoRepository.GetGICGroupedCountAsync(filterParams);
-
-        var confirmingCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.GIC.Confirmed)?.Count ?? 0;
-        var lockStockCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.GIC.LockedStock)?.Count ?? 0;
-        var inProgressCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.InProgress)?.Count ?? 0;
-        var closedCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.Closed)?.Count ?? 0;
-        var cancelledCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.Cancelled)?.Count ?? 0;
-
-        summary.Confirmed = confirmingCount;
-        summary.LockedStock = lockStockCount;
-        summary.InProgress = inProgressCount;
-        summary.Closed = closedCount;
-        summary.Cancelled = cancelledCount;
-
-        return summary;
-    }
-
-
-    public virtual async Task<GKRStatusSummaryDto> GetGKRStatusSummaryAsync(GetGKRsInput input)
-    {
-        var summary = new GKRStatusSummaryDto();
-        var filterParams = ObjectMapper.Map<GetGKRsInput, GKRFilterParams>(input);
-        var buyerAccess = await _buyerAccessService.GetBuyerAccessAsync();
-        //filterParams.ApplyBuyerRestrictions(buyerAccess);
-        //filterParams.ApplyMaterialTypeRestrictions(buyerAccess);
-        var statusCounts = await _dpoRepository.GetGKRGroupedCountAsync(filterParams);
-
-        var submittedCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.DPO.Submitted)?.Count ?? 0;
-        var confirmedCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.DPO.Confirmed)?.Count ?? 0;
-        var lockedStockCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.DPO.LockedStock)?.Count ?? 0;
-        var cancelledCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.Cancelled)?.Count ?? 0;
-        var closedCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.Closed)?.Count ?? 0;
-        var inProgressCount = statusCounts.FirstOrDefault(x => x.Status == QuoteFlowStatuses.InProgress)?.Count ?? 0;
-
-        summary.Submitted = submittedCount;
-        summary.Confirmed = confirmedCount;
-        summary.LockedStock = lockedStockCount;
-        summary.Cancelled = cancelledCount;
-        summary.Closed = closedCount;
-        summary.InProgress = inProgressCount;
-
-        return summary;
-    }
-
     public async Task<List<SaleResultBuyerDto>> SaleResultByBuyerAsync(int fy)
     {
         var items = await _workflowConfigurationRepository.SaleResultByBuyer(fy);

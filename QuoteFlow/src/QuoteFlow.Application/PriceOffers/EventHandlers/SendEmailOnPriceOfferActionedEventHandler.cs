@@ -7,7 +7,6 @@ using QuoteFlow.RequesterContexts;
 using QuoteFlow.SalesAssignments;
 using QuoteFlow.Shared.Models;
 using QuoteFlow.Shared.Utils;
-using QuoteFlow.SpecialInputPrices;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -25,15 +24,13 @@ public class SendEmailOnPriceOfferActionedEventHandler : ILocalEventHandler<Pric
     protected readonly IPriceOfferRepository _priceOfferRepository;
     protected readonly ISalesAssignmentRepository _salesAssignmentRepository;
     protected readonly IEffectiveUserContext _currentUser;
-    protected readonly ISpecialInputPriceRepository _specialInputPriceRepository;
     private readonly IConfiguration _configuration;
-    public SendEmailOnPriceOfferActionedEventHandler(IEmailJobScheduler emailJobScheduler, IPriceOfferRepository priceOfferRepository, ISalesAssignmentRepository salesAssignmentRepository, IEffectiveUserContext currentUser, ISpecialInputPriceRepository specialInputPriceRepository, IConfiguration configuration)
+    public SendEmailOnPriceOfferActionedEventHandler(IEmailJobScheduler emailJobScheduler, IPriceOfferRepository priceOfferRepository, ISalesAssignmentRepository salesAssignmentRepository, IEffectiveUserContext currentUser, IConfiguration configuration)
     {
         _emailJobScheduler = emailJobScheduler;
         _priceOfferRepository = priceOfferRepository;
         _salesAssignmentRepository = salesAssignmentRepository;
         _currentUser = currentUser;
-        _specialInputPriceRepository = specialInputPriceRepository;
         _configuration = configuration;
     }
 
@@ -65,13 +62,6 @@ public class SendEmailOnPriceOfferActionedEventHandler : ILocalEventHandler<Pric
         var approvalUrl = GenerateApprovalUrl(priceOffer);
         var submittedDate = priceOffer.SubmittedDate;
 
-        SpecialInputPrice? specialInputPrice = null;
-        if (priceOffer.SpecialInputPriceId != null)
-        {
-            specialInputPrice = await _specialInputPriceRepository.FirstOrDefaultAsync(x => x.Id == priceOffer.SpecialInputPriceId);
-        }
-
-
         var emailData = new PriceOfferApprovalEmailModel(
             action,
             new(priceOffer.CurrentApproverRoleCode ?? "", priceOffer.ProjectResultStatus ?? "", priceOffer.ApprovalStatus!, priceOffer.CreatorName!, priceOffer.PriceOfferCode, priceOffer.ProjectName!, priceOffer.BuyerCode!, priceOffer.MaterialType, priceOffer.TotalStandardAmount, priceOffer.TotalMEVNOfferAmount ?? 0),
@@ -80,16 +70,15 @@ public class SendEmailOnPriceOfferActionedEventHandler : ILocalEventHandler<Pric
                 x.Action,
                 x.ActionDate,
                 x.ApproverRoleName!,
-
                 x.ApproverFullName!,
                 x.Note
             )).OrderBy(x => x.ActionDate)],
-            specialInputPrice != null ? specialInputPrice.AccountNo : "",
-            specialInputPrice != null ? specialInputPrice.AccountName : "",
-            specialInputPrice != null ? specialInputPrice.ProjectName ?? "" : "",
-            specialInputPrice != null ? specialInputPrice.ValidFrom ?? DateTime.Now : DateTime.Now,
-            specialInputPrice != null ? specialInputPrice.ValidTo ?? DateTime.Now : DateTime.Now,
-            specialInputPrice != null ? specialInputPrice.Id.ToString() : "",
+            "",
+            "",
+            "",
+            DateTime.Now,
+            DateTime.Now,
+            "",
             approvalUrl,
             priceOffer.ApprovalHistories.Any(x => x.Action == HistoryActions.PriceOffer.SubmittedMoreItems) ? "SubmittedMoreItems" : ""
         );

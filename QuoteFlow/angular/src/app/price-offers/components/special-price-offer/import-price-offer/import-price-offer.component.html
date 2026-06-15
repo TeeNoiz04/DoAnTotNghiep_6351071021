@@ -30,14 +30,6 @@
                 accept=".xls,.xlsx" />
             </div>
 
-            <!--Checkbox "Get Price Automatically, optional for only Key Account Price Offer"-->
-            <div class="col-md-12" *ngIf="priceOfferType === PriceOfferTypes.KeyAccount">
-              <div class="form-check px-0 mx-0">
-                <mat-checkbox id="autoGetOfferPrice" formControlName="autoGetOfferPrice">
-                  Get Price Automatically
-                </mat-checkbox>
-              </div>
-            </div>
             <div class="col-md-12 mb-2">
               <label for="commentAddMoreItems" class="form-label">Note</label>
               <textarea
@@ -356,50 +348,6 @@
               <div *ngIf="f.buyer.invalid && f.buyer.touched" class="invalid-feedback">
                 <span *ngIf="f.buyer.errors?.required || f.buyer.errors?.buyerRequired"> Please select a buyer. </span>
               </div>
-            </div>
-          </div>
-
-          <!-- Row 4: Key Account Name 6 - Key Account Type 3 - Key Account Class 3 -->
-          <div class="row mb-2">
-            <div class="col-md-6">
-              <label class="form-label label-required" for="keyAccount">Key Account Name</label>
-              <ng-select
-                id="keyAccount"
-                formControlName="keyAccount"
-                [items]="keyAccountOptions"
-                bindLabel="displayName"
-                bindValue="id"
-                clearable="false"
-                [appendTo]="'body'"
-                [ngClass]="{
-                  'is-invalid': f.keyAccount.invalid && f.keyAccount.touched,
-                  'check-view': f.keyAccount.disabled,
-                }"
-                (change)="onKeyAccountChange($event)">
-              </ng-select>
-              <div
-                *ngIf="f.keyAccount.invalid && f.keyAccount.touched && f.keyAccount.errors?.required"
-                class="invalid-feedback">
-                Key Account Name is required.
-              </div>
-            </div>
-            <div class="col-md-3">
-              <label class="form-label" for="keyAccountType">Key Account Type</label>
-              <input
-                autocomplete="off"
-                id="keyAccountType"
-                class="form-control"
-                formControlName="keyAccountTypeName"
-                [readonly]="true" />
-            </div>
-            <div class="col-md-3">
-              <label class="form-label" for="keyAccountClass">Key Account Class</label>
-              <input
-                autocomplete="off"
-                id="keyAccountClass"
-                class="form-control"
-                formControlName="keyAccountClassName"
-                [readonly]="true" />
             </div>
           </div>
 
@@ -828,41 +776,6 @@
                 class="invalid-feedback">
                 Close Date is required.
               </div>
-            </div>
-          </div>
-
-          <!-- Row 4: Key Account Name 4 - Key Account Type 4 - Key Account Class 4 -->
-          <div class="row mb-2">
-            <div class="col-md-4">
-              <label class="form-label" for="keyAccount">Key Account Name</label>
-              <ng-select
-                id="keyAccount"
-                formControlName="keyAccount"
-                [items]="keyAccountOptions"
-                bindLabel="displayName"
-                bindValue="id"
-                clearable="false"
-                [appendTo]="'body'"
-                (change)="onKeyAccountChange($event)">
-              </ng-select>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label" for="keyAccountType">Key Account Type</label>
-              <input
-                autocomplete="off"
-                id="keyAccountType"
-                class="form-control"
-                formControlName="keyAccountType"
-                [readonly]="true" />
-            </div>
-            <div class="col-md-4">
-              <label class="form-label" for="keyAccountClass">Key Account Class</label>
-              <input
-                autocomplete="off"
-                id="keyAccountClass"
-                class="form-control"
-                formControlName="keyAccountClass"
-                [readonly]="true" />
             </div>
           </div>
 

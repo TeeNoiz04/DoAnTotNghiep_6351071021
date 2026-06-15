@@ -30,7 +30,6 @@ using QuoteFlow.Shared.Extensions;
 using QuoteFlow.Shared.Flagging;
 using QuoteFlow.Shared.Models;
 using QuoteFlow.Shared.Utils;
-using QuoteFlow.SpecialInputPrices;
 using QuoteFlow.SystemConfigurations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Distributed;
@@ -74,7 +73,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
     protected readonly IApprovalRouteRepository _approvalRouteRepository;
     protected readonly IIdentityUserRepository _identityUserRepository;
     protected readonly ISalesAssignmentRepository _salesAssignmentRepository;
-    protected readonly ISpecialInputPriceRepository _specialInputPriceRepository;
     protected readonly IFlaggingService<PriceOffer, PriceOfferFlagsDto> _flaggingService;
     protected readonly ICustomerEnrichmentService _customerEnrichmentService;
     protected readonly IMaterialRepository _materialRepository;
@@ -101,7 +99,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         IFlaggingService<PriceOffer, PriceOfferFlagsDto> flaggingService,
         IPriceOfferCustomerRepository priceOfferCustomerRepository,
         PriceOfferCustomerManager priceOfferCustomerManager,
-        ISpecialInputPriceRepository specialInputPriceRepository,
         ICustomerEnrichmentService customerEnrichmentService,
         IEmailJobScheduler emailJobScheduler,
         ISystemConfigurationRepository systemConfigurationRepository,
@@ -127,7 +124,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         _flaggingService = flaggingService;
         _priceOfferCustomerRepository = priceOfferCustomerRepository;
         _priceOfferCustomerManager = priceOfferCustomerManager;
-        _specialInputPriceRepository = specialInputPriceRepository;
         _customerEnrichmentService = customerEnrichmentService;
         _emailJobScheduler = emailJobScheduler;
         _systemConfigurationRepository = systemConfigurationRepository;
@@ -1700,48 +1696,40 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         var priceOffer = await _priceOfferRepository.GetWithDetailsAsync(id);
         priceOffer.ValidateConcurrencyStamp(input.ConcurrencyStamp);
 
-        var speicalInputPrice = await _specialInputPriceRepository.GetAsync(input.SpecialInputPriceId);
-
-        var accountNo = speicalInputPrice.AccountNo;
-
-        priceOffer.AccountNo = accountNo;
-        priceOffer.SpecialInputPriceAccountName = speicalInputPrice.AccountName;
-
-        var note = accountNo + ": " + input.Note;
 
         if (priceOffer.ApprovalStatus != QuoteFlowStatuses.InProgress || priceOffer.CurrentApprovalStepSequence >= 3)
         {
             throw new BusinessException(QuoteFlowDomainErrorCodes.PriceOffer.InvalidPriceOfferStatusForLandingCostUpdate);
         }
 
-        var history = new PriceOfferApprovalHistory(
-            GuidGenerator.Create(),
-            priceOffer.Id,
-            new ApprovalHistoryCreateParams(
-                "FAP",
-                "FAP",
-                _currentUser.Username ?? CurrentUser.UserName ?? string.Empty,
-                _currentUser.FullName ?? CurrentUser.Name ?? string.Empty,
-                HistoryActions.PriceOffer.SpecialInputPriceAssigned,
-                DateTime.Now,
-                note
-            )
-        );
-        priceOffer.RecordAction(history);
-
-        var specialInputPrice = await _specialInputPriceRepository.GetAsync(input.SpecialInputPriceId);
-        priceOffer.AssignSpecialInputPrice(
-            specialInputPrice,
-            _currentUser.Id ?? Guid.Empty,
-            _currentUser.Username ?? "N/A",
-            _currentUser.FullName ?? "N/A",
-            input.Note);
+        //var history = new PriceOfferApprovalHistory(
+        //    GuidGenerator.Create(),
+        //    priceOffer.Id,
+        //    new ApprovalHistoryCreateParams(
+        //        "FAP",
+        //        "FAP",
+        //        _currentUser.Username ?? CurrentUser.UserName ?? string.Empty,
+        //        _currentUser.FullName ?? CurrentUser.Name ?? string.Empty,
+        //        HistoryActions.PriceOffer.SpecialInputPriceAssigned,
+        //        DateTime.Now,
+            
+        //    )
+        //);
+        //priceOffer.RecordAction(history);
+        // Need to check 
+       // var specialInputPrice = await _specialInputPriceRepository.GetAsync(input.SpecialInputPriceId);
+        //priceOffer.AssignSpecialInputPrice(
+        //    specialInputPrice,
+        //    _currentUser.Id ?? Guid.Empty,
+        //    _currentUser.Username ?? "N/A",
+        //    _currentUser.FullName ?? "N/A",
+        //    input.Note);
 
         //priceOffer = await _priceOfferRepository.UpdateAsync(priceOffer, true);
         priceOffer = await _priceOfferRepository.UpdateCalculatedFieldsAsync(id, true);
 
         // Track history for price offer details that had special input price applied
-        await TrackSpecialInputPriceHistoryForDetailsAsync(id, input.SpecialInputPriceId, note);
+      //  await TrackSpecialInputPriceHistoryForDetailsAsync(id, input.SpecialInputPriceId, note);
 
         var updatedPriceOffer = await _priceOfferRepository.UpdateAsync(priceOffer, true);
 
@@ -2260,64 +2248,64 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
     private async Task TrackSpecialInputPriceHistoryForDetailsAsync(Guid priceOfferId, Guid specialInputPriceId, string? note)
     {
         // Get the special input price with its details to find matching material codes
-        var specialInputPriceQuery = await _specialInputPriceRepository.WithDetailsAsync(x => x.Details);
-        var specialInputPrice = await AsyncExecuter.FirstOrDefaultAsync(
-            specialInputPriceQuery.Where(x => x.Id == specialInputPriceId)
-        );
+        //var specialInputPriceQuery = await _specialInputPriceRepository.WithDetailsAsync(x => x.Details);
+        //var specialInputPrice = await AsyncExecuter.FirstOrDefaultAsync(
+        //    specialInputPriceQuery.Where(x => x.Id == specialInputPriceId)
+        //);
 
-        if (specialInputPrice == null || specialInputPrice.Details == null || !specialInputPrice.Details.Any())
-        {
-            return; // No details to match against
-        }
+        //if (specialInputPrice == null || specialInputPrice.Details == null || !specialInputPrice.Details.Any())
+        //{
+        //    return; // No details to match against
+        //}
 
-        // Extract material codes from special input price details
-        var materialCodes = specialInputPrice.Details
-            .Where(d => !string.IsNullOrEmpty(d.MaterialCode))
-            .Select(d => d.MaterialCode!)
-            .ToHashSet();
+        //// Extract material codes from special input price details
+        //var materialCodes = specialInputPrice.Details
+        //    .Where(d => !string.IsNullOrEmpty(d.MaterialCode))
+        //    .Select(d => d.MaterialCode!)
+        //    .ToHashSet();
 
-        if (!materialCodes.Any())
-        {
-            return; // No material codes to match
-        }
+        //if (!materialCodes.Any())
+        //{
+        //    return; // No material codes to match
+        //}
 
-        var priceOfferDetailQuery = await _priceOfferDetailRepository.GetQueryableAsync();
-        var matchedDetails = await AsyncExecuter.ToListAsync(
-            priceOfferDetailQuery.Where(pod =>
-                pod.PriceOfferId == priceOfferId &&
-                materialCodes.Contains(pod.GolfaCode) &&
-                pod.Status == QuoteFlowStatuses.InProgress
-            )
-        );
+        //var priceOfferDetailQuery = await _priceOfferDetailRepository.GetQueryableAsync();
+        //var matchedDetails = await AsyncExecuter.ToListAsync(
+        //    priceOfferDetailQuery.Where(pod =>
+        //        pod.PriceOfferId == priceOfferId &&
+        //        materialCodes.Contains(pod.GolfaCode) &&
+        //        pod.Status == QuoteFlowStatuses.InProgress
+        //    )
+        //);
 
-        if (!matchedDetails.Any())
-        {
-            return; // No matching details found
-        }
+        //if (!matchedDetails.Any())
+        //{
+        //    return; // No matching details found
+        //}
 
-        // Create history records for each matched detail
-        var actionDate = DateTime.Now;
-        var historyCreateParams = new ApprovalHistoryCreateParams(
-            "FAP",
-            "FAP",
-            _currentUser.Username ?? CurrentUser.UserName ?? string.Empty,
-            _currentUser.FullName ?? CurrentUser.Name ?? string.Empty,
-            HistoryActions.PriceOfferDetail.SpecialInputPriceAssigned,
-            actionDate,
-            note
-        );
+        //// Create history records for each matched detail
+        //var actionDate = DateTime.Now;
+        //var historyCreateParams = new ApprovalHistoryCreateParams(
+        //    "FAP",
+        //    "FAP",
+        //    _currentUser.Username ?? CurrentUser.UserName ?? string.Empty,
+        //    _currentUser.FullName ?? CurrentUser.Name ?? string.Empty,
+        //    HistoryActions.PriceOfferDetail.SpecialInputPriceAssigned,
+        //    actionDate,
+        //    note
+        //);
 
-        foreach (var detail in matchedDetails)
-        {
-            var detailHistory = new PriceOfferDetailApprovalHistory(
-                GuidGenerator.Create(),
-                detail.Id,
-                historyCreateParams
-            );
+        //foreach (var detail in matchedDetails)
+        //{
+        //    var detailHistory = new PriceOfferDetailApprovalHistory(
+        //        GuidGenerator.Create(),
+        //        detail.Id,
+        //        historyCreateParams
+        //    );
 
-            // Use the RecordAction method to add history to the detail
-            detail.RecordAction(detailHistory);
-            await _priceOfferDetailRepository.UpdateAsync(detail);
-        }
+        //    // Use the RecordAction method to add history to the detail
+        //    detail.RecordAction(detailHistory);
+        //    await _priceOfferDetailRepository.UpdateAsync(detail);
+        //}
     }
 }

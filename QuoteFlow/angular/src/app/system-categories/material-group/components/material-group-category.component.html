@@ -126,13 +126,6 @@
             {{ row.name }}
           </ng-template>
         </ngx-datatable-column>
-        <ngx-datatable-column name="Allow Key Account" prop="allowKeyAccount" [width]="150" [maxWidth]="150">
-          <ng-template let-row="row" ngx-datatable-cell-template>
-            <div class="form-check d-flex justify-content-center">
-              <input type="checkbox" class="form-check-input" [checked]="row.allowKeyAccount" [disabled]="true" />
-            </div>
-          </ng-template>
-        </ngx-datatable-column>
         <ngx-datatable-column name="{{ '::Note' | abpLocalization }}" prop="note">
           <ng-template let-row="row" ngx-datatable-cell-template>
             {{ row.note }}

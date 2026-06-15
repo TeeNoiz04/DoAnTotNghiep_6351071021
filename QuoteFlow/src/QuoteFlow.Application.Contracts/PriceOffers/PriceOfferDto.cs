@@ -1,7 +1,6 @@
 using QuoteFlow.ApprovalHistories;
 using QuoteFlow.Attachments;
 using QuoteFlow.Buyers;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.PriceOffers.PriceOfferCustomers;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
 using QuoteFlow.Shared;
@@ -87,7 +86,6 @@ public class PriceOfferDto : ExtendedAuditedEntityDto<Guid>, IHasConcurrencyStam
     public string ConcurrencyStamp { get; set; } = null!;
 
     public BuyerDto? Buyer { get; set; } = null!;
-    public KeyAccountListDto? KeyAccount { get; set; } = null!;
     public ICollection<PriceOfferCustomerDto>? Customers { get; set; }
     public ICollection<PriceOfferDetailDto>? Details { get; set; }
     public ICollection<ApprovalHistoryDto> ApprovalHistories { get; set; } = [];

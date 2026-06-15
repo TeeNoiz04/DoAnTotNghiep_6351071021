@@ -76,7 +76,6 @@ public class EfCorePriceOfferRepository : EfCoreRepository<QuoteFlowDbContext, P
         var queryData = query
             .Include(x => x.Buyer)
                 .ThenInclude(x => x.BuyerType)
-            .Include(x => x.KeyAccount)
             .Include(x => x.Customers.OrderBy(c => c.SaleChannelNumber))
             .Include(x => x.Details)
                 .ThenInclude(x => x.ApprovalHistories.OrderByDescending(x => x.CreationTime))
@@ -97,7 +96,7 @@ public class EfCorePriceOfferRepository : EfCoreRepository<QuoteFlowDbContext, P
         var resultData = query
             .Include(x => x.Buyer)
                 .ThenInclude(x => x.BuyerType)
-            .Include(x => x.KeyAccount)
+         
             .Include(x => x.Customers.OrderBy(c => c.SaleChannelNumber))
             .Include(x => x.Details)
                 .ThenInclude(x => x.ApprovalHistories.OrderByDescending(x => x.CreationTime))
@@ -471,7 +470,6 @@ public class EfCorePriceOfferRepository : EfCoreRepository<QuoteFlowDbContext, P
         if (!string.IsNullOrWhiteSpace(customerName))
         {
             query = query
-                .Include(x => x.KeyAccount)
                 .Include(x => x.Customers)
                 .AsQueryable();
         }
@@ -493,9 +491,6 @@ public class EfCorePriceOfferRepository : EfCoreRepository<QuoteFlowDbContext, P
                         d => d.CustomerName
                         ))
                 .WhereIf(!string.IsNullOrWhiteSpace(customerTaxCode), e =>
-                    (e.KeyAccount != null &&
-                     e.KeyAccount.CustomerTaxCode != null &&
-                     e.KeyAccount.CustomerTaxCode.Contains(customerTaxCode!)) ||
                     e.Customers.Any(c =>
                         c.CustomerTaxCode != null &&
                         c.CustomerTaxCode.Contains(customerTaxCode!)))

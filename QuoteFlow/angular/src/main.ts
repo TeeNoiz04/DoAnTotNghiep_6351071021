@@ -14,17 +14,12 @@ import {
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { CARGOS_ROUTE_PROVIDER } from '@app/cargos/providers/cargo-route.provider';
+import { BUYER_ROUTE_PROVIDER } from '@app/buyer/providers/buyer-route.provider';
+import { CUSTOMER_ROUTE_PROVIDER } from '@app/customer/providers/customer-route.provider';
 import { DPO_ROUTE_PROVIDERS } from '@app/dpos/providers/dpo-route.provider';
-import { GIC_ROUTE_PROVIDERS } from '@app/gics/providers/gic-route.provider';
-import { GKR_ROUTE_PROVIDERS } from '@app/gkrs/providers/gkr-route.provider';
-import { IMPORT_ALLOCATION_ROUTE_PROVIDER } from '@app/import-allocations/providers/import-allocation-route.provider';
 import { MATERIALS_MATERIAL_ROUTE_PROVIDER } from '@app/materials/providers/material-route.provider';
 import { PRICE_OFFERS_PRICE_OFFER_ROUTE_PROVIDER } from '@app/price-offers/providers/price-offer-route.provider';
-import { PSIS_ROUTE_PROVIDER } from '@app/psis/providers/psi-route.provider';
-import { PURCHASE_ORDERS_MANAGEMENT_ROUTE_PROVIDER } from '@app/purchase-orders/providers/purchase-orders-route.provider';
 import { REPORT_ROUTE_PROVIDER } from '@app/report/providers/report-route.provider';
-import { SALE_ORDERS_GIC_MANAGEMENT_ROUTE_PROVIDER } from '@app/sale-orders-gic/providers/sale-orders-gic-route.provider';
 import { SALE_ORDERS_MANAGEMENT_ROUTE_PROVIDER } from '@app/sale-orders/providers/sale-orders-route.provider';
 import { CustomNgbDatePickerFormatter } from '@app/shared/formatters/custom-ngb-datepicker';
 import { InternalServerErrorHandlerService } from '@app/shared/http-error-handler/internal-error-handler';
@@ -66,11 +61,9 @@ import { ToolbarContainerComponent } from '@volosoft/ngx-lepton-x/layouts';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { AppRoutingModule } from './app/app-routing.module';
 import { AppComponent } from './app/app.component';
-import { KEY_ACCOUNTS_KEY_ACCOUNT_ROUTE_PROVIDER } from './app/key-accounts/providers/key-account-route.provider';
 import { APP_ROUTE_PROVIDER } from './app/route.provider';
 import { APPLICATION_CATEGORIES_APPLICATION_CATEGORY_ROUTE_PROVIDER } from './app/system-categories/providers/application-category-route.provider';
 import { environment } from './environments/environment';
-import { ASSET_MANAGEMENT_ROUTE_PROVIDER } from '@app/asset-management/providers/asset-management-route.provider';
 
 if (environment.production) {
   enableProdMode();
@@ -132,30 +125,20 @@ bootstrapApplication(AppComponent, {
     provideAuditLoggingConfig(),
     provideOpeniddictproConfig(),
     provideTextTemplateManagementConfig(),
-    KEY_ACCOUNTS_KEY_ACCOUNT_ROUTE_PROVIDER,
+    BUYER_ROUTE_PROVIDER,
+    CUSTOMER_ROUTE_PROVIDER,
     MATERIALS_MATERIAL_ROUTE_PROVIDER,
     APPLICATION_CATEGORIES_APPLICATION_CATEGORY_ROUTE_PROVIDER,
     STOCK_TRACINGS_STOCK_TRACING_ROUTE_PROVIDER,
     PRICE_OFFERS_PRICE_OFFER_ROUTE_PROVIDER,
-    CARGOS_ROUTE_PROVIDER,
-    PSIS_ROUTE_PROVIDER,
     APPLICATION_SETTING_ROUTE_PROVIDER,
     FA_ADMIN_ROUTE_PROVIDER,
     DPO_ROUTE_PROVIDERS,
-    GKR_ROUTE_PROVIDERS,
     SPECIAL_INPUT_PRICE_ROUTE_PROVIDER,
-    GIC_ROUTE_PROVIDERS,
     WORKFLOW_CONFIGURATION_ROUTE_PROVIDER,
     STOCK_MANAGEMENT_ROUTE_PROVIDER,
     REPORT_ROUTE_PROVIDER,
-    PURCHASE_ORDERS_MANAGEMENT_ROUTE_PROVIDER,
     SALE_ORDERS_MANAGEMENT_ROUTE_PROVIDER,
-    SALE_ORDERS_GIC_MANAGEMENT_ROUTE_PROVIDER,
-    // CUSTOMER_ROUTE_PROVIDER,
-    // BUYER_ROUTE_PROVIDER,
-    IMPORT_ALLOCATION_ROUTE_PROVIDER,
-    ASSET_MANAGEMENT_ROUTE_PROVIDER,
-
     provideAnimations(),
     provideAppInitializer(() => {
       const styles = inject(LPX_STYLE_FINAL);

@@ -1,14 +1,9 @@
-using QuoteFlow.AssetRequestDetails;
-using QuoteFlow.AssetRequests;
-using QuoteFlow.Assets;
 using Dapper;
 using QuoteFlow.AddMoreItemHistories;
 using QuoteFlow.ApprovalHistories;
 using QuoteFlow.ApprovalRoutes;
 using QuoteFlow.Attachments;
 using QuoteFlow.Buyers;
-using QuoteFlow.Cargos;
-using QuoteFlow.Cargos.CargoDatas;
 using QuoteFlow.CfgDiscountRatios;
 using QuoteFlow.CustomerPICs;
 using QuoteFlow.Customers;
@@ -18,8 +13,6 @@ using QuoteFlow.DPOs;
 using QuoteFlow.DPOs.DPODetails;
 using QuoteFlow.EntityFrameworkCore.Interceptors;
 using QuoteFlow.HistoryTrackings;
-using QuoteFlow.KeyAccountEvaluations;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.MaterialGroupBuyers;
 using QuoteFlow.Materials;
 using QuoteFlow.Materials.MaterialApprovalRequestDetails;
@@ -34,25 +27,10 @@ using QuoteFlow.Messages;
 using QuoteFlow.PriceOffers;
 using QuoteFlow.PriceOffers.PriceOfferCustomers;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
-using QuoteFlow.PSIs;
-using QuoteFlow.PSIs.PSIDetails;
-using QuoteFlow.PurchaseOrderDetails;
-using QuoteFlow.PurchaseOrderLockShipments;
-using QuoteFlow.PurchaseOrders;
-using QuoteFlow.PurchaseOrders.PurchaseOrderDetails;
-using QuoteFlow.PurchaseOrdersSapImports;
 using QuoteFlow.SaleOrders;
 using QuoteFlow.SaleOrders.SaleOrderDetails;
 using QuoteFlow.SaleOrdersSapImports;
-using QuoteFlow.SpecialInputPrices;
-using QuoteFlow.SpecialInputPrices.SpecialInputPriceDetails;
-using QuoteFlow.SpoBatchRequests;
-using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
 using QuoteFlow.StockCategories;
-using QuoteFlow.StockImportAllocations;
-using QuoteFlow.StockImportDetails;
-using QuoteFlow.StockImportPriorities;
-using QuoteFlow.StockImports;
 using QuoteFlow.StockTracingDetails;
 using QuoteFlow.StockTracings;
 using QuoteFlow.SupplierBUs;
@@ -113,8 +91,6 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
             options.AddDefaultRepositories(includeAllEntities: true);
             options.AddRepository<Buyer, Buyers.EfCoreBuyerRepository>();
 
-            options.AddRepository<KeyAccount, KeyAccounts.EfCoreKeyAccountRepository>();
-
             options.AddRepository<SystemCategory, SystemCategories.EfCoreSystemCategoryRepository>();
 
             options.AddRepository<StockTracing, StockTracings.EfCoreStockTracingRepository>();
@@ -123,21 +99,14 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
 
             options.AddRepository<Material, Materials.EfCoreMaterialRepository>();
 
-            options.AddRepository<PSI, EFCorePSIRepository>();
-
-            options.AddRepository<KeyAccountEvaluation, KeyAccountEvaluations.EfCoreKeyAccountEvaluationRepository>();
-
+          
             options.AddRepository<PriceOffer, PriceOffers.EfCorePriceOfferRepository>();
 
             options.AddRepository<PriceOfferCustomer, EfCorePriceOfferCustomerRepository>();
 
             options.AddRepository<PriceOfferDetail, EfCorePriceOfferDetailRepository>();
 
-            options.AddRepository<PSIDetail, EfCorePSIDetailRepository>();
-
-            options.AddRepository<Cargo, Cargos.EfCoreCargoRepository>();
-
-            options.AddRepository<CargoData, EfCoreCargoDataRepository>();
+           
 
             options.AddRepository<Customer, Customers.EfCoreCustomerRepository>();
 
@@ -163,10 +132,6 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
 
             options.AddRepository<MaterialStockUploadDetail, MaterialStockUploadDetails.EfCoreMaterialStockUploadDetailRepository>();
 
-            options.AddRepository<SpecialInputPrice, SpecialInputPrices.EfCoreSpecialInputPriceRepository>();
-
-            options.AddRepository<SpecialInputPriceDetail, EfCoreSpecialInputPriceDetailRepository>();
-
             options.AddRepository<WorkflowApprover, WorkflowApprovers.EfCoreWorkflowApproverRepository>();
 
             options.AddRepository<WorkflowConfiguration, WorkflowConfigurations.EfCoreWorkflowConfigurationRepository>();
@@ -188,45 +153,20 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
             options.AddRepository<SaleOrder, SaleOrders.EfCoreSaleOrderRepository>();
 
             options.AddRepository<SaleOrderDetail, EfCoreSaleOrderDetailRepository>();
-
-            options.AddRepository<PurchaseOrder, PurchaseOrders.EfCorePurchaseOrderRepository>();
-
-            options.AddRepository<PurchaseOrderDetail, EfCorePurchaseOrderDetailRepository>();
-
-            options.AddRepository<StockImport, StockImports.EfCoreStockImportRepository>();
-
-            options.AddRepository<StockImportDetail, StockImportDetails.EfCoreStockImportDetailRepository>();
-
-            options.AddRepository<StockImportPriority, StockImportPriorities.EfCoreStockImportPriorityRepository>();
-
+          
             options.AddRepository<MaterialStockLockStock, EfCoreMaterialStockLockStockRepository>();
-
-            options.AddRepository<StockImportAllocation, StockImportAllocations.EfCoreStockImportAllocationRepository>();
-
+   
             options.AddRepository<SaleOrdersSapImport, SaleOrdersSapImports.EfCoreSaleOrdersSapImportRepository>();
 
-            options.AddRepository<PurchaseOrdersSapImport, PurchaseOrdersSapImports.EfCorePurchaseOrdersSapImportRepository>();
-
             options.AddRepository<DistributorTarget, DistributorTargets.EfCoreDistributorTargetRepository>();
-
-            options.AddRepository<PurchaseOrderLockShipment, PurchaseOrderLockShipments.EfCorePurchaseOrderLockShipmentRepository>();
 
             options.AddRepository<MaterialStockLockShipment, EfCoreMaterialStockLockShipmentRepository>();
 
             options.AddRepository<HistoryTracking, HistoryTrackings.EfCoreHistoryTrackingRepository>();
 
-            options.AddRepository<SpoBatchRequest, SpoBatchRequests.EfCoreSpoBatchRequestRepository>();
-
-            options.AddRepository<SpoBatchRequestDetail, EfCoreSpoBatchRequestDetailRepository>();
-
             options.AddRepository<CfgDiscountRatio, CfgDiscountRatios.EfCoreCfgDiscountRatioRepository>();
 
-            options.AddRepository<Asset, Assets.EfCoreAssetRepository>();
-
-            options.AddRepository<AssetRequest, AssetRequests.EfCoreAssetRequestRepository>();
-
-            options.AddRepository<AssetRequestDetail, AssetRequestDetails.EfCoreAssetRequestDetailRepository>();
-
+          
         });
 
         if (AbpStudioAnalyzeHelper.IsInAnalyzeMode)

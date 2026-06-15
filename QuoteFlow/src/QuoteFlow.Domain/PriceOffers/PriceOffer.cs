@@ -1,13 +1,11 @@
 using JetBrains.Annotations;
 using QuoteFlow.Buyers;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.PriceOffers.ParameterObjects;
 using QuoteFlow.PriceOffers.PriceOfferCustomers;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
 using QuoteFlow.Shared.Extensions;
 using QuoteFlow.Shared.Interfaces;
 using QuoteFlow.Shared.Models;
-using QuoteFlow.SpecialInputPrices;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -214,7 +212,7 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
 
     #region Navigation Properties
     public virtual Buyer? Buyer { get; set; }
-    public virtual KeyAccount? KeyAccount { get; set; }
+ 
     public virtual ICollection<PriceOfferCustomer> Customers { get; set; } = [];
     public virtual ICollection<PriceOfferDetail> Details { get; set; } = [];
     public virtual ICollection<PriceOfferApprovalHistory> ApprovalHistories { get; set; } = [];
@@ -609,52 +607,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
             }
         }
     }
-
-    public void AssignSpecialInputPrice(SpecialInputPrice inputPrice, Guid assignerId, string assignerUsername, string assignerFullName, string? assignmentNote = null)
-    {
-        if (inputPrice == null)
-        {
-            throw new ArgumentNullException(nameof(inputPrice), "Special input price cannot be null.");
-        }
-
-        if (inputPrice.IsValidFor(DateTime.Now.Date))
-        {
-            // Assign the special input price
-            SpecialInputPriceId = inputPrice.Id;
-            AccountNo = inputPrice.AccountNo;
-            SpecialInputPriceAccountName = inputPrice.AccountName;
-            SpecialInputPriceAssignedTime = DateTime.Now;
-            SpecialInputPriceAssignerId = assignerId;
-            SpecialInputPriceAssignerUsername = assignerUsername;
-            SpecialInputPriceAssignerFullName = assignerFullName;
-            SpecialInputPriceAssignmentNote = assignmentNote;
-            //// Update the total price to customer based on the special input price
-            //TotalPriceToCustomer = inputPrice.CalculateTotalPrice(Details);
-        }
-        else
-        {
-            var validFrom = inputPrice.ValidFrom;
-            var validTo = inputPrice.ValidTo;
-            if (validFrom is null && validTo is null)
-            {
-                throw new BusinessException(QuoteFlowDomainErrorCodes.PriceOffer.SpecialInputPriceNotValid);
-            }
-            else if (validFrom is null && validTo is not null)
-            {
-                throw new BusinessException(QuoteFlowDomainErrorCodes.PriceOffer.SpecialInputPriceNotYetValid)
-                    .WithData("specialInputPriceId", inputPrice.Id)
-                    .WithData("validTo", validTo.Value.ToStandardString());
-            }
-            else if (validTo is null && validFrom is not null)
-            {
-                throw new BusinessException(QuoteFlowDomainErrorCodes.PriceOffer.SpecialInputPriceExpired)
-                    .WithData("specialInputPriceId", inputPrice.Id)
-                    .WithData("validFrom", validFrom.Value.ToStandardString());
-            }
-        }
-
-    }
-
     public List<Guid> MergeDetails(Guid newestImportGuid)
     {
         var approvedLookup = Details

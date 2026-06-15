@@ -1,7 +1,6 @@
 using QuoteFlow.Buyers;
 using QuoteFlow.Customers;
 using QuoteFlow.DPOs.DPODetails;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.Materials;
 using QuoteFlow.PriceOffers;
 using QuoteFlow.PriceOffers.PriceOfferCustomers;
@@ -34,7 +33,6 @@ public class ImportDPOValidator : IExcelValidator<ImportDPODto>
     private readonly ILogger<ImportDPOValidator> _logger;
     private readonly IAsyncQueryableExecuter _asyncQueryableExecuter;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IKeyAccountRepository _keyAccountRepository;
     private readonly IDuplicateDetectionService _duplicateDetectionService;
     private readonly IBuyerRepository _buyerRepository;
 
@@ -52,7 +50,6 @@ public class ImportDPOValidator : IExcelValidator<ImportDPODto>
         _systemConfigurationRepository = serviceProvider.GetRequiredService<ISystemConfigurationRepository>();
         _asyncQueryableExecuter = serviceProvider.GetRequiredService<IAsyncQueryableExecuter>();
         _customerRepository = serviceProvider.GetRequiredService<ICustomerRepository>();
-        _keyAccountRepository = serviceProvider.GetRequiredService<IKeyAccountRepository>();
         _duplicateDetectionService = serviceProvider.GetRequiredService<IDuplicateDetectionService>();
         _buyerRepository = serviceProvider.GetRequiredService<IBuyerRepository>();
     }
@@ -230,32 +227,6 @@ public class ImportDPOValidator : IExcelValidator<ImportDPODto>
                             CustomerIndustry = x.CustomerIndustry ?? ""
                         })
                 );
-            }
-            else if (priceOffer.IsKeyAccountPriceOffer())
-            {
-                var keyAccount = await _keyAccountRepository.FirstOrDefaultAsync(x => x.Id == priceOffer.KeyAccountId);
-                if (keyAccount == null)
-                {
-                    dpoResult.Errors.Add($"The SPO '{priceOffer.PriceOfferCode}' is linked to a Key Account that does not exist.");
-                    return;
-                }
-
-                var keyAccountCustomer = await _customerRepository.FirstOrDefaultAsync(x => x.TaxCode == keyAccount.CustomerTaxCode);
-                if (keyAccountCustomer == null)
-                {
-                    dpoResult.Errors.Add($"The Key Account '{keyAccount.KeyAccountName}' linked to SPO '{priceOffer.PriceOfferCode}' has a Customer Tax Code '{keyAccount.CustomerTaxCode}' that does not exist in the system.");
-                    return;
-                }
-                customerInDPO = new PriceOfferCustomerProjection
-                {
-                    PriceOfferId = priceOffer.Id,
-                    CustomerId = keyAccountCustomer.Id,
-                    CustomerName = keyAccount.CustomerName ?? "",
-                    CustomerTaxCode = keyAccount.CustomerTaxCode ?? "",
-                    CustomerType = keyAccountCustomer.CustomerType ?? "",
-                    CustomerIndustry = keyAccount.Industry ?? ""
-                };
-
             }
             else if (priceOffer.IsBuyerStockPriceOffer())
             {

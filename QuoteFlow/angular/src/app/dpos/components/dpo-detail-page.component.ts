@@ -42,7 +42,6 @@ import { DpoDiscussionBoxComponent } from './discussion-box/dpo-discussion-box.c
 import { EditDPOItemDialogComponent } from './edit-dpo-item-dialog/edit-dpo-item-dialog.component';
 import { ExtraFeeModalComponent } from './extra-fee-modal/extra-fee-modal.component';
 import { ExtraFeesInfoModalComponent } from './extra-fees-info-modal/extra-fees-info-modal.component';
-import { GkrAllocationTableComponent } from './gkr-allocation-table/gkr-allocation-table.component';
 import { LockOnOrderStockAvailableDetailModalComponent } from './lock-on-order-stock-available-detail-modal/lock-on-order-stock-available-detail-modal.component';
 import {
   LockOnOrderStockDetailModalComponent,
@@ -86,7 +85,6 @@ import { LockOnOrderStockModalComponent } from './lock-on-order-stock-modal/lock
     DpoDiscussionBoxComponent,
     FiltersPaneComponent,
     EditDPOItemDialogComponent,
-    GkrAllocationTableComponent,
     HistoryModalComponent,
     NgbTooltip,
     LockOnOrderStockModalComponent,

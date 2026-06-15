@@ -4,7 +4,6 @@ using QuoteFlow.ApprovalHistories.ParameterObjects;
 using QuoteFlow.BackgroundJobs.Emailing;
 using QuoteFlow.BuyerAccess;
 using QuoteFlow.Buyers;
-using QuoteFlow.Cargos.CargoDatas;
 using QuoteFlow.DPOs.DPODetails;
 using QuoteFlow.DPOs.DPODetails.ParameterObjects;
 using QuoteFlow.DPOs.DpoGkrUsages;
@@ -22,9 +21,6 @@ using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.Messages;
 using QuoteFlow.Permissions;
 using QuoteFlow.PriceOffers;
-using QuoteFlow.PurchaseOrderDetails;
-using QuoteFlow.PurchaseOrderLockShipments;
-using QuoteFlow.PurchaseOrders;
 using QuoteFlow.RequesterContexts;
 using QuoteFlow.SaleOrders;
 using QuoteFlow.SalesAssignments;
@@ -70,10 +66,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
     protected readonly IIdentityUserRepository _identityUserRepository;
     protected IMaterialStockRepository _materialStockRepository;
     protected IMaterialStockLockStockRepository _materialStockLockStockRepository;
-    protected IPurchaseOrderLockShipmentRepository _purchaseOrderLockShipmentRepository;
-    protected IPurchaseOrderRepository _poRepository;
-    protected ICargoDataRepository _cargoDataRepository;
-    protected IPurchaseOrderDetailRepository _poDetailRepository;
     protected IDPODetailRepository _dPODetailRepository;
     protected IPriceOfferRepository _priceOfferRepository;
     protected DPOManager _dPOManager;
@@ -105,10 +97,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         IMaterialStockRepository materialStockRepository,
         IMaterialStockLockStockRepository materialStockLockStockRepository,
         IFlaggingService<DPO, DPOFlagsDto> flaggingService,
-        IPurchaseOrderRepository poRepository,
-        IPurchaseOrderDetailRepository poDetailRepository,
-        ICargoDataRepository cargoDataRepository,
-        IPurchaseOrderLockShipmentRepository purchaseOrderLockShipmentRepository,
         DPODetailManager dPODetailManager,
         IPriceOfferRepository priceOfferRepository,
         IRepository<FileDescriptor, Guid> fileDescriptorRepository,
@@ -135,10 +123,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         _materialStockRepository = materialStockRepository;
         _materialStockLockStockRepository = materialStockLockStockRepository;
         _flaggingService = flaggingService;
-        _poRepository = poRepository;
-        _poDetailRepository = poDetailRepository;
-        _cargoDataRepository = cargoDataRepository;
-        _purchaseOrderLockShipmentRepository = purchaseOrderLockShipmentRepository;
         _dPODetailManager = dPODetailManager;
         _priceOfferRepository = priceOfferRepository;
         _fileDescriptorRepository = fileDescriptorRepository;
@@ -626,40 +610,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         }
 
     }
-
-    public virtual async Task LockShipmentAutoAsync(DPOLockShipmentAutoDto input)
-    {
-        await _dPORepository.LockShipmentAutoAsync(
-            input.DPODetailIds,
-            input.Note,
-            _currentUser.Username ?? string.Empty,
-            _currentUser.FullName ?? string.Empty
-        );
-        foreach (var detailId in input.DPODetailIds)
-        {
-            var dpoDetail = await _dPODetailRepository.GetAsync(detailId);
-            var autoReleaseLockStockHistory = new DPODetailApprovalHistory(
-                    GuidGenerator.Create(),
-                    dpoDetail.Id,
-                    new ApprovalHistoryCreateParams
-                    {
-                        Action = HistoryActions.DPO.AutoLockOnOrder,
-                        ActionDate = Clock.Now.AddSeconds(2),
-                        ApproverUsername = _currentUser.Username,
-                        ApproverFullName = _currentUser.FullName,
-                        ApproverRoleCode = "FA Team",
-                        ApproverRoleName = "FA Team",
-                        EntityType = EntityTypes.DPODetail,
-                        IsLastApprovalInCurrentWorkflow = false,
-                        Note = $"{input.Note}"
-
-                    }
-                );
-
-            dpoDetail.RecordAction(autoReleaseLockStockHistory);
-        }
-    }
-
     public virtual async Task<ListResultDto<MaterialStockLockStockDto>> GetLockStocksAsync(Guid dpoId, Guid detailId)
     {
         var dpoDetail = await _dPODetailRepository.GetAsync(detailId);
@@ -747,121 +697,61 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
 
     public virtual async Task<ListResultDto<DPOListPOsDto>> GetListAvailablePOsAsync(Guid dpoId, Guid dpoDetailId, string? materialCode)
     {
-        var models = await _dPORepository.GetListAvailablePOsAsync(dpoDetailId, materialCode);
-        var itemDtos = ObjectMapper.Map<List<DPOListPOsModel>, List<DPOListPOsDto>>(models);
-        itemDtos = itemDtos.OrderBy(x => x.PODate).ToList();
-        return new ListResultDto<DPOListPOsDto>(itemDtos);
+        //var models = await _dPORepository.GetListAvailablePOsAsync(dpoDetailId, materialCode);
+        //var itemDtos = ObjectMapper.Map<List<DPOListPOsModel>, List<DPOListPOsDto>>(models);
+        //itemDtos = itemDtos.OrderBy(x => x.PODate).ToList();
+        return new ListResultDto<DPOListPOsDto>();
     }
 
-    public virtual async Task<ListResultDto<DPOLockOnOrderStockDto>> GetListLockOnOrderStockAsync(Guid dpoId, Guid dpoDetailId)
-    {
-        var purchaseOrderLockShipments = await _purchaseOrderLockShipmentRepository.GetListAsync(
-            dPODetailId: dpoDetailId);
+    //public virtual async Task<ListResultDto<DPOLockOnOrderStockDto>> GetListLockOnOrderStockAsync(Guid dpoId, Guid dpoDetailId)
+    //{
+    //    var purchaseOrderLockShipments = await _purchaseOrderLockShipmentRepository.GetListAsync(
+    //        dPODetailId: dpoDetailId);
 
-        var poDetailIds = purchaseOrderLockShipments
-            .Select(x => x.PODetailId)
-            .Distinct()
-            .ToList();
+    //    var poDetailIds = purchaseOrderLockShipments
+    //        .Select(x => x.PODetailId)
+    //        .Distinct()
+    //        .ToList();
 
-        if (purchaseOrderLockShipments.Count == 0)
-        {
-            return new ListResultDto<DPOLockOnOrderStockDto>([]);
-        }
+    //    if (purchaseOrderLockShipments.Count == 0)
+    //    {
+    //        return new ListResultDto<DPOLockOnOrderStockDto>([]);
+    //    }
 
-        var poDetails = await _poDetailRepository.GetListWithDetailsAsync(x => poDetailIds.Contains(x.Id));
-        var allGolfaCodes = poDetails.Select(x => x.GolfaCode).Distinct().ToList();
-        var cargoDataFull = await _cargoDataRepository.GetListAsync(y => allGolfaCodes.Contains(y.GolfaCode));
+    //    var poDetails = await _poDetailRepository.GetListWithDetailsAsync(x => poDetailIds.Contains(x.Id));
+    //    var allGolfaCodes = poDetails.Select(x => x.GolfaCode).Distinct().ToList();
+    //    var cargoDataFull = await _cargoDataRepository.GetListAsync(y => allGolfaCodes.Contains(y.GolfaCode));
 
-        var itemDtos = purchaseOrderLockShipments.Select(x =>
-        {
-            var poDetail = poDetails.FirstOrDefault(pd => pd.Id == x.PODetailId);
-            var po = poDetail?.PurchaseOrder;
-            var cargoData = cargoDataFull.FirstOrDefault(cd =>
-                cd.GolfaCode.Equals(poDetail?.GolfaCode, StringComparison.OrdinalIgnoreCase) &&
-                cd.PODetailId == poDetail.Id &&
-                string.Equals(cd.PODetailCode, poDetail.PODetailCode, StringComparison.OrdinalIgnoreCase)
-            );
+    //    var itemDtos = purchaseOrderLockShipments.Select(x =>
+    //    {
+    //        var poDetail = poDetails.FirstOrDefault(pd => pd.Id == x.PODetailId);
+    //        var po = poDetail?.PurchaseOrder;
+    //        var cargoData = cargoDataFull.FirstOrDefault(cd =>
+    //            cd.GolfaCode.Equals(poDetail?.GolfaCode, StringComparison.OrdinalIgnoreCase) &&
+    //            cd.PODetailId == poDetail.Id &&
+    //            string.Equals(cd.PODetailCode, poDetail.PODetailCode, StringComparison.OrdinalIgnoreCase)
+    //        );
 
-            return new DPOLockOnOrderStockDto
-            {
-                Id = x.Id,
-                PODetailId = x.PODetailId,
-                PONo = po?.PONo ?? "",
-                POQty = poDetail?.Qty ?? 0,
-                PODate = po?.PODate,
-                MachineNumber = cargoData?.MachineNumber,
-                STCReply = cargoData?.STCReply,
-                QtyLocked = x.Qty,
-                QtyImported = x.QtyDisposed,
-                QtyNeedImport = x.QtyNeed,
-                Status = x.Qty == x.QtyDisposed ? QuoteFlowStatuses.Closed : QuoteFlowStatuses.InProgress,
-                Note = x.Note,
-                LastModifierUsername = x.LastModifierUsername
-            };
-        }).ToList();
+    //        return new DPOLockOnOrderStockDto
+    //        {
+    //            Id = x.Id,
+    //            PODetailId = x.PODetailId,
+    //            PONo = po?.PONo ?? "",
+    //            POQty = poDetail?.Qty ?? 0,
+    //            PODate = po?.PODate,
+    //            MachineNumber = cargoData?.MachineNumber,
+    //            STCReply = cargoData?.STCReply,
+    //            QtyLocked = x.Qty,
+    //            QtyImported = x.QtyDisposed,
+    //            QtyNeedImport = x.QtyNeed,
+    //            Status = x.Qty == x.QtyDisposed ? QuoteFlowStatuses.Closed : QuoteFlowStatuses.InProgress,
+    //            Note = x.Note,
+    //            LastModifierUsername = x.LastModifierUsername
+    //        };
+    //    }).ToList();
 
-        return new ListResultDto<DPOLockOnOrderStockDto>(itemDtos);
-    }
-
-    [Authorize(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock)]
-    public virtual async Task LockShipmentAsync(Guid dpoDetailId, DPOLockShipmentDto input)
-    {
-        var dpoDetails = new List<DPODetail>();
-        var dpoDetail = await _dPODetailRepository.GetAsync(dpoDetailId);
-
-        var totalLockQty = input.Items.Sum(x => x.Qty);
-        if (totalLockQty > dpoDetail.NeedDelivery)
-        {
-            throw new UserFriendlyException($"The total qty to Lock ({totalLockQty}) exceeds the Need Order qty ({dpoDetail.NeedDelivery}).");
-        }
-
-        var errorMessages = new List<string>();
-        foreach (var item in input.Items)
-        {
-            // Call stored procedure for each item
-            var error = await _dPORepository.LockShipmentAsync(
-                item.PODetailId,
-                dpoDetailId,
-                item.GolfaCode,
-                item.Qty,
-                item.Note,
-                _currentUser.Username ?? "",
-                _currentUser.FullName ?? ""
-            );
-            if (!string.IsNullOrWhiteSpace(error))
-            {
-                errorMessages.Add($"{item.GolfaCode}: {error}");
-                continue;
-            }
-
-            // Retrieve the updated DPO detail
-            dpoDetails.Add(dpoDetail);
-        }
-        if (errorMessages.Any())
-        {
-            throw new UserFriendlyException(string.Join("\n", errorMessages));
-        }
-    }
-
-    [Authorize(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock)]
-    public virtual async Task UpdateLockShipmentAsync(Guid dpoDetailId, Guid poDetailId, DPOLockShipmentItemUpdateDto input)
-    {
-        var errorMessage = await _dPORepository.UpdateLockShipmentAsync(
-            poDetailId,
-            dpoDetailId,
-            input.GolfaCode,
-            input.Qty,
-            input.Note,
-            _currentUser.Username ?? string.Empty,
-            _currentUser.FullName ?? string.Empty
-        );
-
-        if (!string.IsNullOrEmpty(errorMessage))
-        {
-            throw new UserFriendlyException(errorMessage);
-        }
-    }
-
+    //    return new ListResultDto<DPOLockOnOrderStockDto>(itemDtos);
+    //}
     public virtual async Task<ListResultDto<DPOLockStockEtaEtdDto>> GetListLockStockEtaEtdAsync(Guid dpoDetailId, Guid poDetailId)
     {
         var models = await _dPORepository.GetListLockStockEtaEtdAsync(dpoDetailId, poDetailId);
@@ -2571,213 +2461,239 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
             };
         }
     }
-    [Authorize(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock)]
-    [UnitOfWork(IsDisabled = true)]
-    public virtual async IAsyncEnumerable<BatchUnlockProgressEventDto> BatchAutoUnlockOnOrderStockAsync(BatchAutoUnlockStockDto input)
+
+    public Task<ListResultDto<DPOLockOnOrderStockDto>> GetListLockOnOrderStockAsync(Guid dpoId, Guid dpoDetailId)
     {
-        // Validation: At least one detail ID required
-        if (input.DpoDetailIds == null || input.DpoDetailIds.Count == 0)
-        {
-            throw new UserFriendlyException("At least one DPO detail ID is required");
-        }
-
-        // Step 1: Validate all details belong to same DPO
-        var firstDetail = await _dPODetailRepository.GetAsync(input.DpoDetailIds.First());
-        var dpoId = firstDetail.DPOId;
-
-        // Check if all details belong to the same DPO
-        var allDetails = await _dPODetailRepository.GetListAsync(x => input.DpoDetailIds.Contains(x.Id));
-        if (allDetails.Any(d => d.DPOId != dpoId))
-        {
-            throw new UserFriendlyException("All selected details must belong to the same DPO");
-        }
-
-        // Step 2: Validate DPO status
-        var dpo = await _dPORepository.GetAsync(dpoId);
-        var blockedStatuses = new HashSet<string>
-        {
-            QuoteFlowStatuses.Closed,
-            QuoteFlowStatuses.Cancelled,
-            QuoteFlowStatuses.Rejected,
-            QuoteFlowStatuses.DPO.Confirmed,
-        };
-
-        if (blockedStatuses.Contains(dpo.Status ?? string.Empty))
-        {
-            throw new UserFriendlyException($"Cannot unlock on order stock for this DPO. DPO status is {dpo.Status!.ToUpperFirstChar()}");
-        }
-
-        // Emit started event
-        yield return new BatchUnlockProgressEventDto
-        {
-            EventType = "started",
-            DpoId = dpoId,
-            Total = input.DpoDetailIds.Count,
-            Current = 0
-        };
-
-        // Step 3: Process each detail
-        int current = 0;
-        int succeeded = 0;
-        int failed = 0;
-        int totalUnlocked = 0;
-        int totalSkipped = 0;
-
-        foreach (var detailId in input.DpoDetailIds)
-        {
-            current++;
-
-
-
-            // Process this detail and get result
-            var result = await UnlockDetailOnOrderStockAsync(detailId);
-
-            // Update counters
-            if (result.Success)
-            {
-                succeeded++;
-                totalUnlocked += result.UnlockedCount;
-                totalSkipped += result.SkippedCount;
-
-                // Emit processing event
-                yield return new BatchUnlockProgressEventDto
-                {
-                    EventType = "progress",
-                    DpoDetailId = detailId,
-                    Status = "processing",
-                    Current = current,
-                    Total = input.DpoDetailIds.Count
-                };
-
-                yield return new BatchUnlockProgressEventDto
-                {
-                    EventType = "progress",
-                    DpoDetailId = detailId,
-                    Status = "success",
-                    Current = current,
-                    Total = input.DpoDetailIds.Count,
-                    UnlockedCount = result.UnlockedCount,
-                    SkippedCount = result.SkippedCount
-                };
-            }
-            else
-            {
-                failed++;
-                totalSkipped += result.SkippedCount;
-
-                yield return new BatchUnlockProgressEventDto
-                {
-                    EventType = "progress",
-                    DpoDetailId = detailId,
-                    Status = "error",
-                    Current = current,
-                    Total = input.DpoDetailIds.Count,
-                    ErrorMessage = result.ErrorMessage
-                };
-            }
-        }
-
-        // Emit complete event
-        yield return new BatchUnlockProgressEventDto
-        {
-            EventType = "complete",
-            TotalProcessed = input.DpoDetailIds.Count,
-            Succeeded = succeeded,
-            Failed = failed,
-            TotalUnlocked = totalUnlocked,
-            TotalSkipped = totalSkipped,
-            Current = current,
-            Total = input.DpoDetailIds.Count
-        };
+        throw new NotImplementedException();
     }
+
+    public IAsyncEnumerable<BatchUnlockProgressEventDto> BatchAutoUnlockOnOrderStockAsync(BatchAutoUnlockStockDto input)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task LockShipmentAsync(Guid dpoDetailId, DPOLockShipmentDto input)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateLockShipmentAsync(Guid dpoDetailId, Guid poDetailId, DPOLockShipmentItemUpdateDto input)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task LockShipmentAutoAsync(DPOLockShipmentAutoDto input)
+    {
+        throw new NotImplementedException();
+    }
+
+    //[Authorize(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock)]
+    //[UnitOfWork(IsDisabled = true)]
+    //public virtual async IAsyncEnumerable<BatchUnlockProgressEventDto> BatchAutoUnlockOnOrderStockAsync(BatchAutoUnlockStockDto input)
+    //{
+    //    // Validation: At least one detail ID required
+    //    if (input.DpoDetailIds == null || input.DpoDetailIds.Count == 0)
+    //    {
+    //        throw new UserFriendlyException("At least one DPO detail ID is required");
+    //    }
+
+    //    // Step 1: Validate all details belong to same DPO
+    //    var firstDetail = await _dPODetailRepository.GetAsync(input.DpoDetailIds.First());
+    //    var dpoId = firstDetail.DPOId;
+
+    //    // Check if all details belong to the same DPO
+    //    var allDetails = await _dPODetailRepository.GetListAsync(x => input.DpoDetailIds.Contains(x.Id));
+    //    if (allDetails.Any(d => d.DPOId != dpoId))
+    //    {
+    //        throw new UserFriendlyException("All selected details must belong to the same DPO");
+    //    }
+
+    //    // Step 2: Validate DPO status
+    //    var dpo = await _dPORepository.GetAsync(dpoId);
+    //    var blockedStatuses = new HashSet<string>
+    //    {
+    //        QuoteFlowStatuses.Closed,
+    //        QuoteFlowStatuses.Cancelled,
+    //        QuoteFlowStatuses.Rejected,
+    //        QuoteFlowStatuses.DPO.Confirmed,
+    //    };
+
+    //    if (blockedStatuses.Contains(dpo.Status ?? string.Empty))
+    //    {
+    //        throw new UserFriendlyException($"Cannot unlock on order stock for this DPO. DPO status is {dpo.Status!.ToUpperFirstChar()}");
+    //    }
+
+    //    // Emit started event
+    //    yield return new BatchUnlockProgressEventDto
+    //    {
+    //        EventType = "started",
+    //        DpoId = dpoId,
+    //        Total = input.DpoDetailIds.Count,
+    //        Current = 0
+    //    };
+
+    //    // Step 3: Process each detail
+    //    int current = 0;
+    //    int succeeded = 0;
+    //    int failed = 0;
+    //    int totalUnlocked = 0;
+    //    int totalSkipped = 0;
+
+    //    foreach (var detailId in input.DpoDetailIds)
+    //    {
+    //        current++;
+
+
+
+    //        // Process this detail and get result
+    //        var result = await UnlockDetailOnOrderStockAsync(detailId);
+
+    //        // Update counters
+    //        if (result.Success)
+    //        {
+    //            succeeded++;
+    //            totalUnlocked += result.UnlockedCount;
+    //            totalSkipped += result.SkippedCount;
+
+    //            // Emit processing event
+    //            yield return new BatchUnlockProgressEventDto
+    //            {
+    //                EventType = "progress",
+    //                DpoDetailId = detailId,
+    //                Status = "processing",
+    //                Current = current,
+    //                Total = input.DpoDetailIds.Count
+    //            };
+
+    //            yield return new BatchUnlockProgressEventDto
+    //            {
+    //                EventType = "progress",
+    //                DpoDetailId = detailId,
+    //                Status = "success",
+    //                Current = current,
+    //                Total = input.DpoDetailIds.Count,
+    //                UnlockedCount = result.UnlockedCount,
+    //                SkippedCount = result.SkippedCount
+    //            };
+    //        }
+    //        else
+    //        {
+    //            failed++;
+    //            totalSkipped += result.SkippedCount;
+
+    //            yield return new BatchUnlockProgressEventDto
+    //            {
+    //                EventType = "progress",
+    //                DpoDetailId = detailId,
+    //                Status = "error",
+    //                Current = current,
+    //                Total = input.DpoDetailIds.Count,
+    //                ErrorMessage = result.ErrorMessage
+    //            };
+    //        }
+    //    }
+
+    //    // Emit complete event
+    //    yield return new BatchUnlockProgressEventDto
+    //    {
+    //        EventType = "complete",
+    //        TotalProcessed = input.DpoDetailIds.Count,
+    //        Succeeded = succeeded,
+    //        Failed = failed,
+    //        TotalUnlocked = totalUnlocked,
+    //        TotalSkipped = totalSkipped,
+    //        Current = current,
+    //        Total = input.DpoDetailIds.Count
+    //    };
+    //}
     /// <summary>
     /// Helper method to unlock all lock stocks for a single DPO detail
     /// </summary>
-    [UnitOfWork(IsDisabled = true)]
-    private async Task<UnlockDetailResult> UnlockDetailOnOrderStockAsync(Guid detailId)
-    {
-        try
-        {
-            var poDetails = await _purchaseOrderLockShipmentRepository.GetUnlockableByDetailIdAsync(detailId);
-            int skippedCount = 0;
+    // [UnitOfWork(IsDisabled = true)]
+    //private async Task<UnlockDetailResult> UnlockDetailOnOrderStockAsync(Guid detailId)
+    //{
+    //    try
+    //    {
+    //        var poDetails = await _purchaseOrderLockShipmentRepository.GetUnlockableByDetailIdAsync(detailId);
+    //        int skippedCount = 0;
 
-            // If no unlockable records, return success with zero unlocked
-            if (poDetails.Count == 0)
-            {
-                return new UnlockDetailResult
-                {
-                    Success = true,
-                    UnlockedCount = 0,
-                    SkippedCount = skippedCount
-                };
-            }
+    //        // If no unlockable records, return success with zero unlocked
+    //        if (poDetails.Count == 0)
+    //        {
+    //            return new UnlockDetailResult
+    //            {
+    //                Success = true,
+    //                UnlockedCount = 0,
+    //                SkippedCount = skippedCount
+    //            };
+    //        }
 
-            // Begin UOW for this detail
-            using (var uow = UnitOfWorkManager.Begin(requiresNew: true))
-            {
-                // Delete each lock stock record
-                foreach (var poDetail in poDetails)
-                {
-                    var errorMessage = await _dPORepository.DeleteLockOnOrderStockAsync(
-                        poDetail.PODetailId,
-                        detailId,
-                        _currentUser.Username ?? string.Empty,
-                        _currentUser.FullName ?? string.Empty
-                    );
+    //        // Begin UOW for this detail
+    //        using (var uow = UnitOfWorkManager.Begin(requiresNew: true))
+    //        {
+    //            // Delete each lock stock record
+    //            foreach (var poDetail in poDetails)
+    //            {
+    //                var errorMessage = await _dPORepository.DeleteLockOnOrderStockAsync(
+    //                    poDetail.PODetailId,
+    //                    detailId,
+    //                    _currentUser.Username ?? string.Empty,
+    //                    _currentUser.FullName ?? string.Empty
+    //                );
 
-                    if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        // Rollback and return error
-                        return new UnlockDetailResult
-                        {
-                            Success = false,
-                            ErrorMessage = errorMessage,
-                            SkippedCount = skippedCount
-                        };
-                    }
-                }
-                var dpoDetail = await _dPODetailRepository.GetAsync(detailId);
-                var autoReleaseLockOnOrderHistory = new DPODetailApprovalHistory(
-                        GuidGenerator.Create(),
-                        dpoDetail.Id,
-                        new ApprovalHistoryCreateParams
-                        {
-                            Action = HistoryActions.DPO.ReleaseLockOnOrderStock,
-                            ActionDate = Clock.Now.AddSeconds(2),
-                            ApproverUsername = _currentUser.Username,
-                            ApproverFullName = _currentUser.FullName,
-                            ApproverRoleCode = "FA Team",
-                            ApproverRoleName = "FA Team",
-                            EntityType = EntityTypes.DPODetail,
-                            IsLastApprovalInCurrentWorkflow = false,
-                            Note = $"Auto release lock on order stock for GolfaCode: {dpoDetail.GolfaCode}"
+    //                if (!string.IsNullOrEmpty(errorMessage))
+    //                {
+    //                    // Rollback and return error
+    //                    return new UnlockDetailResult
+    //                    {
+    //                        Success = false,
+    //                        ErrorMessage = errorMessage,
+    //                        SkippedCount = skippedCount
+    //                    };
+    //                }
+    //            }
+    //            var dpoDetail = await _dPODetailRepository.GetAsync(detailId);
+    //            var autoReleaseLockOnOrderHistory = new DPODetailApprovalHistory(
+    //                    GuidGenerator.Create(),
+    //                    dpoDetail.Id,
+    //                    new ApprovalHistoryCreateParams
+    //                    {
+    //                        Action = HistoryActions.DPO.ReleaseLockOnOrderStock,
+    //                        ActionDate = Clock.Now.AddSeconds(2),
+    //                        ApproverUsername = _currentUser.Username,
+    //                        ApproverFullName = _currentUser.FullName,
+    //                        ApproverRoleCode = "FA Team",
+    //                        ApproverRoleName = "FA Team",
+    //                        EntityType = EntityTypes.DPODetail,
+    //                        IsLastApprovalInCurrentWorkflow = false,
+    //                        Note = $"Auto release lock on order stock for GolfaCode: {dpoDetail.GolfaCode}"
 
-                        }
-                    );
+    //                    }
+    //                );
 
-                dpoDetail.RecordAction(autoReleaseLockOnOrderHistory);
-                // Commit transaction
-                await uow.CompleteAsync();
-            }
+    //            dpoDetail.RecordAction(autoReleaseLockOnOrderHistory);
+    //            // Commit transaction
+    //            await uow.CompleteAsync();
+    //        }
 
-            // Success
-            return new UnlockDetailResult
-            {
-                Success = true,
-                UnlockedCount = poDetails.Count,
-                SkippedCount = skippedCount
-            };
-        }
-        catch (Exception ex)
-        {
-            return new UnlockDetailResult
-            {
-                Success = false,
-                ErrorMessage = ex.Message,
-                SkippedCount = 0
-            };
-        }
-    }
+    //        // Success
+    //        return new UnlockDetailResult
+    //        {
+    //            Success = true,
+    //            UnlockedCount = poDetails.Count,
+    //            SkippedCount = skippedCount
+    //        };
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return new UnlockDetailResult
+    //        {
+    //            Success = false,
+    //            ErrorMessage = ex.Message,
+    //            SkippedCount = 0
+    //        };
+    //    }
+    //}
     /// <summary>
     /// Result of unlocking stock for a single detail
     /// </summary>

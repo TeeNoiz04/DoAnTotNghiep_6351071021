@@ -18,13 +18,7 @@ export class NavigationFallbackService {
 
       case 'dpo':
         return [AppRoutes.DPO.BASE, AppRoutes.DPO.LIST.BASE];
-
-      case 'gic':
-        return [AppRoutes.GIC.BASE, AppRoutes.GIC.LIST.BASE];
-
-      case 'key-accounts':
-        return [AppRoutes.KEY_ACCOUNTS.BASE, AppRoutes.KEY_ACCOUNTS.LIST.BASE];
-
+      
       case 'customers':
         return [AppRoutes.CUSTOMERS.BASE];
 
@@ -33,12 +27,6 @@ export class NavigationFallbackService {
 
       case 'stock-tracing':
         return [AppRoutes.STOCK_TRACING.BASE, AppRoutes.STOCK_TRACING.SEARCH.BASE];
-
-      case 'cargo-data':
-        return [AppRoutes.CARGO_DATA.BASE, AppRoutes.CARGO_DATA.IMPORT.BASE];
-
-      case 'psis':
-        return [AppRoutes.PSI.BASE, AppRoutes.PSI.LIST.BASE];
 
       case 'home':
       case 'dashboard':
@@ -62,9 +50,6 @@ export class NavigationFallbackService {
           AppRoutes.SPECIAL_PRICE_OFFERS.BASE,
           AppRoutes.SPECIAL_PRICE_OFFERS.MY_APPROVALS.BASE,
         ];
-
-      case 'key-accounts':
-        return [AppRoutes.KEY_ACCOUNTS.BASE, AppRoutes.KEY_ACCOUNTS.MY_APPROVALS.BASE];
 
       default:
         return this.getFallbackUrl(baseContext);

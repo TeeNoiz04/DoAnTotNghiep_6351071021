@@ -4,7 +4,6 @@ using QuoteFlow.ApprovalHistories;
 using QuoteFlow.Customers;
 using QuoteFlow.GeneralLookups;
 using QuoteFlow.Shared;
-using QuoteFlow.SpecialInputPrices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -214,12 +213,12 @@ public class LookupController : AbpController, ILookupsAppService
     {
         return _lookupsAppService.GetKeyAccountClassChildLookupAsync(keyAccountTypeCode, hiddenNA);
     }
-    [HttpGet]
-    [Route("special-input-prices")]
-    public virtual Task<ListResultDto<SpecialInputPriceLookupDto<Guid>>> GetSpecialInputPriceLookupAsync(string? materialType)
-    {
-        return _lookupsAppService.GetSpecialInputPriceLookupAsync(materialType);
-    }
+    //[HttpGet]
+    //[Route("special-input-prices")]
+    //public virtual Task<ListResultDto<SpecialInputPriceLookupDto<Guid>>> GetSpecialInputPriceLookupAsync(string? materialType)
+    //{
+    //    return _lookupsAppService.GetSpecialInputPriceLookupAsync(materialType);
+    //}
     [HttpGet]
     [Route("supplier")]
     public virtual Task<ListResultDto<LookupDto<Guid>>> GetSupplierLookupAsync()
@@ -259,12 +258,7 @@ public class LookupController : AbpController, ILookupsAppService
         return _lookupsAppService.GetSupplierBUBySupplierAndMaterialTypeLookupAsync(supplierId, materialType);
     }
 
-    [HttpGet]
-    [Route("account-no")]
-    public virtual Task<ListResultDto<AccountCodeLookupDto>> GetAccountNoAsync([FromQuery][Required] string materialCode)
-    {
-        return _lookupsAppService.GetAccountNoAsync(materialCode);
-    }
+   
     [HttpGet]
     [Route("user-by-username")]
     public Task<List<UserLookupDto>> GetListUserLookup(string name)
@@ -351,12 +345,7 @@ public class LookupController : AbpController, ILookupsAppService
     {
         return _lookupsAppService.GetConditionLookupWorkflowAsync(type);
     }
-    [HttpGet]
-    [Route("fy-psi")]
-    public Task<ListResultDto<int?>> GetYearDistinctPSIAsync()
-    {
-        return _lookupsAppService.GetYearDistinctPSIAsync();
-    }
+   
     [HttpGet]
     [Route("history-dpo/{id}")]
     public Task<List<ApprovalHistoryDto>> GetDPOApprovalHistoriesAsync(Guid id)

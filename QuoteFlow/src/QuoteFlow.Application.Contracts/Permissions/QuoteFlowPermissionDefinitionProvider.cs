@@ -12,7 +12,6 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
 
         var dashboardGroup = myGroup.AddPermission(QuoteFlowPermissions.Dashboard.Default, L("Permission:Dashboard"));
         dashboardGroup.AddChild(QuoteFlowPermissions.Dashboard.SalesResultBasedOnPlan, L("Permission:Dashboard.SalesResultBasedOnPlan"));
-        dashboardGroup.AddChild(QuoteFlowPermissions.Dashboard.POResultBasedOnPlan, L("Permission:Dashboard.POResultBasedOnPlan"));
         dashboardGroup.AddChild(QuoteFlowPermissions.Dashboard.SalesByMaterialGroup, L("Permission:Dashboard.SalesByMaterialGroup"));
         dashboardGroup.AddChild(QuoteFlowPermissions.Dashboard.SalesByBuyer, L("Permission:Dashboard.SalesByBuyer"));
 
@@ -46,11 +45,6 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         var materialStockUploads = materialStockPermission.AddChild(QuoteFlowPermissions.MaterialStocks.Uploads.UploadDefault, L("Permission:Uploads"));
         materialStockUploads.AddChild(QuoteFlowPermissions.MaterialStocks.Uploads.StockInventory, L("Permission:StockInventory"));
         materialStockUploads.AddChild(QuoteFlowPermissions.MaterialStocks.Uploads.StockTransfer, L("Permission:StockTransfer"));
-
-        //Key Account
-        var keyAccountPermission = myGroup.AddPermission(QuoteFlowPermissions.KeyAccounts.Default, L("Permission:KeyAccounts"));
-        keyAccountPermission.AddChild(QuoteFlowPermissions.KeyAccounts.KeyAccountData, L("Permission:KeyAccountData"));
-        keyAccountPermission.AddChild(QuoteFlowPermissions.KeyAccounts.ClassAdjustment, L("Permission:ClassAdjustment"));
 
         // Price Offer
         var priceOfferPermission = myGroup.AddPermission(QuoteFlowPermissions.PriceOffers.Default, L("Permission:PriceOffers"));
@@ -86,58 +80,7 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         dpoPermission.AddChild(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock, L("Permission:LockOnOrderStock"));
         dpoPermission.AddChild(QuoteFlowPermissions.MovingOrders.DPOs.ConfirmReject, L("Permission:ConfirmReject"));
 
-        // GICs
-        var gicPermission = movingOrdersPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GICDefault, L("Permission:GICs"));
-
-        // GICs.InternalUse
-        var gicInternalUsePermission = gicPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.InternalUseDefault, L("Permission:InternalUse"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.Import, L("Permission:Import"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.Delete, L("Permission:Delete"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.CancelItems, L("Permission:CancelItems"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.AddExtraFee, L("Permission:AddExtraFee"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.ConfirmNote, L("Permission:ConfirmNote"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.LockStock, L("Permission:LockStock"));
-        gicInternalUsePermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.InternalUse.LockOnOrderStock, L("Permission:LockOnOrderStock"));
-
-        // GICs.GivingFOC
-        var gicGivingFOCPermission = gicPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.GivingFOCDefault, L("Permission:GivingFOC"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.Import, L("Permission:Import"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.Delete, L("Permission:Delete"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.CancelItems, L("Permission:CancelItems"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.AddExtraFee, L("Permission:AddExtraFee"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.ConfirmNote, L("Permission:ConfirmNote"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.LockStock, L("Permission:LockStock"));
-        gicGivingFOCPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.GivingFOC.LockOnOrderStock, L("Permission:LockOnOrderStock"));
-
-        // GICs.Warranty
-        var gicWarrantyPermission = gicPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.WarrantyDefault, L("Permission:Warranty"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.Import, L("Permission:Import"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.Delete, L("Permission:Delete"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.CancelItems, L("Permission:CancelItems"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.AddExtraFee, L("Permission:AddExtraFee"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.ConfirmNote, L("Permission:ConfirmNote"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.LockStock, L("Permission:LockStock"));
-        gicWarrantyPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.Warranty.LockOnOrderStock, L("Permission:LockOnOrderStock"));
-
-        // GICs.WriteOff
-        var gicWriteOffPermission = gicPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.WriteOffDefault, L("Permission:WriteOff"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.Import, L("Permission:Import"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.Delete, L("Permission:Delete"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.CancelItems, L("Permission:CancelItems"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.AddExtraFee, L("Permission:AddExtraFee"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.ConfirmNote, L("Permission:ConfirmNote"));
-        gicWriteOffPermission.AddChild(QuoteFlowPermissions.MovingOrders.GICs.WriteOff.LockStock, L("Permission:LockStock"));
-
-        // GKRs
-        var gkrPermission = movingOrdersPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.GKRDefault, L("Permission:GKRs"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.Import, L("Permission:Import"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.Delete, L("Permission:Delete"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.CancelItems, L("Permission:CancelItems"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.AddExtraFee, L("Permission:AddExtraFee"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.ConfirmNote, L("Permission:ConfirmNote"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.LockStock, L("Permission:LockStock"));
-        gkrPermission.AddChild(QuoteFlowPermissions.MovingOrders.GKRs.LockOnOrderStock, L("Permission:LockOnOrderStock"));
-
+       
         //Sale Order
         var saleOrderPermission = myGroup.AddPermission(QuoteFlowPermissions.SaleOrders.Default, L("Permission:SaleOrders"));
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.Edit, L("Permission:Edit"));
@@ -154,58 +97,7 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.ExportReportData, L("Permission:ExportReportData"));
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.SAPLandingCost, L("Permission:SAPLandingCost"));
 
-        //Special Input Price
-        var specialInputPricePermission = myGroup.AddPermission(QuoteFlowPermissions.SpecialInputPrice.Default, L("Permission:SpecialInputPrice"));
-        specialInputPricePermission.AddChild(QuoteFlowPermissions.SpecialInputPrice.Create, L("Permission:Create"));
-        specialInputPricePermission.AddChild(QuoteFlowPermissions.SpecialInputPrice.Edit, L("Permission:Edit"));
-        specialInputPricePermission.AddChild(QuoteFlowPermissions.SpecialInputPrice.Delete, L("Permission:Delete"));
-        specialInputPricePermission.AddChild(QuoteFlowPermissions.SpecialInputPrice.Import, L("Permission:Import"));
-
-        //Purchase Order
-        var purchaseOrderPermission = myGroup.AddPermission(QuoteFlowPermissions.PurchaseOrders.Default, L("Permission:PurchaseOrders"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.Edit, L("Permission:Edit"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.Create, L("Permission:Create"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.Delete, L("Permission:Delete"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.DeleteItem, L("Permission:DeleteItem"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.ImportSAPPO, L("Permission:ImportSAPPO"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.ExportPOSAP, L("Permission:ExportPOSAP"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.ExportListPO, L("Permission:ExportListPO"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.PODataReport, L("Permission:PODataReport"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.ExportStandard, L("Permission:ExportStandard"));
-        purchaseOrderPermission.AddChild(QuoteFlowPermissions.PurchaseOrders.ExportFASCM, L("Permission:ExportFASCM"));
-
-        //Cargo
-        var cargoDataPermission = myGroup.AddPermission(QuoteFlowPermissions.CargoDatas.Default, L("Permission:CargoDatas"));
-        cargoDataPermission.AddChild(QuoteFlowPermissions.CargoDatas.ImportData, L("Menu:Cargo:CargoImport"));
-        cargoDataPermission.AddChild(QuoteFlowPermissions.CargoDatas.CargoReport, L("Permission:CargoReport"));
-        cargoDataPermission.AddChild(QuoteFlowPermissions.CargoDatas.Delete, L("Permission:Delete"));
-
-        // Invoice
-        var invoicePermission = myGroup.AddPermission(QuoteFlowPermissions.Shipments.Default, L("Permission:Shipments"));
-
-        // Allocation Priority
-        var allocationPriority = invoicePermission.AddChild(QuoteFlowPermissions.Shipments.AllocationPriority.AllocationPriorityDefault, L("Permission:AllocationPriority"));
-        allocationPriority.AddChild(QuoteFlowPermissions.Shipments.AllocationPriority.Import, L("Permission:Import"));
-        allocationPriority.AddChild(QuoteFlowPermissions.Shipments.AllocationPriority.Delete, L("Permission:Delete"));
-
-        // Supplier Shipment
-        var supplierShipments = invoicePermission.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.SupplierShipmentDefault, L("Permission:SupplierShipments"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.ViewDetail, L("Permission:ViewDetail"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.Import, L("Permission:Import"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.Confirm, L("Permission:Confirm"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.Delete, L("Permission:Delete"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.ExportPurchaseInvoice, L("Permission:ExportPurchaseInvoice"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.ExportInvoiceSAPData, L("Permission:ExportInvoiceSAPData"));
-        supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.ExportInvoiceAllocation, L("Permission:ExportInvoiceAllocation"));
-        var allocationDetails = supplierShipments.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.AllocationDetails.AllocationDetailDefault, L("Permission:AllocationDetails"));
-        allocationDetails.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.AllocationDetails.View, L("Permission:View"));
-        allocationDetails.AddChild(QuoteFlowPermissions.Shipments.SupplierShipments.AllocationDetails.Export, L("Permission:Export"));
-
-        //PSI
-        var psiPermission = myGroup.AddPermission(QuoteFlowPermissions.PSIs.Default, L("Permission:PSIs"));
-        psiPermission.AddChild(QuoteFlowPermissions.PSIs.ImportData, L("Menu:PSI:List"));
-        psiPermission.AddChild(QuoteFlowPermissions.PSIs.PSIReport, L("Permission:PSIReport"));
-
+     
         //Stock Tracing
         var stockTracingPermission = myGroup.AddPermission(QuoteFlowPermissions.StockTracings.Default, L("Permission:StockTracings"));
         stockTracingPermission.AddChild(QuoteFlowPermissions.StockTracings.ImportData, L("Permission:ImportData"));
@@ -217,8 +109,6 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         reportsPermission.AddChild(QuoteFlowPermissions.Reports.R24DPOProcessing, L("Permission:R24DPOProcessing"));
         reportsPermission.AddChild(QuoteFlowPermissions.Reports.R21OverallStock, L("Permission:R21OverallStock"));
         reportsPermission.AddChild(QuoteFlowPermissions.Reports.R15Inventory, L("Permission:R15Inventory"));
-        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R06Sale, L("Permission:R06Sale"));
-        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R05Sale, L("Permission:R05Sale"));
         reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportGeneral, L("Permission:CustomerSaleReportGeneral"));
         reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportDetail, L("Permission:CustomerSaleReportDetail"));
 
@@ -293,78 +183,11 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         buyerTargetPermission.AddChild(QuoteFlowPermissions.FAAdmins.DeleteBuyerTarget, L("Permission:Delete"));
         var cfgDiscountRatioPermission = faAdminPermission.AddChild(QuoteFlowPermissions.FAAdmins.CfgDiscountRatio, L("Permission:CfgDiscountRatio"));
         cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.FAAdmins.ViewCfgDiscountRatio, L("Permission:ViewCfgDiscountRatio"));
-        //cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.FAAdmins.CreateCfgDiscountRatio, L("Permission:CreateCfgDiscountRatio"));
         cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.FAAdmins.EditCfgDiscountRatio, L("Permission:EditCfgDiscountRatio"));
-        //cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.FAAdmins.DeleteCfgDiscountRatio, L("Permission:DeleteCfgDiscountRatio"));
-
         var workflowConfiguration = myGroup.AddPermission(QuoteFlowPermissions.WorkflowConfigurations.Default, L("Permission:WorkflowConfiguration"));
         workflowConfiguration.AddChild(QuoteFlowPermissions.WorkflowConfigurations.View, L("Permission:View"));
         workflowConfiguration.AddChild(QuoteFlowPermissions.WorkflowConfigurations.Edit, L("Permission:Edit"));
 
-        //var cfgDiscountRatioPermission = myGroup.AddPermission(QuoteFlowPermissions.CfgDiscountRatios.Default, L("Permission:CfgDiscountRatios"));
-        //cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.CfgDiscountRatios.Create, L("Permission:Create"));
-        //cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.CfgDiscountRatios.Edit, L("Permission:Edit"));
-        //cfgDiscountRatioPermission.AddChild(QuoteFlowPermissions.CfgDiscountRatios.Delete, L("Permission:Delete"));
-
-
-        // FATAs
-        var assetPermission = myGroup.AddPermission(QuoteFlowPermissions.Assets.Default, L("Permission:Assets"));
-        var fataCategoryPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATACategory, L("Permission:FATACategory"));
-        fataCategoryPermission.AddChild(QuoteFlowPermissions.Assets.ImportCreate, L("Permission:ImportCreate"));
-        fataCategoryPermission.AddChild(QuoteFlowPermissions.Assets.ImportUpdate, L("Permission:ImportUpdate"));
-        //fataCategoryPermission.AddChild(QuoteFlowPermissions.Assets.Delete, L("Permission:Delete"));
-        fataCategoryPermission.AddChild(QuoteFlowPermissions.Assets.ViewLandingPrice, L("Permission:ViewLandingPrice"));
-        fataCategoryPermission.AddChild(QuoteFlowPermissions.Assets.ExportReport, L("Permission:ExportReport"));
-        
-        // 0. Asset Approve Request
-        var assetApprovePermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATAApproveRequests, L("Permission:AssetApproveRequests"));
-
-        //// 1. Asset Request
-        //var assetRequestPermission = myGroup.AddPermission(QuoteFlowPermissions.Assets.Default, L("Permission:AssetRequests"));
-        //assetRequestPermission.AddChild(QuoteFlowPermissions.Assets.ViewList, L("Permission:ViewList"));
-        //assetRequestPermission.AddChild(QuoteFlowPermissions.AssetRequests.ViewSale, L("Permission:ViewSale"));
-
-       
-        // 2. PIC Transfer
-        var picTransferPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.PICTransfer, L("Permission:PICTransfer"));
-        picTransferPermission.AddChild(QuoteFlowPermissions.Assets.CreatePICTransfer, L("Permission:Create"));
-        picTransferPermission.AddChild(QuoteFlowPermissions.Assets.ViewFullPICPICTransfer, L("Permission:ViewFullPIC"));
-        //picTransferPermission.AddChild(QuoteFlowPermissions.Assets.EditPICTransfer, L("Permission:Edit"));
-        //picTransferPermission.AddChild(QuoteFlowPermissions.Assets.DeletePICTransfer, L("Permission:Delete"));
-
-        // 3. Asset Lending
-        var assetLendingPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATALending, L("Permission:AssetLending"));
-        assetLendingPermission.AddChild(QuoteFlowPermissions.Assets.CreateFATALending, L("Permission:Create"));
-        assetLendingPermission.AddChild(QuoteFlowPermissions.Assets.ExtendFATALending, L("Permission:Extend"));
-        //assetLendingPermission.AddChild(QuoteFlowPermissions.Assets.Edit, L("Permission:Edit"));
-        //assetLendingPermission.AddChild(QuoteFlowPermissions.Assets.Delete, L("Permission:Delete"));
-
-        // 4. Asset Liquidation
-        var assetLiquidationPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATALiquidation, L("Permission:AssetLiquidation"));
-        assetLiquidationPermission.AddChild(QuoteFlowPermissions.Assets.CreateFATALiquidation, L("Permission:Create"));
-        //assetLiquidationPermission.AddChild(QuoteFlowPermissions.Assets.Edit, L("Permission:Edit"));
-        //assetLiquidationPermission.AddChild(QuoteFlowPermissions.Assets.Delete, L("Permission:Delete"));
-
-        // 5. Asset Audit
-        var assetAuditPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATAAudit, L("Permission:AssetAudit"));
-        assetAuditPermission.AddChild(QuoteFlowPermissions.Assets.CreateFATAAudit, L("Permission:Create"));
-        assetAuditPermission.AddChild(QuoteFlowPermissions.Assets.ExportFATAAudit, L("Permission:Export"));
-        assetAuditPermission.AddChild(QuoteFlowPermissions.Assets.ImportFATAAudit, L("Permission:Import"));
-
-        // 6. Asset StockTransfer
-        var assetStockTransferPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATAStockTransfer, L("Permission:AssetStockTransfer"));
-        assetStockTransferPermission.AddChild(QuoteFlowPermissions.Assets.CreateFATAStockTransfer, L("Permission:Create"));
-        assetStockTransferPermission.AddChild(QuoteFlowPermissions.Assets.ViewFullPICFATAStockTransfer, L("Permission:ViewFullPIC"));
-        //assetStockTransferPermission.AddChild(QuoteFlowPermissions.Assets.EditFATAStockTransfer, L("Permission:Edit"));
-        //assetStockTransferPermission.AddChild(QuoteFlowPermissions.Assets.DeleteFATAStockTransfer, L("Permission:Delete"));
-
-        // 7. Asset Reports
-        //var assetReportsPermission = assetPermission.AddChild(QuoteFlowPermissions.Assets.FATAReports, L("Permission:AssetReports"));
-
-        //var assetRequestDetailPermission = myGroup.AddPermission(QuoteFlowPermissions.AssetRequestDetails.Default, L("Permission:AssetRequestDetails"));
-        //assetRequestDetailPermission.AddChild(QuoteFlowPermissions.AssetRequestDetails.Create, L("Permission:Create"));
-        //assetRequestDetailPermission.AddChild(QuoteFlowPermissions.AssetRequestDetails.Edit, L("Permission:Edit"));
-        //assetRequestDetailPermission.AddChild(QuoteFlowPermissions.AssetRequestDetails.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

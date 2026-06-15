@@ -1,5 +1,4 @@
-﻿using QuoteFlow.GICs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
@@ -30,11 +29,11 @@ public class GetSaleOrderListDetailGICsInput : PagedAndSortedResultRequestDto
             yield return result;
         }
 
-        if ((GICType == GICTypeCodes.Internal || GICType == GICTypeCodes.Warranty)
-            && string.IsNullOrEmpty(GICProcess))
-        {
-            yield return new ValidationResult($"GICProcess is required when GICType is '{GICTypeCodes.Internal}' or '{GICTypeCodes.Warranty}'", new[] { nameof(GICProcess) });
-        }
+        //if ((GICType == GICTypeCodes.Internal || GICType == GICTypeCodes.Warranty)
+        //    && string.IsNullOrEmpty(GICProcess))
+        //{
+        //    yield return new ValidationResult($"GICProcess is required when GICType is '{GICTypeCodes.Internal}' or '{GICTypeCodes.Warranty}'", new[] { nameof(GICProcess) });
+        //}
     }
 }
 

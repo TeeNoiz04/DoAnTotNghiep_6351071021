@@ -1,4 +1,3 @@
-using QuoteFlow.GICs;
 using QuoteFlow.SaleOrders.ParameterObjects;
 using QuoteFlow.Shared.Models;
 using System;
@@ -118,7 +117,7 @@ public class SaleOrderManager : DomainService
         return draftCode;
     }
 
-
+    // Need to check 
     public async Task<string> CheckSameGICTypeAsync(string ids, bool? exportSAP = false)
     {
         if (string.IsNullOrWhiteSpace(ids))
@@ -148,21 +147,10 @@ public class SaleOrderManager : DomainService
 
         var inputGicType = gicTypeList[0];
 
-        if (inputGicType.Equals(GICTypeCodes.Internal, StringComparison.OrdinalIgnoreCase))
-        {
-            var distinctGICProcess = gicProcessList.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            if (distinctGICProcess.Count > 1)
-            {
-                throw new UserFriendlyException("All selected SO-GIC-IU items must share the same GIC Process.");
-            }
-        }
-        else
-        {
             if (exportSAP != true)
             {
                 throw new UserFriendlyException("All selected SO-GIC must be **Internal Use**.");
             }
-        }
 
         return inputGicType;
 
@@ -173,18 +161,6 @@ public class SaleOrderManager : DomainService
         if (soType.Equals(SaleOrderTypes.DPO, StringComparison.OrdinalIgnoreCase))
         {
             return SaleOrderConsts.SaleOrderDPOPrefix;
-        }
-
-        if (soType.Equals(SaleOrderTypes.GIC, StringComparison.OrdinalIgnoreCase))
-        {
-            return gicType switch
-            {
-                GICTypeCodes.Warranty => SaleOrderConsts.SaleOrderGICWRPrefix,
-                GICTypeCodes.Internal => SaleOrderConsts.SaleOrderGICIUPrefix,
-                GICTypeCodes.GivingSponsor => SaleOrderConsts.SaleOrderGICFOCPrefix,
-                GICTypeCodes.WriteOff => SaleOrderConsts.SaleOrderGICWOPrefix,
-                _ => SaleOrderConsts.SaleOrderGICPrefix,
-            };
         }
         throw new UserFriendlyException("Invalid Sale Order type.");
     }

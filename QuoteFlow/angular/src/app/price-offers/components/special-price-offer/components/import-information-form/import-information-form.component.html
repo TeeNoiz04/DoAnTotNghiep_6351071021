@@ -113,43 +113,6 @@
           </div>
         </div>
 
-        <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
-        <div class="row mb-1" *ngIf="service.importInfoDetailForm.get('keyAccountName')?.value !== null">
-          <div class="col-md-6">
-            <div>
-              <label class="form-label" for="keyAccountNameReadonly">Key Account Name</label>
-              <input
-                autocomplete="off"
-                id="keyAccountNameReadonly"
-                class="form-control"
-                formControlName="keyAccountName"
-                readonly />
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div>
-              <label class="form-label" for="keyAccountTypeReadonly">Key Account Type</label>
-              <input
-                autocomplete="off"
-                id="keyAccountTypeReadonly"
-                class="form-control"
-                formControlName="keyAccountType"
-                readonly />
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div>
-              <label class="form-label" for="keyAccountClassReadonly">Key Account Class</label>
-              <input
-                autocomplete="off"
-                id="keyAccountClassReadonly"
-                class="form-control"
-                formControlName="keyAccountClass"
-                readonly />
-            </div>
-          </div>
-        </div>
-
         <!-- Row 5: Reason to offer this price 12 -->
         <div class="row mb-1">
           <div class="col-12">
@@ -383,40 +346,7 @@
             </div>
           </div>
 
-          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
-          <div class="row mb-1">
-            <div class="col-md-6">
-              <div>
-                <label class="form-label" for="keyAccountNameFilter">Key Account Name</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountNameFilter"
-                  class="form-control"
-                  formControlName="keyAccountName" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountTypeFilter">Key Account Type</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountTypeFilter"
-                  class="form-control"
-                  formControlName="keyAccountType" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountClassFilter">Key Account Class</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountClassFilter"
-                  class="form-control"
-                  formControlName="keyAccountClass" />
-              </div>
-            </div>
-          </div>
-
+      
           <!-- Row 5: Reason to offer this price 12 -->
           <div class="row mb-1">
             <div class="col-12">
@@ -743,40 +673,6 @@
             </div>
           </div>
 
-          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
-          <div class="row mb-1">
-            <div class="col-md-6">
-              <div>
-                <label class="form-label" for="keyAccountNameFilter">Key Account Name</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountNameFilter"
-                  class="form-control"
-                  formControlName="keyAccountName" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountTypeFilter">Key Account Type</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountTypeFilter"
-                  class="form-control"
-                  formControlName="keyAccountType" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountClassFilter">Key Account Class</label>
-                <input
-                  autocomplete="off"
-                  id="keyAccountClassFilter"
-                  class="form-control"
-                  formControlName="keyAccountClass" />
-              </div>
-            </div>
-          </div>
-
           <!-- Row 5: Reason to offer this price 12 -->
           <div class="row mb-1">
             <div class="col-12">
@@ -1038,47 +934,7 @@
               </div>
             </div>
           </div>
-
-          <!-- Row 4: Key Account Name 6, Key Account Type 3, Key Account Class 3 -->
-          <div class="row mb-1">
-            <div class="col-md-6">
-              <div>
-                <label class="form-label" for="keyAccountName">Key Account Name</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountName"
-                  formControlName="keyAccountName"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountType">Key Account Type</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountType"
-                  formControlName="keyAccountType"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountClass">Key Account Class</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountClass"
-                  formControlName="keyAccountClass"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-          </div>
-
+      
           <!-- Row 5: Note -->
           <div class="row mb-1">
             <div class="col-12">
@@ -1412,46 +1268,6 @@
               </div>
             </div>
           </div>
-          <!-- Row 3: Key Account fields (if present) -->
-          <div class="row mb-1" *ngIf="importInfoForm.get('keyAccountName')?.value">
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountName">Key Account</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountName"
-                  formControlName="keyAccountName"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountType">Key Account Type</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountType"
-                  formControlName="keyAccountType"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div>
-                <label class="form-label" for="keyAccountClass">Key Account Class</label>
-                <input
-                  autocomplete="off"
-                  type="text"
-                  id="keyAccountClass"
-                  formControlName="keyAccountClass"
-                  class="form-control"
-                  [readonly]="isReadonly" />
-              </div>
-            </div>
-          </div>
-
           <!-- Row 4: Note -->
           <div class="row mb-1">
             <div class="col-12">

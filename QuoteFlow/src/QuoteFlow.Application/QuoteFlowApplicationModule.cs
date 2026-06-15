@@ -1,12 +1,3 @@
-using QuoteFlow.AssetRequestDetails.ParametersObjec;
-using QuoteFlow.AssetRequests;
-using QuoteFlow.AssetRequests.Excels;
-using QuoteFlow.Assets;
-using QuoteFlow.Assets.Excels;
-using QuoteFlow.Assets.ParameterObjects;
-using QuoteFlow.Cargos;
-using QuoteFlow.Cargos.CargoDatas.ParameterObjects;
-using QuoteFlow.Cargos.Excels;
 using QuoteFlow.Customers;
 using QuoteFlow.Customers.Excels.Converters;
 using QuoteFlow.Customers.Excels.Validators;
@@ -17,21 +8,6 @@ using QuoteFlow.DPOs.DPODetails.ParameterObjects;
 using QuoteFlow.DPOs.Excels.ImportDPO.Converters;
 using QuoteFlow.DPOs.Excels.ImportDPO.Validators;
 using QuoteFlow.DPOs.ParameterObjects;
-using QuoteFlow.GICs;
-using QuoteFlow.GICs.Excels.GICInternal.Converters;
-using QuoteFlow.GICs.Excels.GICInternal.Validators;
-using QuoteFlow.GICs.Excels.GICSponser.Converters;
-using QuoteFlow.GICs.Excels.GICSponser.Validators;
-using QuoteFlow.GICs.Excels.GICWarranty.Converters;
-using QuoteFlow.GICs.Excels.GICWarranty.Validators;
-using QuoteFlow.GICs.Excels.GICWriteOff.Converters;
-using QuoteFlow.GICs.Excels.GICWriteOff.Validators;
-using QuoteFlow.GICs.Excels.Shared;
-using QuoteFlow.GICs.GICDetails;
-using QuoteFlow.GKRs;
-using QuoteFlow.GKRs.Excels.ImportGKR.Converters;
-using QuoteFlow.GKRs.Excels.ImportGKR.Validators;
-using QuoteFlow.GKRs.GKRDetails;
 using QuoteFlow.Materials;
 using QuoteFlow.Materials.Excels.MaterialFactory;
 using QuoteFlow.Materials.Excels.MaterialNewRegistrations;
@@ -65,49 +41,13 @@ using QuoteFlow.PriceOffers.PriceOfferCustomers;
 using QuoteFlow.PriceOffers.PriceOfferCustomers.ParameterObject;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
 using QuoteFlow.PriceOffers.PriceOfferDetails.ParameterObjects;
-using QuoteFlow.PSIs;
-using QuoteFlow.PSIs.Excels.FA.Converters;
-using QuoteFlow.PSIs.Excels.FA.Validators;
-using QuoteFlow.PSIs.Excels.LVS.Converters;
-using QuoteFlow.PSIs.Excels.LVS.Validators;
-using QuoteFlow.PSIs.ParameterObjects;
-using QuoteFlow.PSIs.PSIDetails;
-using QuoteFlow.PSIs.PSIDetails.ParameterObject;
-using QuoteFlow.PurchaseOrders.Excel;
-using QuoteFlow.PurchaseOrders.Excel.Conventer;
-using QuoteFlow.PurchaseOrdersSapImports.Excel;
-using QuoteFlow.PurchaseOrdersSapImports.ParameterObject;
 using QuoteFlow.RequesterContexts;
 using QuoteFlow.SaleOrders.Excel;
 using QuoteFlow.SaleOrders.Excel.Conventer;
-using QuoteFlow.SaleOrders.GICExcel.FOC;
-using QuoteFlow.SaleOrders.GICExcel.FOC.Converter;
-using QuoteFlow.SaleOrders.GICExcel.InternalUse;
-using QuoteFlow.SaleOrders.GICExcel.InternalUse.Converter;
-using QuoteFlow.SaleOrders.GICExcel.InternalUse_Change;
-using QuoteFlow.SaleOrders.GICExcel.InternalUse_Change.Converter;
-using QuoteFlow.SaleOrders.GICExcel.Warranty;
-using QuoteFlow.SaleOrders.GICExcel.Warranty.Converter;
-using QuoteFlow.SaleOrders.GICExcel.WriteOff;
-using QuoteFlow.SaleOrders.GICExcel.WriteOff.Converter;
 using QuoteFlow.SaleOrdersSapImports.ParameterObjects;
 using QuoteFlow.Shared.Excels;
 using QuoteFlow.Shared.Flagging;
-using QuoteFlow.SpecialInputPrices;
-using QuoteFlow.SpecialInputPrices.Excels.Conventer;
-using QuoteFlow.SpecialInputPrices.Excels.Validators;
-using QuoteFlow.SpecialInputPrices.SpecialInputPriceDetails.ParameterObject;
-using QuoteFlow.SpoBatchRequests.Excel;
-using QuoteFlow.SpoBatchRequests.Excel.Converters;
-using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
-using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails.ParameterObject;
-using QuoteFlow.StockImportDetails.ParameterObject;
-using QuoteFlow.StockImportPriorities.Excel;
-using QuoteFlow.StockImportPriorities.Excel.Conventer;
-using QuoteFlow.StockImportPriorities.ParameterObjects;
-using QuoteFlow.StockImports.Excel;
-using QuoteFlow.StockImports.Excels;
-using QuoteFlow.StockImports.Excels.Converter;
+
 using QuoteFlow.StockManagements.Excels.StockInventory.Converters;
 using QuoteFlow.StockManagements.Excels.StockInventory.Validators;
 using QuoteFlow.StockManagements.Excels.StockTransfer.Converters;
@@ -115,10 +55,6 @@ using QuoteFlow.StockManagements.Excels.StockTransfer.Validators;
 using QuoteFlow.StockTracingDetails.ParameterObjects;
 using QuoteFlow.StockTracings;
 using QuoteFlow.StockTracings.Excels;
-using QuoteFlow.SupplierBUs;
-using QuoteFlow.SupplierBUs.Excels.Converter;
-using QuoteFlow.SupplierBUs.Excels.Validations;
-using QuoteFlow.SupplierBUs.ParameterObjects;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -283,44 +219,18 @@ public class QuoteFlowApplicationModule : AbpModule
         services.AddKeyedScoped<IExcelRowValidator<StockTracingInventoryImportDto>, StockTracingInventoryRowValidator>(stockTracingInventory);
         services.AddKeyedScoped<IExcelRowValidator<StockTracingReceiptImportDto>, StockTracingReceiptRowValidator>(stockTracingReceipt);
 
-        services.AddKeyedScoped<IExcelRowValidator<CargoImportDto>, CargoRowValidator>(cargo);
-        services.AddKeyedScoped<IExcelRowValidator<AssetImportDto>, AssetRowValidator>(asset);
-        services.AddKeyedScoped<IExcelRowValidator<AssetImportDto>, AssetRowValidator>(assetUpdate);
-        services.AddKeyedScoped<IExcelRowValidator<AssetAuditImportDto>, AssetAuditRowValidator>(assetAudit);
-
-        services.AddKeyedScoped<IExcelRowValidator<SupplierBUImportDto>, SupplierBURowValidator>(supplierBU);
         services.AddKeyedScoped<IExcelRowValidator<CustomerImportDto>, ImportCustomerRowValidator>(customer);
 
         services.AddKeyedScoped<IExcelRowValidator<MaterialSAPUpdateExcelDto>, MaterialSAPRowValidatior>(materialSAP);
         services.AddKeyedScoped<IExcelRowValidator<MaterialFactoryUpdateExcelDto>, MaterialFactoryRowValidatior>(materialFactory);
         services.AddKeyedScoped<IExcelRowValidator<MaterialStatusUpdateExcelDto>, MaterialStatusRowValidator>(materialStatus);
 
-        services.AddKeyedScoped<IExcelRowValidator<PSIDetailImportDto>, PSI_FADetailRowValidator>(pSI_FA);
-        services.AddKeyedScoped<IExcelRowValidator<PSIDetailImportDto>, PSI_LVSDetailRowValidator>(pSI_LVS);
-
-        services.AddKeyedScoped<IExcelRowValidator<GICDetailImportDto>, GICWarrantyRowValidator>(gicWarranty);
-        services.AddKeyedScoped<IExcelRowValidator<GICDetailImportDto>, GICSponsorRowValidator>(gicSponsor);
-        services.AddKeyedScoped<IExcelRowValidator<GICDetailImportDto>, GICInternalRowValidator>(gicInternal);
-        services.AddKeyedScoped<IExcelRowValidator<GICDetailImportDto>, GICWriteOffRowValidator>(gicWriteOff);
-
-        services.AddKeyedScoped<IExcelRowValidator<StockImportExcelDto>, StockImportExcelRowValidation>(stockImport);
-        services.AddKeyedScoped<IExcelRowValidator<SpecialInputPriceDetailImportDto>, SpecialImportExcelRowValidator>(special);
-        services.AddKeyedScoped<IExcelRowValidator<StockImportPriorityExcelDto>, StockImportPriorityExcelRowValidation>(stockImportPriority);
-
+       
         services.AddKeyedScoped<IExcelRowValidator<ImportDPODetailDto>, ImportDPODetailRowValidator>(dpo);
 
-        services.AddKeyedScoped<IExcelRowValidator<GKRDetailImportDto>, ImportGKRDetailRowValidator>(gkr);
-
         services.AddKeyedScoped<IExcelRowValidator<SaleOrderExcelDto>, SaleOrderExcelRowValidation>(so);
-        services.AddKeyedScoped<IExcelRowValidator<SaleOrderGICWarrantyExcelDto>, SaleOrderGICWarrantyRowValidation>(so_WR);
-        services.AddKeyedScoped<IExcelRowValidator<SaleOrderGICInternalUseExcelDto>, SaleOrderGICInternalUseRowValidation>(so_IU);
-        services.AddKeyedScoped<IExcelRowValidator<SaleOrderGICInternalUseChangeExcelDto>, SaleOrderGICInternalUseChangeRowValidation>(so_IUC);
-        services.AddKeyedScoped<IExcelRowValidator<SaleOrderGICFOCExcelDto>, SaleOrderGICFOCExcelRowValidation>(so_FOC);
-        services.AddKeyedScoped<IExcelRowValidator<SaleOrderGICWriteOffExcelDto>, SaleOrderGICWriteOffExcelRowValidation>(so_WO);
-        services.AddKeyedScoped<IExcelRowValidator<PurchaseOrdersSapImportsExcelDto>, PurchaseOrderSapImportExcelRowValidation>(po);
-
-        services.AddKeyedScoped<IExcelRowValidator<SpoBatchRequestDetailImportDto>, SpoBatchRequestDetailRowValidator>(br);
-
+     
+      
         // Sub-list validators
         services.AddKeyedScoped<IExcelValidator<PriceOfferDetailImportDto>>(priceOfferPP, (provider, _) =>
         {
@@ -354,53 +264,7 @@ public class QuoteFlowApplicationModule : AbpModule
             return new BaseExcelValidator<PriceOfferDetailImportDto>(config, rowValidator, logger);
         });
 
-        services.AddKeyedScoped<IExcelValidator<PSIDetailImportDto>>(pSI_FA, (provider, _) =>
-        {
-            var config = new PSI_FADetailValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<PSIDetailImportDto>>(pSI_FA);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<PSIDetailImportDto>>>();
-            return new BaseExcelValidator<PSIDetailImportDto>(config, rowValidator, logger);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<PSIDetailImportDto>>(pSI_LVS, (provider, _) =>
-        {
-            var config = new PSI_LVSDetailValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<PSIDetailImportDto>>(pSI_LVS);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<PSIDetailImportDto>>>();
-            return new BaseExcelValidator<PSIDetailImportDto>(config, rowValidator, logger);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICDetailImportDto>>(gicSponsor, (provider, _) =>
-        {
-            var config = new GICSponsorValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<GICDetailImportDto>>(gicSponsor);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<GICDetailImportDto>>>();
-            return new GICBaseValidator(config, rowValidator, logger);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICDetailImportDto>>(gicInternal, (provider, _) =>
-        {
-            var config = new GICInternalValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<GICDetailImportDto>>(gicInternal);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<GICDetailImportDto>>>();
-            return new GICBaseValidator(config, rowValidator, logger);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICDetailImportDto>>(gicWriteOff, (provider, _) =>
-        {
-            var config = new GICWriteOffValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<GICDetailImportDto>>(gicWriteOff);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<GICDetailImportDto>>>();
-            return new GICBaseValidator(config, rowValidator, logger);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICDetailImportDto>>(gicWarranty, (provider, _) =>
-        {
-            var config = new GICWarrantyValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<GICDetailImportDto>>(gicWarranty);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<GICDetailImportDto>>>();
-            return new GICBaseValidator(config, rowValidator, logger);
-        });
+      
 
         services.AddKeyedScoped<IExcelValidator<PriceOfferDetailImportDto>>(priceOfferAddMoreItem, (provider, _) =>
         {
@@ -491,23 +355,7 @@ public class QuoteFlowApplicationModule : AbpModule
         //    var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<StockTracingReceiptImportDto>>>();
         //    return new BaseExcelValidator<StockTracingReceiptImportDto>(config, rowValidator, logger);
         //});
-        services.AddKeyedScoped<IExcelValidator<CargoImportDto>>(cargo, (provider, _) =>
-        {
-            var config = new CargoValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<CargoImportDto>>(cargo);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<CargoImportDto>>>();
-            return new BaseExcelValidator<CargoImportDto>(config, rowValidator, logger);
-        });
-
-
-        services.AddKeyedScoped<IExcelValidator<AssetImportDto>>(asset, (provider, _) =>
-        {
-            var config = new AssetValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<AssetImportDto>>(asset);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<AssetImportDto>>>();
-            return new BaseExcelValidator<AssetImportDto>(config, rowValidator, logger);
-        });
-
+      
 
         services.AddKeyedScoped<IExcelValidator<StockTracingDeliveryImportDto>>(stockTracingDelivery, (provider, _) =>
         {
@@ -573,13 +421,7 @@ public class QuoteFlowApplicationModule : AbpModule
             return new ImportDPODetailValidator(config, rowValidator, priceOfferRepository, logger, provider);
         });
 
-        services.AddKeyedScoped<IExcelValidator<GKRDetailImportDto>>(gkr, (provider, _) =>
-        {
-            var config = new ImportGKRDetailValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<GKRDetailImportDto>>(gkr);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<GKRDetailImportDto>>>();
-            return new ImportGKRDetailValidator(config, rowValidator, logger, provider);
-        });
+     
 
         // Full File Validators
         services.AddKeyedScoped<IExcelValidator<PriceOfferImportDto>>(priceOfferPP, (provider, _) =>
@@ -622,68 +464,7 @@ public class QuoteFlowApplicationModule : AbpModule
             );
         });
 
-        services.AddKeyedScoped<IExcelValidator<PSIImportDto>>(pSI_FA, (provider, _) =>
-        {
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<PSIDetailImportDto>>(pSI_FA);
-            return new PSI_FAValidator(
-                offerDetailValidator,
-                provider
-
-            );
-        });
-
-        services.AddKeyedScoped<IExcelValidator<PSIImportDto>>(pSI_LVS, (provider, _) =>
-        {
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<PSIDetailImportDto>>(pSI_LVS);
-            return new PSI_LVSValidator(
-                offerDetailValidator,
-                provider
-
-            );
-        });
-        services.AddKeyedScoped<IExcelValidator<GICImportDto>>(gicWarranty, (provider, _) =>
-        {
-            var config = new GICWarrantyValidationConfig();
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<GICDetailImportDto>>(gicWarranty);
-            return new GICWarrantyValidator(
-                offerDetailValidator,
-                provider,
-                config
-            );
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICImportDto>>(gicSponsor, (provider, _) =>
-        {
-            var config = new GICSponsorValidationConfig();
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<GICDetailImportDto>>(gicSponsor);
-            return new GICSponsorValidator(
-                offerDetailValidator,
-                provider,
-                config
-            );
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICImportDto>>(gicInternal, (provider, _) =>
-        {
-            var config = new GICInternalValidationConfig();
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<GICDetailImportDto>>(gicInternal);
-            return new GICInternalValidator(
-                offerDetailValidator,
-                provider,
-                config
-            );
-        });
-
-        services.AddKeyedScoped<IExcelValidator<GICImportDto>>(gicWriteOff, (provider, _) =>
-        {
-            var config = new GICWriteOffValidationConfig();
-            var offerDetailValidator = provider.GetRequiredKeyedService<IExcelValidator<GICDetailImportDto>>(gicWriteOff);
-            return new GICWriteOffValidator(
-                offerDetailValidator,
-                provider,
-                config
-            );
-        });
+      
 
         services.AddKeyedScoped<IExcelValidator<ImportDPODto>>(dpo, (provider, _) =>
         {
@@ -693,14 +474,7 @@ public class QuoteFlowApplicationModule : AbpModule
                 provider
             );
         });
-        services.AddKeyedScoped<IExcelValidator<GKRImportDto>>(gkr, (provider, _) =>
-        {
-            var detailValidator = provider.GetRequiredKeyedService<IExcelValidator<GKRDetailImportDto>>(gkr);
-            return new ImportGKRValidator(
-                detailValidator,
-                provider
-            );
-        });
+       
         services.AddKeyedScoped<IExcelValidator<MaterialStockUploadDetailImportTransferDto>>(stockManagementTransfer, (provider, _) =>
         {
             var config = new StockTransferValidationConfig();
@@ -716,61 +490,7 @@ public class QuoteFlowApplicationModule : AbpModule
             var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<MaterialStockUploadDetailImportInventoryDto>>>();
             return new StockInventoryValidator(config, rowValidator, logger, provider);
         });
-        services.AddKeyedScoped<IExcelValidator<StockImportExcelDto>>(stockImport, (provider, _) =>
-        {
-            var config = new StockImportExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<StockImportExcelDto>>(stockImport);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<StockImportExcelDto>>>();
-            return new StockImportExcelValidator(config, rowValidator, logger, provider);
-        });
-        services.AddKeyedScoped<IExcelValidator<SpecialInputPriceDetailImportDto>>(special, (provider, _) =>
-        {
-            var config = new SpecialImportExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SpecialInputPriceDetailImportDto>>(special);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SpecialInputPriceDetailImportDto>>>();
-            return new SpecialInputPriceDetailValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<StockImportPriorityExcelDto>>(stockImportPriority, (provider, _) =>
-        {
-            var config = new StockImportPriorityExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<StockImportPriorityExcelDto>>(stockImportPriority);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<StockImportPriorityExcelDto>>>();
-            return new StockImportPriorityExcelValidator(config, rowValidator, logger, provider);
-        });
-        services.AddKeyedScoped<IExcelValidator<CargoImportDto>>(cargo, (provider, _) =>
-        {
-            var config = new CargoValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<CargoImportDto>>(cargo);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<CargoImportDto>>>();
-            return new CargoValidator(config, rowValidator, logger, provider);
-        });
-
-        #region Asset
-        services.AddKeyedScoped<IExcelValidator<AssetImportDto>>(asset, (provider, _) =>
-        {
-            var config = new AssetValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<AssetImportDto>>(asset);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<AssetImportDto>>>();
-            return new AssetValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<AssetAuditImportDto>>(assetAudit, (provider, _) =>
-        {
-            var config = new AssetAuditValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<AssetAuditImportDto>>(assetAudit);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<AssetAuditImportDto>>>();
-            return new AssetAuditValidator(config, rowValidator, logger, provider);
-        });
-        #endregion
-
-        services.AddKeyedScoped<IExcelValidator<SupplierBUImportDto>>(supplierBU, (provider, _) =>
-        {
-            var config = new SupplierBUImportConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SupplierBUImportDto>>(supplierBU);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SupplierBUImportDto>>>();
-            return new SupplierBUValidator(config, rowValidator, logger, provider);
-        });
+       
         services.AddKeyedScoped<IExcelValidator<CustomerImportDto>>(customer, (provider, _) =>
         {
             var config = new ImportCustomerValidationConfig();
@@ -785,61 +505,8 @@ public class QuoteFlowApplicationModule : AbpModule
             var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderExcelDto>>>();
             return new SaleOrderExcelValidator(config, rowValidator, logger, provider);
         });
-        services.AddKeyedScoped<IExcelValidator<SaleOrderGICWriteOffExcelDto>>(so_WO, (provider, _) =>
-        {
-            var config = new SaleOrderGICWriteOffExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SaleOrderGICWriteOffExcelDto>>(so_WO);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderGICWriteOffExcelDto>>>();
-            return new SaleOrderGICWriteOffExcelValidator(config, rowValidator, logger, provider);
-        });
-        services.AddKeyedScoped<IExcelValidator<SaleOrderGICWarrantyExcelDto>>(so_WR, (provider, _) =>
-        {
-            var config = new SaleOrderGICWarrantyExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SaleOrderGICWarrantyExcelDto>>(so_WR);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderGICWarrantyExcelDto>>>();
-            return new SaleOrderGICWarrantyExcelValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<SaleOrderGICInternalUseExcelDto>>(so_IU, (provider, _) =>
-        {
-            var config = new SaleOrderGICInternalUseExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SaleOrderGICInternalUseExcelDto>>(so_IU);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderGICInternalUseExcelDto>>>();
-            return new SaleOrderGICInternalUseExcelValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<SaleOrderGICInternalUseChangeExcelDto>>(so_IUC, (provider, _) =>
-        {
-            var config = new SaleOrderGICInternalUseChangeExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SaleOrderGICInternalUseChangeExcelDto>>(so_IUC);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderGICInternalUseChangeExcelDto>>>();
-            return new SaleOrderGICInternalUseChangeExcelValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<SaleOrderGICFOCExcelDto>>(so_FOC, (provider, _) =>
-        {
-            var config = new SaleOrderGICFOCExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SaleOrderGICFOCExcelDto>>(so_FOC);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderGICFOCExcelDto>>>();
-            return new SaleOrderGICFOCExcelValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<PurchaseOrdersSapImportsExcelDto>>(po, (provider, _) =>
-        {
-            var config = new PurchaseOrderSapImportExcelConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<PurchaseOrdersSapImportsExcelDto>>(po);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<PurchaseOrdersSapImportsExcelDto>>>();
-            return new PurchaseOrderSapImportExcelValidator(config, rowValidator, logger, provider);
-        });
-
-        services.AddKeyedScoped<IExcelValidator<SpoBatchRequestDetailImportDto>>(br, (provider, _) =>
-        {
-            var config = new SpoBatchRequestDetailValidationConfig();
-            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SpoBatchRequestDetailImportDto>>(br);
-            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SpoBatchRequestDetailImportDto>>>();
-            return new SpoBatchRequestDetailValidator(config, rowValidator, logger, provider);
-        });
-
+      
+    
         //----------------------------------------------------------------
 
         // Excel DTO Converters
@@ -853,20 +520,7 @@ public class QuoteFlowApplicationModule : AbpModule
         services.AddKeyedScoped<IExcelDtoConverter<PriceOfferDetailImportDto, PriceOfferDetailCreateParams>, PriceOfferNBDetailExcelDtoConverter>(priceOfferNB);
         services.AddKeyedScoped<IExcelDtoConverter<PriceOfferImportDto, PriceOfferCreateParams>, PriceOfferNBExcelDtoConverter>(priceOfferNB);
 
-        services.AddKeyedScoped<IExcelDtoConverter<GICDetailImportDto, DPODetailCreateParams>, GICWarrantyDetailExcelDtoConverter>(gicWarranty);
-        services.AddKeyedScoped<IExcelDtoConverter<GICImportDto, GICCreateParams>, GICWarrantyExcelDtoConverter>(gicWarranty);
-        services.AddKeyedScoped<IExcelDtoConverter<GICDetailImportDto, DPODetailCreateParams>, GICSponsorDetailExcelDtoConverter>(gicSponsor);
-        services.AddKeyedScoped<IExcelDtoConverter<GICImportDto, GICCreateParams>, GICSponsorExcelDtoConverter>(gicSponsor);
-        services.AddKeyedScoped<IExcelDtoConverter<GICDetailImportDto, DPODetailCreateParams>, GICInternalDetailExcelDtoConverter>(gicInternal);
-        services.AddKeyedScoped<IExcelDtoConverter<GICImportDto, GICCreateParams>, GICInternalExcelDtoConverter>(gicInternal);
-        services.AddKeyedScoped<IExcelDtoConverter<GICDetailImportDto, DPODetailCreateParams>, GICWriteOffDetailExcelDtoConverter>(gicWriteOff);
-        services.AddKeyedScoped<IExcelDtoConverter<GICImportDto, GICCreateParams>, GICWriteOffExcelDtoConverter>(gicWriteOff);
-
-        services.AddKeyedScoped<IExcelDtoConverter<PSIDetailImportDto, PSIDetailsCreateParams>, PSI_FADetailExcelDtoConverter>(pSI_FA);
-        services.AddKeyedScoped<IExcelDtoConverter<PSIImportDto, PSICreateParams>, PSI_FAExcelDtoConverter>(pSI_FA);
-        services.AddKeyedScoped<IExcelDtoConverter<PSIDetailImportDto, PSIDetailsCreateParams>, PSI_LVSDetailExcelDtoConverter>(pSI_LVS);
-        services.AddKeyedScoped<IExcelDtoConverter<PSIImportDto, PSICreateParams>, PSI_LVSExcelDtoConverter>(pSI_LVS);
-
+      
         services.AddKeyedScoped<IExcelDtoConverter<PriceOfferDetailImportDto, PriceOfferDetailCreateParams>, PriceOfferAddMoreItemExcelDtoConverter>(priceOfferAddMoreItem);
         services.AddKeyedScoped<IExcelDtoConverter<PriceOfferDetailImportDto, PriceOfferDetailCreateParams>, PriceOfferAddMoreItemExcelDtoConverter>(priceOfferAddMoreItem);
         services.AddKeyedScoped<IExcelDtoConverter<PriceOfferUpdateLandingCostImportDto, PriceOfferDetailUpdateLandingCostParams>, PriceOfferUpdateLandingCostExcelDtoConverter>(priceOfferUpdateLandingCost);
@@ -879,41 +533,22 @@ public class QuoteFlowApplicationModule : AbpModule
         services.AddKeyedScoped<IExcelDtoConverter<MaterialStatusUpdateExcelDto, ExcelMaterialStatusUpdateParams>, MaterialStatusExcelDtoConverter>(materialStatus);
         services.AddKeyedScoped<IExcelDtoConverter<MaterialStockUploadDetailImportTransferDto, MaterialStockUploadDetailCreateParams>, StockTransferExcelDtoConverter>(stockManagementTransfer);
         services.AddKeyedScoped<IExcelDtoConverter<MaterialStockUploadDetailImportInventoryDto, MaterialStockUploadDetailCreateParams>, StockInventoryExcelDtoConverter>(stockManagementInventory);
-        services.AddKeyedScoped<IExcelDtoConverter<CargoImportDto, CargoDataCreateParams>, CargoExcelDtoConverter>(cargo);
-        services.AddKeyedScoped<IExcelDtoConverter<AssetImportDto, AssetCreateParams>, AssetExcelDtoConverter>(asset);
-        services.AddKeyedScoped<IExcelDtoConverter<AssetImportDto, AssetUpdateParams>, AssetExcelUpdateDtoConverter>(assetUpdate);
-        services.AddKeyedScoped<IExcelDtoConverter<AssetAuditImportDto, AssetRequestDetailUpdateParams>, AssetAuditExcelUpdateDtoConverter>(assetAudit);
-        services.AddKeyedScoped<IExcelDtoConverter<SupplierBUImportDto, SupplierBUCreateParams>, SupplierBUImportConverter>(supplierBU);
-        services.AddKeyedScoped<IExcelDtoConverter<SupplierBUImportDto, SupplierBUImportUpdateParams>, SupplierBUImportUpdateConverter>(supplierBUUpdate);
-
+       
         services.AddKeyedScoped<IExcelDtoConverter<CustomerImportDto, CustomerCreateParams>, CustomerImportConverter>(customer);
         services.AddKeyedScoped<IExcelDtoConverter<CustomerImportDto, CustomerUpdateParams>, CustomerImportUpdateConverter>(customerUpdate);
 
         services.AddKeyedScoped<IExcelDtoConverter<StockTracingDeliveryImportDto, StockTracingDetailCreateParams>, StockTracingDeliveryExcelDtoConverter>(stockTracingDelivery);
         services.AddKeyedScoped<IExcelDtoConverter<StockTracingInventoryImportDto, StockTracingDetailCreateParams>, StockTracingInventoryExcelDtoConverter>(stockTracingInventory);
         services.AddKeyedScoped<IExcelDtoConverter<StockTracingReceiptImportDto, StockTracingDetailCreateParams>, StockTracingReceiptExcelDtoConverter>(stockTracingReceipt);
-        services.AddKeyedScoped<IExcelDtoConverter<SpoBatchRequestDetailImportDto, SpoBatchRequestDetailCreateParams>, SpoBatchRequestDetailExcelDtoConverter>(br);
-
+      
         // DPO Excel Converters
         services.AddKeyedScoped<IExcelDtoConverter<ImportDPODto, DPOCreateParams>, ImportDPOExcelDtoConverter>(dpo);
         services.AddKeyedScoped<IExcelDtoConverter<ImportDPODetailDto, DPODetailCreateParams>, ImportDPODetailExcelDtoConverter>(dpo);
 
         // GKR Excel Converters
-        services.AddKeyedScoped<IExcelDtoConverter<GKRImportDto, GKRCreateParams>, ImportGKRExcelDtoConverter>(gkr);
-        services.AddKeyedScoped<IExcelDtoConverter<GKRDetailImportDto, DPODetailCreateParams>, ImportGKRDetailExcelDtoConverter>(gkr);
-
-        services.AddKeyedScoped<IExcelDtoConverter<SpecialInputPriceDetailImportDto, SpecialInputPriceDetailCreateParams>, SpecialInputPriceDetailExcelDtoConverter>(special);
-        services.AddKeyedScoped<IExcelDtoConverter<StockImportExcelDto, StockImportDetailCreateParams>, StockImportExcelConverter>(stockImport);
-        services.AddKeyedScoped<IExcelDtoConverter<StockImportPriorityExcelDto, StockImportPriorityCreateParams>, StockImportPriorityExcelConventer>(stockImportPriority);
-
+      
         services.AddKeyedScoped<IExcelDtoConverter<SaleOrderExcelDto, SaleOrderSapImportCreateParams>, SaleOrderExcelConventer>(so);
-        services.AddKeyedScoped<IExcelDtoConverter<SaleOrderGICWarrantyExcelDto, SaleOrderSapImportCreateParams>, SaleOrderGICWrrantyConverter>(so_WR);
-        services.AddKeyedScoped<IExcelDtoConverter<SaleOrderGICInternalUseExcelDto, SaleOrderSapImportCreateParams>, SaleOrderGICInternalUseConverter>(so_IU);
-        services.AddKeyedScoped<IExcelDtoConverter<SaleOrderGICInternalUseChangeExcelDto, SaleOrderSapImportCreateParams>, SaleOrderGICInternalUseChangeConverter>(so_IUC);
-        services.AddKeyedScoped<IExcelDtoConverter<SaleOrderGICFOCExcelDto, SaleOrderSapImportCreateParams>, SaleOrderGICFOCConverter>(so_FOC);
-        services.AddKeyedScoped<IExcelDtoConverter<SaleOrderGICWriteOffExcelDto, SaleOrderSapImportCreateParams>, SaleOrderGICWriteOffConverter>(so_WO);
-        services.AddKeyedScoped<IExcelDtoConverter<PurchaseOrdersSapImportsExcelDto, PurchaseOrderSapImportCreateParams>, PurchaseOrderSapImportExcelConventer>(po);
-        // Factories
+         // Factories
         services.AddScoped<IExcelImportFactory, ExcelImportFactory>();
     }
 }

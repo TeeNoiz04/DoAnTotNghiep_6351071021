@@ -282,81 +282,6 @@ public class EfCoreMaterialRepository : EfCoreRepository<QuoteFlowDbContext, Mat
 
         return await query.ToListNoLockAsync(dbContext);
     }
-
-    public async Task<List<LockShipment>> GetLockShipmentAsync(string? materialCode)
-    {
-        var dbContext = await GetDbContextAsync();
-
-        var query =
-            from pols in dbContext.PurchaseOrderLockShipments
-            join pod in dbContext.PurchaseOrderDetails
-                on pols.PODetailId equals pod.Id
-            join po in dbContext.PurchaseOrders
-                on pod.PurchaseOrderId equals po.Id
-            join dpod in dbContext.DPODetails
-                on pols.DPODetailId equals dpod.Id
-            join dpo in dbContext.DPOs
-                on dpod.DPOId equals dpo.Id
-
-            where pols.MaterialCode == materialCode
-                && (pols.QtyNeed ?? 0) > 0
-                && (pols.IsDeleted == false || pols.IsDeleted == null)
-                && pod.StatusCode == "IN_PROGRESS" && (pod.IsDeleted == false || pod.IsDeleted == null)
-                && po.StatusCode == "IN_PROGRESS" && (po.IsDeleted == false || po.IsDeleted == null)
-                && dpod.Status == "IN_PROGRESS" && (dpod.IsDeleted == false || dpod.IsDeleted == null)
-                && dpo.Status == "IN_PROGRESS" && (dpo.IsDeleted == false || dpo.IsDeleted == null)
-            orderby pols.CreationTime descending
-
-            select new LockShipment
-            {
-                GolfaCode = pod.GolfaCode,
-                Qty = pols.Qty,
-                QtyDisposed = pols.QtyDisposed,
-                QtyNeed = pols.QtyNeed,
-                PONo = po.PONo,
-                DPONo = dpo.DPONo,
-                MachineNo = pod.MachineNumber,
-                SupplierReply = pod.STCReply,
-                MEVNAddRequest = pod.MEVNAddedRequest,
-                MEVNRequest = pod.MEVNRequest,
-                Modified = pod.LastModificationTime,
-                ModifiedBy = pod.LastModifierUsername
-            };
-
-        return await query.ToListNoLockAsync(dbContext);
-    }
-
-
-    public async Task<List<OnOrderStock>> OnOrderStockAsync(string? materialCode)
-    {
-        var dbContext = await GetDbContextAsync();
-
-        var query =
-            from pod in dbContext.PurchaseOrderDetails
-            join po in dbContext.PurchaseOrders
-                on pod.PurchaseOrderId equals po.Id
-            where !(pod.IsDeleted ?? false)
-                && !(po.IsDeleted ?? false)
-                && pod.GolfaCode == materialCode
-                && pod.StatusCode == "IN_PROGRESS"
-                && (pod.QtyAvailable ?? 0) > 0
-            orderby pod.CreationTime descending
-            select new OnOrderStock
-            {
-                PONo = po.PONo,
-                GolfaCode = pod.GolfaCode,
-                PODate = po.PODate,
-                QtyAvailable = pod.QtyAvailable,
-                MachineNo = pod.MachineNumber,
-                SupplierReply = pod.STCReply,
-                MEVNAddRequest = pod.MEVNAddedRequest,
-                MEVNRequest = pod.MEVNRequest,
-            };
-
-        return await query.ToListNoLockAsync(dbContext);
-    }
-
-
     public async Task<List<MaterialOverallStockReport>> GetListStockOverallAsync()
     {
         var dbContext = await GetDbContextAsync();
@@ -841,6 +766,16 @@ public class EfCoreMaterialRepository : EfCoreRepository<QuoteFlowDbContext, Mat
             transaction.Rollback();
             throw;
         }
+    }
+
+    public Task<List<LockShipment>> GetLockShipmentAsync(string? materialCode)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<OnOrderStock>> OnOrderStockAsync(string? materialCode)
+    {
+        throw new NotImplementedException();
     }
     //public async Task BulkUpdateMaterialWithOutPriceAsync(
     //List<ExcelMaterialUpdateWithoutPrriceParams> updates,

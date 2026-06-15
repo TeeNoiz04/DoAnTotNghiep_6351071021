@@ -18,7 +18,6 @@
             <th class="text-center" *ngIf="enableErrorHandling" style="width: 100px">Status</th>
             <th class="text-start">Sale Channel</th>
             <th class="text-center">Customer Tax Code</th>
-            <th class="text-center">Key Account</th>
             <th class="text-start">Company Official Name</th>
             <th class="text-start">Official Address</th>
             <th class="text-start">Customer Nationality</th>
@@ -42,7 +41,6 @@
                 <ng-container *ngIf="useServiceData">
                   <td>{{ item.saleChannel }}</td>
                   <td>{{ item.customerTaxCode }}</td>
-                  <td>{{ item.hasKeyAccount === true ? '✓' : '-' }}</td>
                   <td>{{ item.customerName }}</td>
                   <td>{{ item.customerAddress }}</td>
                   <td>{{ item.customerNationality }}</td>

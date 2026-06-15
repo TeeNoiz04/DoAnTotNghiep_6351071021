@@ -1,6 +1,5 @@
 using QuoteFlow.ApprovalHistories;
 using QuoteFlow.Attachments.ParameterObjects;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.PriceOffers;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,7 +23,6 @@ public class AttachmentsAppService : QuoteFlowAppService, IAttachmentsAppService
 
     protected IAttachmentRepository _attachmentRepository;
     protected AttachmentManager _attachmentManager;
-    protected IKeyAccountRepository _keyAccountRepository;
     protected IPriceOfferRepository _priceOfferRepository;
     protected IGuidGenerator _guidGenerator;
 
@@ -34,14 +32,13 @@ public class AttachmentsAppService : QuoteFlowAppService, IAttachmentsAppService
 
     private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
-    public AttachmentsAppService(IHttpClientFactory httpClientFactory, Microsoft.Extensions.Configuration.IConfiguration configuration, IAttachmentRepository attachmentRepository, AttachmentManager attachmentManager, IBlobContainer<AttachmentContainer> blobContainer, IKeyAccountRepository keyAccountRepository, IGuidGenerator guidGenerator, IPriceOfferRepository priceOfferRepository)
+    public AttachmentsAppService(IHttpClientFactory httpClientFactory, Microsoft.Extensions.Configuration.IConfiguration configuration, IAttachmentRepository attachmentRepository, AttachmentManager attachmentManager, IBlobContainer<AttachmentContainer> blobContainer, IGuidGenerator guidGenerator, IPriceOfferRepository priceOfferRepository)
     {
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
         _attachmentRepository = attachmentRepository;
         _attachmentManager = attachmentManager;
         _blobContainer = blobContainer;
-        _keyAccountRepository = keyAccountRepository;
         _guidGenerator = guidGenerator;
         _priceOfferRepository = priceOfferRepository;
     }
@@ -85,28 +82,6 @@ public class AttachmentsAppService : QuoteFlowAppService, IAttachmentsAppService
 
             switch (attachmentCode)
             {
-                case EntityTypes.KeyAccount:
-                    var keyAccount = await _keyAccountRepository.GetAsync(requestId);
-
-                    if (keyAccount != null)
-                    {
-                        keyAccount.AddedAttachmentAction(new KeyAccountAttachment(
-                             _guidGenerator.Create(),
-                             keyAccount.Id,
-                             new AttachmentCreateParams
-                             {
-                                 RequestPart = string.Empty,
-                                 FileName = file.FileName,
-                                 FileNameDB = Path.GetFileName(blobKey),
-                                 FilePath = blobKey,
-                                 OfflineAttachment = false,
-                                 Description = string.Empty
-                             }
-                         ));
-                    }
-
-                    await _keyAccountRepository.UpdateAsync(keyAccount, autoSave: true);
-                    break;
                 case EntityTypes.PriceOffer:
                     var priceOffer = await _priceOfferRepository.GetWithDetailsAsync(requestId);
                     if (priceOffer != null)

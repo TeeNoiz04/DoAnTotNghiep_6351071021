@@ -53,38 +53,7 @@ public interface IDPORepository : IRepository<DPO, Guid>
         string userFullName,
         CancellationToken cancellationToken = default);
 
-    Task LockShipmentAutoAsync(
-        List<Guid> dpoDetailIds,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default);
-
-    Task<List<DPOListPOsModel>> GetListAvailablePOsAsync(
-        Guid dpoDetailId,
-        string? materialCode,
-        CancellationToken cancellationToken = default);
-
-    Task<string?> LockShipmentAsync(
-        Guid poDetailId,
-        Guid dpoDetailId,
-        string golfaCode,
-        int qty,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default);
-
-    Task<string?> UpdateLockShipmentAsync(
-        Guid poDetailId,
-        Guid dpoDetailId,
-        string golfaCode,
-        int qty,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default);
-
+   
     Task<List<DPOLockStockEtaEtdModel>> GetListLockStockEtaEtdAsync(
         Guid dpoDetailId,
         Guid poDetailId,
@@ -109,10 +78,7 @@ public interface IDPORepository : IRepository<DPO, Guid>
         GICFilterParams filterParams,
         CancellationToken cancellationToken = default);
 
-    Task<long> GetGKRCountAsync(
-        GKRFilterParams filterParams,
-        CancellationToken cancellationToken = default);
-
+ 
     Task<List<DPO>> GetListPendingAsync(
         GKRFilterParams filterParams,
         string approverUsername,
@@ -125,14 +91,7 @@ public interface IDPORepository : IRepository<DPO, Guid>
         DPOFilterParams filterParams,
         CancellationToken cancellationToken = default);
 
-    Task<List<StatusCount>> GetGICGroupedCountAsync(
-        GICFilterParams filterParams,
-        CancellationToken cancellationToken = default);
-
-    Task<List<StatusCount>> GetGKRGroupedCountAsync(
-        GKRFilterParams filterParams,
-        CancellationToken cancellationToken = default);
-
+  
     Task<List<DPOReportDto>> GetListDPOReportAsync(Guid? buyerTypeId, Guid? buyerId, DateTime fromDate, DateTime toDate, bool hasFullBuyerAccess, string userName);
     Task<List<DPOProcessingReport>> GetListDPOProcessingReportAsync(Guid? buyerTypeId, Guid? buyerId, DateTime fromDate, DateTime toDate, bool hasFullBuyerAccess, string userName);
     Task<List<DPOMessage>> GetListMessagesAsync(Guid dpoId, int maxResultCount = int.MaxValue, int skipCount = 0, CancellationToken cancellationToken = default);
@@ -165,18 +124,7 @@ public interface IDPORepository : IRepository<DPO, Guid>
         string? buyerShortName = null,
         CancellationToken cancellationToken = default);
 
-    Task<List<GICInternalUseModel>> GetListGICInternalUseAsync(
-        GICFilterParams filterParams,
-        CancellationToken cancellationToken = default
-    );
-    Task<List<GICFOCModel>> GetListGICFOCAsync(
-        GICFilterParams filterParams,
-        CancellationToken cancellationToken = default
-    );
-    Task<List<GICWarrantyModel>> GetListGICWarrantyAsync(
-        GICFilterParams filterParams,
-        CancellationToken cancellationToken = default
-    );
+    
 
     Task<string?> UpdateDPODetailAsync(
         Guid dpoDetailId,
@@ -198,40 +146,5 @@ public interface IDPORepository : IRepository<DPO, Guid>
     Task<string?> AllocateGkrToDpoAsync(Guid dpoId, Guid gkrId, string? note, string userName, string userFullName);
     Task GenerateApprovalRouteAsync(Guid gkrId);
     Task<List<GKRApprovalRoute>> GetListApprovalRoutesAsync(Guid gkrId);
-    Task<List<GKRExportModel>> GetExportGKRDataAsync(
-       string? dpoNo,
-       string? status,
-       string? golfaCode,
-       string? model,
-       string? poNo,
-       string? customerName,
-       DateTime? fromDate,
-       DateTime? toDate,
-       string? buyerTypeId,
-       string? buyerId,
-       string? materialType,
-       string? supplierCode,
-       string? spoCode,
-       string? taxCode,
-       string? materialGroup,
-       string? userName,
-       bool fullBuyerPermission,
-       CancellationToken cancellationToken = default);
-
-    Task<List<GICExportModel>> GetExportGICDataAsync(
-    string? gicNo,
-    string? status,
-    string? golfaCode,
-    string? modelName,
-    string? costCenter,
-    string? gicType,
-    string? gicProcess,
-    DateTime? fromDate,
-    DateTime? toDate,
-    string? buyerTypeId,
-    string? buyerId,
-    string? materialType,
-    string? userName,
-    bool fullBuyerPermission,
-    CancellationToken cancellationToken = default);
+  
 }

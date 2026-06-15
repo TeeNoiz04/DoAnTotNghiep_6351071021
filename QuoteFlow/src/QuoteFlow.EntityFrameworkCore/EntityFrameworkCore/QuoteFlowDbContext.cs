@@ -1,14 +1,8 @@
 using QuoteFlow.AddMoreItemHistories;
 using QuoteFlow.ApprovalHistories;
 using QuoteFlow.ApprovalRoutes;
-using QuoteFlow.AssetRequestDetails;
-using QuoteFlow.AssetRequests;
-using QuoteFlow.Assets;
 using QuoteFlow.Attachments;
 using QuoteFlow.Buyers;
-using QuoteFlow.CargoDatas;
-using QuoteFlow.Cargos;
-using QuoteFlow.Cargos.CargoDatas;
 using QuoteFlow.CfgDiscountRatios;
 using QuoteFlow.CustomerPICs;
 using QuoteFlow.Customers;
@@ -18,8 +12,6 @@ using QuoteFlow.DPOs.DPODetails;
 using QuoteFlow.DPOs.DpoGkrUsages;
 using QuoteFlow.Extensions;
 using QuoteFlow.HistoryTrackings;
-using QuoteFlow.KeyAccountEvaluations;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.MaterialGroupBuyers;
 using QuoteFlow.Materials;
 using QuoteFlow.Materials.MaterialApprovalRequestDetails;
@@ -35,28 +27,13 @@ using QuoteFlow.Messages;
 using QuoteFlow.PriceOffers;
 using QuoteFlow.PriceOffers.PriceOfferCustomers;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
-using QuoteFlow.PSIs;
-using QuoteFlow.PSIs.PSIDetails;
-using QuoteFlow.PurchaseOrderDetails;
-using QuoteFlow.PurchaseOrderLockShipments;
-using QuoteFlow.PurchaseOrders;
-using QuoteFlow.PurchaseOrdersSapImports;
 using QuoteFlow.SaleOrderDetails;
 using QuoteFlow.SaleOrders;
 using QuoteFlow.SaleOrders.SaleOrderDetails;
 using QuoteFlow.SaleOrdersSapImports;
 using QuoteFlow.SalesAssignments;
 using QuoteFlow.Shared.Consts;
-using QuoteFlow.SpecialInputPrices;
-using QuoteFlow.SpecialInputPrices.SpecialInputPriceDetails;
-using QuoteFlow.SpoBatchRequestDetails;
-using QuoteFlow.SpoBatchRequests;
-using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
 using QuoteFlow.StockCategories;
-using QuoteFlow.StockImportAllocations;
-using QuoteFlow.StockImportDetails;
-using QuoteFlow.StockImportPriorities;
-using QuoteFlow.StockImports;
 using QuoteFlow.StockTracingDetails;
 using QuoteFlow.StockTracings;
 using QuoteFlow.SupplierBUs;
@@ -93,29 +70,17 @@ public class QuoteFlowDbContext :
     AbpDbContext<QuoteFlowDbContext>,
     IIdentityProDbContext
 {
-    public DbSet<AssetRequestDetail> AssetRequestDetails { get; set; } = null!;
-    public DbSet<AssetRequest> AssetRequests { get; set; } = null!;
-    public DbSet<Asset> Assets { get; set; } = null!;
     public DbSet<CfgDiscountRatio> CfgDiscountRatios { get; set; } = null!;
-    public DbSet<SpoBatchRequestDetail> SpoBatchRequestDetails { get; set; } = null!;
-    public DbSet<SpoBatchRequest> SpoBatchRequests { get; set; } = null!;
+   
     public DbSet<HistoryTracking> HistoryTrackings { get; set; } = null!;
-    public DbSet<MaterialHistoryTracking> MaterialHistoryTrackings { get; set; } = null!;
-    public DbSet<StockHistoryTracking> StockHistoryTrackings { get; set; } = null!;
+   
     public DbSet<MaterialStockLockShipment> MaterialStockLockShipments { get; set; } = null!;
-    public DbSet<PurchaseOrderLockShipment> PurchaseOrderLockShipments { get; set; } = null!;
-    public DbSet<PurchaseOrdersSapImport> PurchaseOrdersSapImports { get; set; } = null!;
+   
     public DbSet<SaleOrdersSapImport> SaleOrdersSapImports { get; set; } = null!;
-    public DbSet<StockImportAllocation> StockImportAllocations { get; set; } = null!;
     public DbSet<DistributorTarget> DistributorTargets { get; set; } = null!;
     public DbSet<MaterialStockLockStock> MaterialStockLockStocks { get; set; } = null!;
-    public DbSet<StockImportPriority> StockImportPriorities { get; set; } = null!;
-    public DbSet<PurchaseOrderDetail> PurchaseOrderDetails { get; set; } = null!;
-    public DbSet<PurchaseOrder> PurchaseOrders { get; set; } = null!;
     public DbSet<SaleOrderDetail> SaleOrderDetails { get; set; } = null!;
     public DbSet<SaleOrder> SaleOrders { get; set; } = null!;
-    public DbSet<StockImportDetail> StockImportDetails { get; set; } = null!;
-    public DbSet<StockImport> StockImports { get; set; } = null!;
     public DbSet<MaterialGroupBuyer> MaterialGroupBuyers { get; set; } = null!;
     public DbSet<MaterialStockUpload> MaterialStockUploads { get; set; } = null!;
     public DbSet<SystemConfiguration> SystemConfigurations { get; set; } = null!;
@@ -125,8 +90,6 @@ public class QuoteFlowDbContext :
     public DbSet<MaterialStockUploadDetail> MaterialStockUploadDetails { get; set; } = null!;
     public DbSet<WorkflowConfiguration> WorkflowConfigurations { get; set; } = null!;
     public DbSet<WorkflowApprover> WorkflowApprovers { get; set; } = null!;
-    public DbSet<SpecialInputPriceDetail> SpecialInputPriceDetails { get; set; } = null!;
-    public DbSet<SpecialInputPrice> SpecialInputPrices { get; set; } = null!;
     public DbSet<DPODetail> DPODetails { get; set; } = null!;
     public DbSet<DPO> DPOs { get; set; } = null!;
     public DbSet<ApprovalRoute> ApprovalRoutes { get; set; } = null!;
@@ -138,18 +101,13 @@ public class QuoteFlowDbContext :
     public DbSet<MaterialStock> MaterialStocks { get; set; } = null!;
     public DbSet<MaterialHistory> MaterialHistories { get; set; } = null!;
     public DbSet<Customer> Customers { get; set; } = null!;
-    public DbSet<CargoData> CargoDatas { get; set; } = null!;
-    public DbSet<Cargo> Cargos { get; set; } = null!;
-    public DbSet<PSIDetail> PSIDetails { get; set; } = null!;
     public DbSet<PriceOfferDetail> PriceOfferDetails { get; set; } = null!;
     public DbSet<PriceOfferCustomer> PriceOfferCustomers { get; set; } = null!;
     public DbSet<PriceOffer> PriceOffers { get; set; } = null!;
-    public DbSet<KeyAccountEvaluation> KeyAccountEvaluations { get; set; } = null!;
     public DbSet<Material> Materials { get; set; } = null!;
     public DbSet<StockTracingDetail> StockTracingDetails { get; set; } = null!;
     public DbSet<StockTracing> StockTracings { get; set; } = null!;
     public DbSet<SystemCategory> SystemCategories { get; set; } = null!;
-    public DbSet<KeyAccount> KeyAccounts { get; set; } = null!;
     public DbSet<Buyer> Buyers { get; set; } = null!;
     public DbSet<SalesAssignment> SalesAssignments { get; set; } = null!;
     public DbSet<MaterialGroup> MaterialGroups { get; set; } = null!;
@@ -214,59 +172,7 @@ public class QuoteFlowDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<KeyAccount>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "KeyAccount", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.ConfigureObjectHasApprovalRoute();
 
-                b.Property(x => x.BuyerId).HasColumnName(nameof(KeyAccount.BuyerId)).IsRequired();
-                b.Property(x => x.BuyerShortName).HasColumnName(nameof(KeyAccount.BuyerShortName)).HasMaxLength(KeyAccountConsts.BuyerShortNameMaxLength);
-
-                b.Property(x => x.KeyAccountCode).HasColumnName(nameof(KeyAccount.KeyAccountCode)).IsRequired().HasMaxLength(KeyAccountConsts.KeyAccountCodeMaxLength);
-                b.Property(x => x.KeyAccountShortName).HasColumnName(nameof(KeyAccount.KeyAccountShortName)).HasMaxLength(KeyAccountConsts.KeyAccountShortNameMaxLength);
-                b.Property(x => x.KeyAccountName).HasColumnName(nameof(KeyAccount.KeyAccountName)).HasMaxLength(KeyAccountConsts.KeyAccountNameMaxLength);
-
-                b.Property(x => x.KeyAccountType).HasColumnName(nameof(KeyAccount.KeyAccountType)).HasMaxLength(SystemCategoryConsts.DescriptionMaxLength);
-                b.Property(x => x.KeyAccountClassBuyer).HasColumnName(nameof(KeyAccount.KeyAccountClassBuyer)).HasMaxLength(SystemCategoryConsts.DescriptionMaxLength);
-                b.Property(x => x.KeyAccountClass).HasColumnName(nameof(KeyAccount.KeyAccountClass)).HasMaxLength(SystemCategoryConsts.DescriptionMaxLength);
-
-                b.Property(x => x.MaterialType).HasColumnName(nameof(KeyAccount.MaterialType)).HasMaxLength(SystemCategoryConsts.DescriptionMaxLength);
-
-                b.Property(x => x.TargetEndUsers).HasColumnName(nameof(KeyAccount.TargetEndUsers)).HasMaxLength(KeyAccountConsts.TargetEndUsersMaxLength);
-                b.Property(x => x.Industry).HasColumnName(nameof(KeyAccount.Industry)).HasMaxLength(KeyAccountConsts.IndustryMaxLength);
-                b.Property(x => x.RegistrationYear).HasColumnName(nameof(KeyAccount.RegistrationYear));
-
-                b.Property(x => x.CustomerTaxCode).HasColumnName(nameof(KeyAccount.CustomerTaxCode)).IsRequired().HasMaxLength(KeyAccountConsts.CustomerTaxCodeMaxLength);
-                b.Property(x => x.CustomerName).HasColumnName(nameof(KeyAccount.CustomerName)).HasMaxLength(KeyAccountConsts.CustomerNameMaxLength);
-                b.Property(x => x.CustomerAddress).HasColumnName(nameof(KeyAccount.CustomerAddress)).HasMaxLength(KeyAccountConsts.CustomerAddressMaxLength);
-                b.Property(x => x.CustomerProvince).HasColumnName(nameof(KeyAccount.CustomerProvince)).HasMaxLength(KeyAccountConsts.CustomerProvinceMaxLength);
-                b.Property(x => x.CustomerWebsite).HasColumnName(nameof(KeyAccount.CustomerWebsite)).HasMaxLength(KeyAccountConsts.CustomerWebsiteMaxLength);
-                b.Property(x => x.CustomerPhone).HasColumnName(nameof(KeyAccount.CustomerPhone)).HasMaxLength(QuoteFlowSharedConsts.PhoneMaxLength);
-
-                b.Property(x => x.CurrentSaleRoute).HasColumnName(nameof(KeyAccount.CurrentSaleRoute)).HasMaxLength(KeyAccountConsts.CurrentSaleRouteMaxLength);
-                b.Property(x => x.CustomerCountry).HasColumnName(nameof(KeyAccount.CustomerCountry)).HasMaxLength(KeyAccountConsts.CustomerCountryMaxLength);
-
-                b.Property(x => x.CustomerLocation).HasColumnName(nameof(KeyAccount.CustomerLocation));
-
-                b.Property(x => x.LastRegisteredProjectCode).HasColumnName(nameof(KeyAccount.LastRegisteredProjectCode)).HasMaxLength(KeyAccountConsts.LastRegisteredProjectCodeMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(KeyAccount.Note)).HasMaxLength(QuoteFlowSharedConsts.NoteMaxLength);
-                b.Property(x => x.IsDeactive).HasColumnName(nameof(KeyAccount.IsDeactive));
-                b.Property(x => x.Status).HasColumnName(nameof(KeyAccount.Status)).HasMaxLength(KeyAccountConsts.StatusMaxLength);
-
-                b.HasOne(x => x.Buyer).WithMany().HasForeignKey(x => x.BuyerId).OnDelete(DeleteBehavior.Restrict);
-
-                b.HasMany(x => x.CustomerPICs).WithOne().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Restrict);
-                b.HasMany(x => x.KeyAccountEvaluation).WithOne().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Restrict);
-                b.HasMany(x => x.ApprovalHistories).WithOne().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Cascade);
-                b.HasMany(x => x.ApprovalRoutes).WithOne().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Cascade);
-                b.HasMany(x => x.Attachments).WithOne().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-        }
         if (builder.IsHostDatabase())
         {
             builder.Entity<SystemCategory>(b =>
@@ -337,25 +243,7 @@ public class QuoteFlowDbContext :
         {
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<KeyAccountEvaluation>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "KeyAccount_Evaluations", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.Property(x => x.KeyAccountId).HasColumnName("KeyAccount_Id").IsRequired();
-                b.Property(x => x.EvaluationType).HasColumnName(nameof(KeyAccountEvaluation.EvaluationType)).IsRequired().HasMaxLength(KeyAccountEvaluationConsts.EvaluationTypeMaxLength);
-                b.Property(x => x.EvaluationId).HasColumnName(nameof(KeyAccountEvaluation.EvaluationId)).IsRequired();
-                b.Property(x => x.BuyerInfo1).HasColumnName("Buyer_Info1").HasMaxLength(KeyAccountEvaluationConsts.BuyerInfo1MaxLength);
-                b.Property(x => x.BuyerInfo2).HasColumnName("Buyer_Info2").HasMaxLength(KeyAccountEvaluationConsts.BuyerInfo2MaxLength);
-                b.Property(x => x.MEVNInfo1).HasColumnName("MEVN_Info1").HasMaxLength(KeyAccountEvaluationConsts.MEVNInfo1MaxLength);
-                b.Property(x => x.MEVNInfo2).HasColumnName("MEVN_Info2").HasMaxLength(KeyAccountEvaluationConsts.MEVNInfo2MaxLength);
-                b.Property(x => x.CompetitorInfo1).HasColumnName("Competitor_Info1").HasMaxLength(KeyAccountEvaluationConsts.CompetitorInfo1MaxLength);
-                b.Property(x => x.CompetitorInfo2).HasColumnName("Competitor_Info2").HasMaxLength(KeyAccountEvaluationConsts.CompetitorInfo2MaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(KeyAccountEvaluation.Note)).HasMaxLength(QuoteFlowSharedConsts.NoteMaxLength);
-            });
-        }
+       
         if (builder.IsHostDatabase())
         {
             builder.Entity<PriceOffer>(b =>
@@ -406,13 +294,6 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.DiscountRatio).HasColumnName("SPO_DiscountRatio").HasPrecision(18, 5);
                 b.Property(x => x.DiscountRatioConfigured).HasColumnName("SPO_DiscountRatio_CFG").HasPrecision(18, 5);
                 b.Property(x => x.TotalMarginIssues).HasColumnName("MarginIssue");
-                b.Property(x => x.SpecialInputPriceId).HasColumnName(nameof(PriceOffer.SpecialInputPriceId));
-                b.Property(x => x.SpecialInputPriceAssignmentNote).HasColumnName(nameof(PriceOffer.SpecialInputPriceAssignmentNote)).HasMaxLength(QuoteFlowSharedConsts.NoteMaxLength);
-                b.Property(x => x.SpecialInputPriceAccountName).HasColumnName(nameof(PriceOffer.SpecialInputPriceAccountName)).HasMaxLength(SpecialInputPriceConsts.AccountNameMaxLength);
-                b.Property(x => x.SpecialInputPriceAssignedTime).HasColumnName(nameof(PriceOffer.SpecialInputPriceAssignedTime));
-                b.Property(x => x.SpecialInputPriceAssignerId).HasColumnName(nameof(PriceOffer.SpecialInputPriceAssignerId));
-                b.Property(x => x.SpecialInputPriceAssignerUsername).HasColumnName(nameof(PriceOffer.SpecialInputPriceAssignerUsername)).HasMaxLength(ExtendedAuditedObjectConsts.MaxCreatorUsernameLength);
-                b.Property(x => x.SpecialInputPriceAssignerFullName).HasColumnName(nameof(PriceOffer.SpecialInputPriceAssignerFullName)).HasMaxLength(ExtendedAuditedObjectConsts.MaxCreatorNameLength);
                 b.Property(x => x.InitialTotalMEVNOfferAmount).HasColumnName(nameof(PriceOffer.InitialTotalMEVNOfferAmount)).HasPrecision(18, 2);
                 b.Property(x => x.HasDPOUsed).HasColumnName(nameof(PriceOffer.HasDPOUsed)).HasDefaultValue(false);
 
@@ -425,7 +306,6 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.LocationDescription).HasColumnName(nameof(PriceOffer.LocationDescription)).HasMaxLength(PriceOfferConsts.LocationDescriptionMaxLength);
 
                 b.HasOne(x => x.Buyer).WithMany().HasForeignKey(x => x.BuyerId).OnDelete(DeleteBehavior.Restrict);
-                b.HasOne(x => x.KeyAccount).WithMany().HasForeignKey(x => x.KeyAccountId).OnDelete(DeleteBehavior.Restrict);
                 b.HasMany(x => x.Customers).WithOne(y => y.PriceOffer).HasForeignKey(x => x.PriceOfferId).OnDelete(DeleteBehavior.Restrict);
                 b.HasMany(x => x.Details).WithOne(y => y.PriceOffer).HasForeignKey(x => x.PriceOfferId).OnDelete(DeleteBehavior.Restrict);
                 b.HasMany(x => x.ApprovalHistories).WithOne().HasForeignKey(x => x.PriceOfferId).OnDelete(DeleteBehavior.Cascade);
@@ -521,114 +401,10 @@ public class QuoteFlowDbContext :
                 b.HasOne(x => x.Location).WithMany().HasForeignKey(x => x.LocationId).OnDelete(DeleteBehavior.Restrict);
             });
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<PSI>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PSI", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.ConfigureObjectHasApprovalRoute();
+     
+      
 
-                b.Property(x => x.PSICode).HasColumnName("PSI_Code").IsRequired().HasMaxLength(PSIConsts.PSI_CodeMaxLength);
-                b.Property(x => x.FY).HasColumnName(nameof(PSI.FY));
-                b.Property(x => x.FileName).HasColumnName(nameof(PSI.FileName)).HasMaxLength(PSIConsts.FileNameMaxLength);
-                b.Property(x => x.ImportType).HasColumnName(nameof(PSI.ImportType)).HasMaxLength(PSIConsts.ImportTypeMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(PSI.Note)).HasMaxLength(PSIConsts.NoteMaxLength);
-                b.Property(x => x.Status).HasColumnName(nameof(PSI.Status)).HasMaxLength(PSIConsts.StatusMaxLength);
-                b.Property(x => x.MaterialType).HasColumnName(nameof(PSI.MaterialType)).HasMaxLength(PSIConsts.StatusMaxLength);
-                b.HasMany(x => x.ApprovalHistories).WithOne().HasForeignKey(y => y.PSI_Id).OnDelete(DeleteBehavior.Cascade);
-                b.HasMany(x => x.ApprovalRoutes).WithOne().HasForeignKey(y => y.PSI_Id).OnDelete(DeleteBehavior.Cascade);
-            });
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<Cargo>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "Cargo", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.FileName).HasColumnName(nameof(Cargo.FileName)).HasMaxLength(CargoConsts.FileNameMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(Cargo.Note));
-                b.Property(x => x.SupplierCode).HasColumnName(nameof(Cargo.SupplierCode)).HasMaxLength(CargoConsts.SupplierCodeMaxLength);
-                b.Property(x => x.MaterialType).HasColumnName(nameof(Cargo.MaterialType)).HasMaxLength(CargoConsts.MaterialTypeMaxLength);
-            });
-        }
-
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<CargoData>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "CargoData", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.CargoId).HasColumnName(nameof(CargoData.CargoId));
-                b.Property(x => x.PODetailId).HasColumnName(nameof(CargoData.PODetailId));
-                b.Property(x => x.PODetailCode).HasColumnName(nameof(CargoData.PODetailCode)).HasMaxLength(CargoDataConsts.PODetailCodeMaxLength);
-                b.Property(x => x.GolfaCode).HasColumnName(nameof(CargoData.GolfaCode)).IsRequired().HasMaxLength(CargoDataConsts.GolfaCodeMaxLength);
-                b.Property(x => x.Model).HasColumnName(nameof(CargoData.Model)).IsRequired().HasMaxLength(CargoDataConsts.ModelMaxLength);
-                b.Property(x => x.PORef).HasColumnName(nameof(CargoData.PORef)).HasMaxLength(CargoDataConsts.PORefMaxLength);
-                b.Property(x => x.InvoiceNo).HasColumnName(nameof(CargoData.InvoiceNo)).HasMaxLength(CargoDataConsts.InvoiceNoMaxLength);
-                b.Property(x => x.SRNo).HasColumnName(nameof(CargoData.SRNo)).HasMaxLength(CargoDataConsts.SRNoMaxLength);
-                b.Property(x => x.Classification).HasColumnName(nameof(CargoData.Classification)).HasMaxLength(CargoDataConsts.ClassificationMaxLength);
-                b.Property(x => x.Product).HasColumnName(nameof(CargoData.Product)).HasMaxLength(CargoDataConsts.ProductMaxLength);
-                b.Property(x => x.MaterialType).HasColumnName(nameof(CargoData.MaterialType)).HasMaxLength(CargoDataConsts.MaterialTypeMaxLength);
-                b.Property(x => x.Spec1).HasColumnName(nameof(CargoData.Spec1)).HasMaxLength(CargoDataConsts.Spec1MaxLength);
-                b.Property(x => x.Spec2).HasColumnName(nameof(CargoData.Spec2)).HasMaxLength(CargoDataConsts.Spec2MaxLength);
-                b.Property(x => x.Spec3).HasColumnName(nameof(CargoData.Spec3)).HasMaxLength(CargoDataConsts.Spec3MaxLength);
-                b.Property(x => x.OrderQty).HasColumnName(nameof(CargoData.OrderQty)).HasMaxLength(CargoDataConsts.OrderQtyMaxLength);
-                b.Property(x => x.ExWorkQty).HasColumnName(nameof(CargoData.ExWorkQty)).HasMaxLength(CargoDataConsts.ExWorkQtyMaxLength);
-                b.Property(x => x.NonExWorkQty).HasColumnName(nameof(CargoData.NonExWorkQty)).HasMaxLength(CargoDataConsts.NonExWorkQtyMaxLength);
-                b.Property(x => x.InSTCH).HasColumnName(nameof(CargoData.InSTCH)).HasMaxLength(CargoDataConsts.InSTCHMaxLength);
-                b.Property(x => x.Shipped).HasColumnName(nameof(CargoData.Shipped)).HasMaxLength(CargoDataConsts.ShippedMaxLength);
-                b.Property(x => x.WaitForShip).HasColumnName(nameof(CargoData.WaitForShip)).HasMaxLength(CargoDataConsts.WaitForShipMaxLength);
-                b.Property(x => x.ShipDate).HasColumnName(nameof(CargoData.ShipDate));
-                b.Property(x => x.OrderDate).HasColumnName(nameof(CargoData.OrderDate));
-                b.Property(x => x.InSTCHDate).HasColumnName(nameof(CargoData.InSTCHDate));
-                b.Property(x => x.ShipmentMethod).HasColumnName(nameof(CargoData.ShipmentMethod)).HasMaxLength(CargoDataConsts.ShipmentMethodMaxLength);
-                b.Property(x => x.ETA1).HasColumnName(nameof(CargoData.ETA1));
-                b.Property(x => x.ETA2).HasColumnName(nameof(CargoData.ETA2));
-                b.Property(x => x.MEVNRequest).HasColumnName(nameof(CargoData.MEVNRequest));
-                b.Property(x => x.STCReply).HasColumnName(nameof(CargoData.STCReply));
-                b.Property(x => x.EU).HasColumnName(nameof(CargoData.EU)).HasMaxLength(CargoDataConsts.EUMaxLength);
-                b.Property(x => x.MEVNAddedRequest).HasColumnName(nameof(CargoData.MEVNAddedRequest)).HasMaxLength(CargoDataConsts.MEVNAddedRequestMaxLength);
-                b.Property(x => x.NPD).HasColumnName(nameof(CargoData.NPD)).HasMaxLength(CargoDataConsts.NPDMaxLength);
-                b.Property(x => x.PlannedShipment).HasColumnName(nameof(CargoData.PlannedShipment)).HasMaxLength(CargoDataConsts.PlannedShipmentMaxLength);
-                b.Property(x => x.SODate).HasColumnName(nameof(CargoData.SODate)).HasMaxLength(CargoDataConsts.SODateMaxLength);
-                b.Property(x => x.CellMarker).HasColumnName(nameof(CargoData.CellMarker)).HasMaxLength(CargoDataConsts.CellMarkerMaxLength);
-                b.Property(x => x.ShipmentForm).HasColumnName(nameof(CargoData.ShipmentForm)).HasMaxLength(CargoDataConsts.ShipmentFormMaxLength);
-                b.Property(x => x.MachineNumber).HasColumnName(nameof(CargoData.MachineNumber)).HasMaxLength(CargoDataConsts.MachineNumberMaxLength);
-                b.Property(x => x.FileName).HasColumnName(nameof(CargoData.FileName)).HasMaxLength(CargoDataConsts.FileNameMaxLength);
-                b.Property(x => x.SupplierCode).HasColumnName(nameof(CargoData.SupplierCode)).HasMaxLength(CargoDataConsts.SupplierCodeMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(CargoData.Note)).HasMaxLength(CargoDataConsts.NoteMaxLength);
-
-            });
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<PSIDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PSI_Detail", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.PSIId).HasColumnName("PSI_Id").IsRequired();
-                b.Property(x => x.MaterialGroup).HasColumnName(nameof(PSIDetail.MaterialGroup)).HasMaxLength(PSIDetailConsts.MaterialGroupMaxLength);
-                b.Property(x => x.Description).HasColumnName(nameof(PSIDetail.Description)).HasMaxLength(PSIDetailConsts.DescriptionMaxLength);
-                b.Property(x => x.FY).HasColumnName(nameof(PSIDetail.FY));
-                b.Property(x => x.Month).HasColumnName(nameof(PSIDetail.Month));
-                b.Property(x => x.Plan).HasColumnName(nameof(PSIDetail.Plan));
-                b.Property(x => x.Note).HasColumnName(nameof(PSIDetail.Note)).HasMaxLength(PSIDetailConsts.NoteMaxLength);
-                b.Property(x => x.ImportGuid).HasColumnName(nameof(PSIDetail.ImportGuid));
-            });
-        }
-
-        if (builder.IsHostDatabase())
-        {
-
-        }
+     
         if (builder.IsHostDatabase())
         {
             builder.Entity<MaterialHistory>(b =>
@@ -745,17 +521,15 @@ public class QuoteFlowDbContext :
                     .HasValue<MaterialApprovalRequestHistory>(EntityTypes.MaterialApprovalRequest)
                     .HasValue<PriceOfferApprovalHistory>(EntityTypes.PriceOffer)
                     .HasValue<PriceOfferDetailApprovalHistory>(EntityTypes.PriceOfferDetail)
-                    .HasValue<KeyAccountApprovalHistory>(EntityTypes.KeyAccount)
+
                     .HasValue<DPOApprovalHistory>(EntityTypes.DPO)
                     .HasValue<GKRApprovalHistory>(EntityTypes.GKR)
                     .HasValue<GICApprovalHistory>(EntityTypes.GIC)
                     .HasValue<SOHistory>(EntityTypes.SO)
                     .HasValue<GKRDetailApprovalHistory>(EntityTypes.GKRDetail)
                     .HasValue<GICDetailApprovalHistory>(EntityTypes.GICDetail)
-                    .HasValue<DPODetailApprovalHistory>(EntityTypes.DPODetail)
-                    .HasValue<PSIApprovalHistory>(EntityTypes.PSI)
-                    .HasValue<AssetRequestApprovalHistory>(EntityTypes.AssetRequest);
-
+                    .HasValue<DPODetailApprovalHistory>(EntityTypes.DPODetail);
+                   
                 builder.Entity<MaterialApprovalRequestHistory>(b =>
                 {
                     b.HasBaseType<ApprovalHistory>();
@@ -773,11 +547,7 @@ public class QuoteFlowDbContext :
                     b.Property(x => x.PriceOfferDetailId).HasColumnName(nameof(PriceOfferDetailApprovalHistory.PriceOfferDetailId)).IsRequired();
                     b.Property(x => x.ImportGuid).HasColumnName(nameof(PriceOfferDetailApprovalHistory.ImportGuid));
                 });
-                builder.Entity<KeyAccountApprovalHistory>(b =>
-                {
-                    b.HasBaseType<ApprovalHistory>();
-                    b.Property(x => x.KeyAccountId).HasColumnName(nameof(KeyAccountApprovalHistory.KeyAccountId)).IsRequired();
-                });
+               
                 builder.Entity<DPOApprovalHistory>(b =>
                 {
                     b.HasBaseType<ApprovalHistory>();
@@ -788,11 +558,7 @@ public class QuoteFlowDbContext :
                     b.HasBaseType<ApprovalHistory>();
                     b.Property(x => x.DPODetailId).HasColumnName(nameof(DPODetailApprovalHistory.DPODetailId)).IsRequired();
                 });
-                builder.Entity<PSIApprovalHistory>(b =>
-                {
-                    b.HasBaseType<ApprovalHistory>();
-                    b.Property(x => x.PSI_Id).HasColumnName(nameof(PSIApprovalHistory.PSI_Id)).IsRequired();
-                });
+               
                 builder.Entity<GICApprovalHistory>(b =>
                 {
                     b.HasBaseType<DPOApprovalHistory>();
@@ -814,11 +580,7 @@ public class QuoteFlowDbContext :
                     b.HasBaseType<ApprovalHistory>();
                     b.Property(x => x.SOId).HasColumnName(nameof(SOHistory.SOId)).IsRequired();
                 });
-                builder.Entity<AssetRequestApprovalHistory>(b =>
-                {
-                    b.HasBaseType<ApprovalHistory>();
-                    b.Property(x => x.AssetRequestId).HasColumnName(nameof(AssetRequestApprovalHistory.AssetRequestId)).IsRequired();
-                });
+             
             });
 
         }
@@ -872,11 +634,8 @@ public class QuoteFlowDbContext :
                 b.HasDiscriminator(x => x.EntityType)
                      .HasValue<ApprovalRoute>(EntityTypes.ApprovalRoute)
                      .HasValue<MaterialApprovalRequestRoute>(EntityTypes.MaterialApprovalRequest)
-                     .HasValue<PriceOfferApprovalRoute>(EntityTypes.PriceOffer)
-                     .HasValue<KeyAccountApprovalRoute>(EntityTypes.KeyAccount)
-                     .HasValue<PSIApprovalRoute>(EntityTypes.PSI)
-                     .HasValue<GKRApprovalRoute>(EntityTypes.GKR)
-                     .HasValue<AssetRequestApprovalRoute>(EntityTypes.AssetRequest);
+                     .HasValue<PriceOfferApprovalRoute>(EntityTypes.PriceOffer)          
+                     .HasValue<GKRApprovalRoute>(EntityTypes.GKR);
 
                 builder.Entity<MaterialApprovalRequestRoute>(b =>
                 {
@@ -895,26 +654,13 @@ public class QuoteFlowDbContext :
                     b.HasBaseType<ApprovalRoute>();
                     b.Property(x => x.PriceOfferId).HasColumnName(nameof(PriceOfferApprovalRoute.PriceOfferId)).IsRequired();
                 });
-                builder.Entity<KeyAccountApprovalRoute>(b =>
-                {
-                    b.HasBaseType<ApprovalRoute>();
-                    b.Property(x => x.KeyAccountId).HasColumnName(nameof(KeyAccountApprovalHistory.KeyAccountId)).IsRequired();
-                });
-                builder.Entity<PSIApprovalRoute>(b =>
-                {
-                    b.HasBaseType<ApprovalRoute>();
-                    b.Property(x => x.PSI_Id).HasColumnName(nameof(PSIApprovalRoute.PSI_Id)).IsRequired();
-                });
+            
                 builder.Entity<GKRApprovalRoute>(b =>
                 {
                     b.HasBaseType<ApprovalRoute>();
                     b.Property(x => x.GkrId).HasColumnName(nameof(GKRApprovalRoute.GkrId)).IsRequired();
                 });
-                builder.Entity<AssetRequestApprovalRoute>(b =>
-                {
-                    b.HasBaseType<ApprovalRoute>();
-                    b.Property(x => x.AssetRequestId).HasColumnName(nameof(AssetRequestApprovalRoute.AssetRequestId)).IsRequired();
-                });
+             
             });
 
         }
@@ -936,14 +682,9 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.Description).HasColumnName(nameof(Attachment.Description)).HasMaxLength(AttachmentConsts.DescriptionMaxLength);
 
                 b.HasDiscriminator(x => x.AttachName)
-                    .HasValue<KeyAccountAttachment>(EntityTypes.KeyAccount)
                     .HasValue<PriceOfferAttachment>(EntityTypes.PriceOffer);
 
-                builder.Entity<KeyAccountAttachment>(b =>
-                {
-                    b.HasBaseType<Attachment>();
-                    b.Property(x => x.KeyAccountId).HasColumnName(nameof(KeyAccountAttachment.KeyAccountId)).IsRequired();
-                });
+              
                 builder.Entity<PriceOfferAttachment>(b =>
                 {
                     b.HasBaseType<Attachment>();
@@ -1314,53 +1055,7 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.StorageDesc_Id).HasColumnName(nameof(MaterialStockUploadDetail.StorageDesc_Id));
             });
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<SpecialInputPrice>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "SpecialInputPrice", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.AccountNo).HasColumnName(nameof(SpecialInputPrice.AccountNo)).IsRequired().HasMaxLength(SpecialInputPriceConsts.AccountNoMaxLength);
-                b.Property(x => x.AccountName).HasColumnName(nameof(SpecialInputPrice.AccountName)).IsRequired().HasMaxLength(SpecialInputPriceConsts.AccountNameMaxLength);
-                b.Property(x => x.ProjectName).HasColumnName(nameof(SpecialInputPrice.ProjectName)).HasMaxLength(SpecialInputPriceConsts.ProjectNameMaxLength);
-                b.Property(x => x.MaterialType).HasColumnName(nameof(SpecialInputPrice.MaterialType)).HasMaxLength(SpecialInputPriceConsts.MaterialTypeMaxLength);
-                b.Property(x => x.SupplierId).HasColumnName(nameof(SpecialInputPrice.SupplierId));
-                b.Property(x => x.SupplierBUId).HasColumnName(nameof(SpecialInputPrice.SupplierBUId));
-                b.Property(x => x.Currency).HasColumnName(nameof(SpecialInputPrice.Currency)).HasMaxLength(SpecialInputPriceConsts.CurrencyMaxLength);
-                b.Property(x => x.ValidFrom).HasColumnName(nameof(SpecialInputPrice.ValidFrom));
-                b.Property(x => x.ValidTo).HasColumnName(nameof(SpecialInputPrice.ValidTo));
-                b.Property(x => x.Status).HasColumnName(nameof(SpecialInputPrice.Status)).IsRequired().HasMaxLength(SpecialInputPriceConsts.StatusMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(SpecialInputPrice.Note)).HasMaxLength(SpecialInputPriceConsts.NoteMaxLength);
-
-                b.HasMany(x => x.Details).WithOne(y => y.SpecialInputPrice).HasForeignKey(x => x.SpecialInputPriceId);
-                b.HasOne(x => x.Supplier).WithMany().HasForeignKey(y => y.SupplierId).OnDelete(DeleteBehavior.Restrict);
-                b.HasOne(x => x.SupplierBU).WithMany().HasForeignKey(y => y.SupplierBUId).OnDelete(DeleteBehavior.Restrict);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<SpecialInputPriceDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "SpecialInputPriceDetail", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.SpecialInputPriceId).HasColumnName(nameof(SpecialInputPriceDetail.SpecialInputPriceId));
-                b.Property(x => x.AccountNo).HasColumnName(nameof(SpecialInputPriceDetail.AccountNo)).HasMaxLength(SpecialInputPriceDetailConsts.MaterialCodeMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(SpecialInputPriceDetail.MaterialCode)).HasMaxLength(SpecialInputPriceDetailConsts.MaterialCodeMaxLength);
-                b.Property(x => x.Model).HasColumnName(nameof(SpecialInputPriceDetail.Model)).HasMaxLength(SpecialInputPriceDetailConsts.ModelMaxLength);
-                b.Property(x => x.Spec1).HasColumnName(nameof(SpecialInputPriceDetail.Spec1)).HasMaxLength(SpecialInputPriceDetailConsts.Spec1MaxLength);
-                b.Property(x => x.LimitQty).HasColumnName(nameof(SpecialInputPriceDetail.LimitQty));
-                b.Property(x => x.InputPrice).HasColumnName(nameof(SpecialInputPriceDetail.InputPrice));
-                b.Property(x => x.LandedCost).HasColumnName(nameof(SpecialInputPriceDetail.LandedCost));
-                b.Property(x => x.Used).HasColumnName(nameof(SpecialInputPriceDetail.Used));
-                b.Property(x => x.Note).HasColumnName(nameof(SpecialInputPriceDetail.Note)).HasMaxLength(SpecialInputPriceDetailConsts.NoteMaxLength);
-            });
-
-        }
+        
         if (builder.IsHostDatabase())
         {
 
@@ -1637,145 +1332,8 @@ public class QuoteFlowDbContext :
                 b.HasOne(x => x.StockCategory).WithMany().HasForeignKey(y => y.StockCategoryId);
             });
 
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<PurchaseOrder>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PurchaseOrder", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.Property(x => x.PONo).HasColumnName(nameof(PurchaseOrder.PONo)).IsRequired().HasMaxLength(PurchaseOrderConsts.PONoMaxLength);
-                b.Property(x => x.PODate).HasColumnName(nameof(PurchaseOrder.PODate));
-                b.Property(x => x.POSAPNo).HasColumnName(nameof(PurchaseOrder.POSAPNo)).HasMaxLength(PurchaseOrderConsts.POSAPNoMaxLength);
-                b.Property(x => x.POSAPDate).HasColumnName(nameof(PurchaseOrder.POSAPDate));
-                b.Property(x => x.StatusCode).HasColumnName(nameof(PurchaseOrder.StatusCode)).HasMaxLength(PurchaseOrderConsts.StatusCodeMaxLength);
-                b.Property(x => x.CreateSource).HasColumnName(nameof(PurchaseOrder.CreateSource)).HasMaxLength(PurchaseOrderConsts.CreateSourceMaxLength);
-                b.Property(x => x.MaterialType).HasColumnName(nameof(PurchaseOrder.MaterialType)).HasMaxLength(PurchaseOrderConsts.MaterialTypeMaxLength);
-                b.Property(x => x.SupplierBUId).HasColumnName(nameof(PurchaseOrder.SupplierBUId));
-                b.Property(x => x.SupplierBUCode).HasColumnName(nameof(PurchaseOrder.SupplierBUCode)).HasMaxLength(PurchaseOrderConsts.SupplierBUCodeMaxLength);
-                b.Property(x => x.SupplierId).HasColumnName(nameof(PurchaseOrder.SupplierId));
-                b.Property(x => x.SupplierCode).HasColumnName(nameof(PurchaseOrder.SupplierCode)).HasMaxLength(PurchaseOrderConsts.SupplierBUCodeMaxLength);
-                b.Property(x => x.Currency).HasColumnName(nameof(PurchaseOrder.Currency)).IsRequired().HasMaxLength(PurchaseOrderConsts.CurrencyMaxLength);
-                b.Property(x => x.EPA).HasColumnName(nameof(PurchaseOrder.EPA)).IsRequired();
-                b.Property(x => x.SendToSupplier).HasColumnName(nameof(PurchaseOrder.SendToSupplier)).IsRequired();
-                b.Property(x => x.OurRef).HasColumnName(nameof(PurchaseOrder.OurRef)).HasMaxLength(PurchaseOrderConsts.OurRefMaxLength);
-                b.Property(x => x.IsDeleted).HasColumnName(nameof(SaleOrder.IsDeleted));
-                b.HasOne(x => x.SupplierBU).WithMany().HasForeignKey(y => y.SupplierBUId).OnDelete(DeleteBehavior.Restrict);
-                b.HasOne(x => x.Supplier).WithMany().HasForeignKey(y => y.SupplierId);
-                b.HasMany(x => x.PurchaseOrderDetails).WithOne(y => y.PurchaseOrder).HasForeignKey(y => y.PurchaseOrderId);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<PurchaseOrderDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PurchaseOrderDetail", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.Property(x => x.PurchaseOrderId).HasColumnName(nameof(PurchaseOrderDetail.PurchaseOrderId));
-                b.Property(x => x.GolfaCode).HasColumnName(nameof(PurchaseOrderDetail.GolfaCode)).IsRequired().HasMaxLength(PurchaseOrderDetailConsts.GolfaCodeMaxLength);
-                b.Property(x => x.Model).HasColumnName(nameof(PurchaseOrderDetail.Model)).HasMaxLength(PurchaseOrderDetailConsts.ModelMaxLength);
-                b.Property(x => x.StatusCode).HasColumnName(nameof(PurchaseOrderDetail.StatusCode)).HasMaxLength(PurchaseOrderDetailConsts.StatusCodeMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(PurchaseOrderDetail.Qty));
-                b.Property(x => x.Price).HasColumnName(nameof(PurchaseOrderDetail.Price));
-                b.Property(x => x.Amount).HasColumnName(nameof(PurchaseOrderDetail.Amount));
-                b.Property(x => x.AmountVND).HasColumnName(nameof(PurchaseOrderDetail.AmountVND));
-                b.Property(x => x.Note).HasColumnName(nameof(PurchaseOrderDetail.Note)).HasMaxLength(PurchaseOrderDetailConsts.NoteMaxLength);
-                b.Property(x => x.ProjectCode).HasColumnName(nameof(PurchaseOrderDetail.ProjectCode)).HasMaxLength(PurchaseOrderDetailConsts.ProjectCodeMaxLength);
-                b.Property(x => x.AccountNo).HasColumnName(nameof(PurchaseOrderDetail.AccountNo)).HasMaxLength(PurchaseOrderDetailConsts.AccountNoMaxLength);
-                b.Property(x => x.QtyImported).HasColumnName(nameof(PurchaseOrderDetail.QtyImported));
-                b.Property(x => x.QtyLocked).HasColumnName(nameof(PurchaseOrderDetail.QtyLocked));
-                b.Property(x => x.QtyAvailable).HasColumnName(nameof(PurchaseOrderDetail.QtyAvailable));
-                b.Property(x => x.LeadTime).HasColumnName(nameof(PurchaseOrderDetail.LeadTime));
-                b.Property(x => x.STCReply).HasColumnName("Cargo_STCReply");
-                b.Property(x => x.MachineNumber).HasColumnName("Cargo_MachineNumber").HasMaxLength(CargoDataConsts.MachineNumberMaxLength);
-                b.Property(x => x.MEVNAddedRequest).HasColumnName("Cargo_MEVNAddedRequest").HasMaxLength(CargoDataConsts.MEVNAddedRequestMaxLength);
-                b.Property(x => x.MEVNRequest).HasColumnName("Cargo_MEVNRequest").HasMaxLength(CargoDataConsts.MEVNAddedRequestMaxLength);
-                b.Property(x => x.Maxlot).HasColumnName(nameof(PurchaseOrderDetail.Maxlot));
-                b.Property(x => x.IsDeleted).HasColumnName(nameof(SaleOrder.IsDeleted));
-                b.Property(x => x.PODetailCode).HasColumnName(nameof(PurchaseOrderDetail.PODetailCode)).HasMaxLength(PurchaseOrderDetailConsts.PODetalCodeMaxLength);
-                b.Property(x => x.Urgent).HasColumnName(nameof(PurchaseOrderDetail.Urgent));
-
-                b.Property(x => x.RequestETA).HasColumnName(nameof(PurchaseOrderDetail.RequestETA));
-                b.Property(x => x.Customer).HasColumnName(nameof(PurchaseOrderDetail.Customer)).HasMaxLength(PurchaseOrderDetailConsts.Customer);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<StockImport>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "StockImport", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.InvoiceNo).HasColumnName(nameof(StockImport.InvoiceNo)).IsRequired().HasMaxLength(StockImportConsts.InvoiceNoMaxLength);
-                b.Property(x => x.InvoiceType).HasColumnName(nameof(StockImport.InvoiceType)).HasMaxLength(StockImportConsts.InvoiceTypeMaxLength);
-                b.Property(x => x.DeliveryTerm).HasColumnName(nameof(StockImport.DeliveryTerm)).HasMaxLength(StockImportConsts.DeliveryTermMaxLength);
-                b.Property(x => x.SupplierId).HasColumnName(nameof(StockImport.SupplierId));
-                b.Property(x => x.SupplierCode).HasColumnName(nameof(StockImport.SupplierCode)).HasMaxLength(StockImportConsts.SupplierCodeMaxLength);
-                b.Property(x => x.FileName).HasColumnName(nameof(StockImport.FileName)).IsRequired().HasMaxLength(StockImportConsts.FileNameMaxLength);
-                b.Property(x => x.Status).HasColumnName(nameof(StockImport.Status)).HasMaxLength(StockImportConsts.StatusMaxLength);
-                b.Property(x => x.InvoiceDate).HasColumnName(nameof(StockImport.InvoiceDate));
-                b.Property(x => x.StockDate).HasColumnName(nameof(StockImport.StockDate));
-                b.Property(x => x.ShipmentMethod).HasColumnName(nameof(StockImport.ShipmentMethod)).HasMaxLength(StockImportConsts.ShipmentMethodMaxLength);
-                b.Property(x => x.ETD).HasColumnName(nameof(StockImport.ETD));
-                b.Property(x => x.ETA).HasColumnName(nameof(StockImport.ETA));
-                b.Property(x => x.BillNo).HasColumnName(nameof(StockImport.BillNo)).HasMaxLength(StockImportConsts.BillNoMaxLength);
-                b.Property(x => x.CDNo).HasColumnName(nameof(StockImport.CDNo)).HasMaxLength(StockImportConsts.CDNoMaxLength);
-                b.Property(x => x.CDDate).HasColumnName(nameof(StockImport.CDDate));
-                b.Property(x => x.ATD).HasColumnName(nameof(StockImport.ATD));
-                b.Property(x => x.ATA).HasColumnName(nameof(StockImport.ATA));
-                b.Property(x => x.ReceivingReportDate).HasColumnName(nameof(StockImport.ReceivingReportDate));
-                b.Property(x => x.WHArrivalDate).HasColumnName(nameof(StockImport.WHArrivalDate));
-                b.Property(x => x.Note).HasColumnName(nameof(StockImport.Note)).HasMaxLength(StockImportConsts.NoteMaxLength);
-                b.Property(x => x.StockCodeConfirmed).HasColumnName(nameof(StockImport.StockCodeConfirmed)).HasMaxLength(StockImportConsts.InvoiceNoMaxLength);
-
-                b.Property(x => x.StockNameConfirmed).HasColumnName(nameof(StockImport.StockNameConfirmed)).HasMaxLength(StockImportConsts.ShipmentMethodMaxLength);
-                b.Property(x => x.TotalQty).HasColumnName(nameof(StockImport.TotalQty));
-                b.Property(x => x.TotalAmount).HasColumnName(nameof(StockImport.TotalAmount));
-                b.Property(x => x.ConfirmNote).HasColumnName(nameof(StockImport.ConfirmNote));
-
-                // Relationship: StockImport -> StockImportDetails (1:N)
-                b.HasMany(x => x.Details).WithOne().HasForeignKey(x => x.StockImportId).OnDelete(DeleteBehavior.Cascade);
-            });
-        }
-
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<StockImportDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "StockImportDetails", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.StockImportId).HasColumnName(nameof(StockImportDetail.StockImportId)).IsRequired();
-                b.Property(x => x.InvoiceNo).HasColumnName(nameof(StockImportDetail.InvoiceNo)).IsRequired().HasMaxLength(StockImportDetailConsts.InvoiceNoMaxLength);
-                b.Property(x => x.ItemModel).HasColumnName(nameof(StockImportDetail.ItemModel)).HasMaxLength(StockImportDetailConsts.ItemModelMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(StockImportDetail.MaterialCode)).HasMaxLength(StockImportDetailConsts.MaterialCodeMaxLength);
-                b.Property(x => x.Unit).HasColumnName(nameof(StockImportDetail.Unit)).HasMaxLength(StockImportDetailConsts.UnitMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(StockImportDetail.Qty));
-                b.Property(x => x.Price).HasColumnName(nameof(StockImportDetail.Price));
-                b.Property(x => x.Amount).HasColumnName(nameof(StockImportDetail.Amount));
-                b.Property(x => x.GensanchiNM).HasColumnName(nameof(StockImportDetail.GensanchiNM)).HasMaxLength(StockImportDetailConsts.GensanchiNMMaxLength);
-                b.Property(x => x.ETA).HasColumnName(nameof(StockImportDetail.ETA));
-                b.Property(x => x.ETD).HasColumnName(nameof(StockImportDetail.ETD));
-                b.Property(x => x.ShipmentMethod).HasColumnName(nameof(StockImportDetail.ShipmentMethod)).HasMaxLength(StockImportDetailConsts.ShipmentMethodMaxLength);
-                b.Property(x => x.BillNo).HasColumnName(nameof(StockImportDetail.BillNo)).HasMaxLength(StockImportDetailConsts.BillNoMaxLength);
-                b.Property(x => x.MachineNumber).HasColumnName(nameof(StockImportDetail.MachineNumber)).HasMaxLength(StockImportDetailConsts.MachineNumberMaxLength);
-                b.Property(x => x.PONo).HasColumnName(nameof(StockImportDetail.PONo)).IsRequired().HasMaxLength(StockImportDetailConsts.PONoMaxLength);
-                b.Property(x => x.CDNo).HasColumnName(nameof(StockImportDetail.CDNo)).HasMaxLength(StockImportDetailConsts.CDNoMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(StockImportDetail.Note)).HasMaxLength(StockImportDetailConsts.NoteMaxLength);
-                b.Property(x => x.DeliveryTerm).HasColumnName(nameof(StockImportDetail.DeliveryTerm)).HasMaxLength(StockImportDetailConsts.DeliveryTermMaxLength);
-                b.Property(x => x.Origin).HasColumnName(nameof(StockImportDetail.Origin)).HasMaxLength(StockImportDetailConsts.OriginMaxLength);
-                b.Property(x => x.InvoiceDate).HasColumnName(nameof(StockImportDetail.InvoiceDate));
-
-            });
-
-        }
-        if (builder.IsHostDatabase())
+        }        
+       if (builder.IsHostDatabase())
         {
             builder.Entity<MaterialStockLockStock>(b =>
             {
@@ -1793,29 +1351,7 @@ public class QuoteFlowDbContext :
                 b.HasOne(x => x.StockCategory).WithMany().HasForeignKey(y => y.StockCategoryId);
 
             });
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<StockImportPriority>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "StockImport_Priority", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.DPONo).HasColumnName(nameof(StockImportPriority.DPONo)).IsRequired().HasMaxLength(StockImportPriorityConsts.DPONoMaxLength);
-                b.Property(x => x.PONo).HasColumnName(nameof(StockImportPriority.PONo)).IsRequired().HasMaxLength(StockImportPriorityConsts.PONoMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(StockImportPriority.MaterialCode)).IsRequired().HasMaxLength(StockImportPriorityConsts.MaterialCodeMaxLength);
-                b.Property(x => x.Model).HasColumnName(nameof(StockImportPriority.Model)).HasMaxLength(StockImportPriorityConsts.ModelMaxLength);
-                b.Property(x => x.StatusCode).HasColumnName(nameof(StockImportPriority.StatusCode)).HasMaxLength(StockImportPriorityConsts.StatusCodeMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(StockImportPriority.Qty)).IsRequired();
-                b.Property(x => x.Priority).HasColumnName(nameof(StockImportPriority.Priority));
-                b.Property(x => x.QtyUsed).HasColumnName(nameof(StockImportPriority.QtyUsed));
-                b.Property(x => x.QtyAvailable).HasColumnName(nameof(StockImportPriority.QtyAvailable));
-                b.Property(x => x.Note).HasColumnName(nameof(StockImportPriority.Note));
-                b.Property(x => x.ImportGuid).HasColumnName(nameof(StockImportPriority.ImportGuid));
-            });
-
-        }
+        }      
         if (builder.IsHostDatabase())
         {
             builder.Entity<MaterialStockLockStock>(b =>
@@ -1853,32 +1389,7 @@ public class QuoteFlowDbContext :
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<StockImportAllocation>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "StockImport_Allocation", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.Property(x => x.StockImportId).HasColumnName(nameof(StockImportAllocation.StockImportId));
-                b.Property(x => x.StockImportDetail_Id).HasColumnName(nameof(StockImportAllocation.StockImportDetail_Id)).IsRequired();
-                b.Property(x => x.InvoiceNo).HasColumnName(nameof(StockImportAllocation.InvoiceNo)).HasMaxLength(StockImportAllocationConsts.InvoiceNoMaxLength);
-                b.Property(x => x.PODetailId).HasColumnName(nameof(StockImportAllocation.PODetailId));
-                b.Property(x => x.PONo).HasColumnName(nameof(StockImportAllocation.PONo)).HasMaxLength(StockImportAllocationConsts.PONoMaxLength);
-                b.Property(x => x.DPODetailId).HasColumnName(nameof(StockImportAllocation.DPODetailId));
-                b.Property(x => x.DPONo).HasColumnName(nameof(StockImportAllocation.DPONo)).HasMaxLength(StockImportAllocationConsts.DPONoMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(StockImportAllocation.MaterialCode)).HasMaxLength(StockImportAllocationConsts.MaterialCodeMaxLength);
-                b.Property(x => x.Qty_Import).HasColumnName(nameof(StockImportAllocation.Qty_Import));
-                b.Property(x => x.Price).HasColumnName(nameof(StockImportAllocation.Price));
-                b.Property(x => x.Qty_Requested).HasColumnName(nameof(StockImportAllocation.Qty_Requested));
-                b.Property(x => x.Qty_Import_ForAllocation).HasColumnName(nameof(StockImportAllocation.Qty_Import_ForAllocation));
-                b.Property(x => x.Qty_Allocation).HasColumnName(nameof(StockImportAllocation.Qty_Allocation));
-                b.Property(x => x.Allocation_Order).HasColumnName(nameof(StockImportAllocation.Allocation_Order));
-                b.Property(x => x.AllocationStep).HasColumnName(nameof(StockImportAllocation.AllocationStep)).HasMaxLength(StockImportAllocationConsts.AllocationStepMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(StockImportAllocation.Note)).HasMaxLength(StockImportAllocationConsts.NoteMaxLength);
-            });
-
-        }
+       
         if (builder.IsHostDatabase())
         {
             builder.Entity<SaleOrdersSapImport>(b =>
@@ -1939,43 +1450,6 @@ public class QuoteFlowDbContext :
         }
         if (builder.IsHostDatabase())
         {
-            builder.Entity<PurchaseOrdersSapImport>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PurchaseOrdersSAPImport", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.PONo).HasColumnName(nameof(PurchaseOrdersSapImport.PONo)).HasMaxLength(PurchaseOrdersSapImportConsts.PONoMaxLength);
-                b.Property(x => x.POSAPNo).HasColumnName(nameof(PurchaseOrdersSapImport.POSAPNo)).HasMaxLength(PurchaseOrdersSapImportConsts.POSAPNoMaxLength);
-                b.Property(x => x.POSAPDate).HasColumnName(nameof(PurchaseOrdersSapImport.POSAPDate));
-                b.Property(x => x.ImportKey).HasColumnName(nameof(PurchaseOrdersSapImport.ImportKey));
-                b.Property(x => x.Note).HasColumnName(nameof(SaleOrdersSapImport.Note)).HasMaxLength(SaleOrdersSapImportConsts.NoteMaxLength);
-                b.Property(x => x.FileName).HasColumnName(nameof(SaleOrdersSapImport.FileName)).HasMaxLength(SaleOrdersSapImportConsts.FileNameMaxLength);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<PurchaseOrderLockShipment>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "PurchaseOrderLockShipment", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-
-                b.Property(x => x.PODetailId).HasColumnName(nameof(PurchaseOrderLockShipment.PODetailId)).IsRequired();
-                b.Property(x => x.DPODetailId).HasColumnName(nameof(PurchaseOrderLockShipment.DPODetailId)).IsRequired();
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(PurchaseOrderLockShipment.MaterialCode)).HasMaxLength(PurchaseOrderLockShipmentConsts.MaterialCodeMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(PurchaseOrderLockShipment.Qty));
-                b.Property(x => x.QtyDisposed).HasColumnName(nameof(PurchaseOrderLockShipment.QtyDisposed));
-                b.Property(x => x.QtyNeed).HasColumnName(nameof(PurchaseOrderLockShipment.QtyNeed));
-                b.Property(x => x.Note).HasColumnName(nameof(PurchaseOrderLockShipment.Note)).HasMaxLength(PurchaseOrderLockShipmentConsts.NoteMaxLength);
-                b.Property(x => x.PONo).HasColumnName(nameof(PurchaseOrderLockShipment.PONo)).HasMaxLength(PurchaseOrderLockShipmentConsts.PONoMaxLength);
-                b.Property(x => x.DPONo).HasColumnName(nameof(PurchaseOrderLockShipment.DPONo)).HasMaxLength(PurchaseOrderLockShipmentConsts.DPONoMaxLength);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
             builder.Entity<MaterialStockLockShipment>(b =>
             {
                 b.ToTable(QuoteFlowConsts.DbTablePrefix + "MaterialStock_LockShipment", QuoteFlowConsts.DbSchema);
@@ -2008,60 +1482,12 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.Note).HasColumnName(nameof(HistoryTracking.Note)).HasMaxLength(HistoryTrackingConsts.NoteMaxLength);
 
                 b.HasDiscriminator(x => x.TrackingType)
-                    .HasValue<HistoryTracking>("General")
-                    .HasValue<MaterialHistoryTracking>("Material")
-                    .HasValue<StockHistoryTracking>("STOCK")
-                    .HasValue<AssetHistoryTracking>(EntityTypes.AssetRequest);
-
-                builder.Entity<AssetHistoryTracking>(b =>
-                {
-                    b.HasBaseType<HistoryTracking>();
-                    b.Property(x => x.AssetId).HasColumnName(nameof(AssetHistoryTracking.AssetId));
-                    b.HasIndex(x => x.AssetId);
-                });
-                builder.Entity<MaterialHistoryTracking>(b =>
-                {
-                    b.HasBaseType<HistoryTracking>();
-                });
-
-                builder.Entity<StockHistoryTracking>(b =>
-                {
-                    b.HasBaseType<HistoryTracking>();
-                });
+                    .HasValue<HistoryTracking>("General");
+     
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<SpoBatchRequest>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "SPO_BatchRequest", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.RequestNo).HasColumnName(nameof(SpoBatchRequest.RequestNo)).IsRequired().HasMaxLength(SpoBatchRequestConsts.RequestNoMaxLength);
-                b.Property(x => x.ImportType).HasColumnName(nameof(SpoBatchRequest.ImportType)).IsRequired().HasMaxLength(SpoBatchRequestConsts.ImportTypeMaxLength);
-                b.Property(x => x.FileName).HasColumnName(nameof(SpoBatchRequest.FileName)).HasMaxLength(SpoBatchRequestConsts.FileNameMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(SpoBatchRequest.Note)).HasMaxLength(SpoBatchRequestConsts.NoteMaxLength);
-                b.Property(x => x.Status).HasColumnName(nameof(SpoBatchRequest.Status)).HasMaxLength(SpoBatchRequestConsts.StatusMaxLength);
-
-                b.HasMany(x => x.SpoBatchRequestDetails).WithOne().HasForeignKey(y => y.RequestId);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<SpoBatchRequestDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "SPO_BatchRequest_Detail", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.RequestId).HasColumnName(nameof(SpoBatchRequestDetail.RequestId)).IsRequired();
-                b.Property(x => x.SPOCode).HasColumnName(nameof(SpoBatchRequestDetail.SPOCode)).HasMaxLength(SpoBatchRequestDetailConsts.SPOCodeMaxLength);
-                b.Property(x => x.GolfaCode).HasColumnName(nameof(SpoBatchRequestDetail.GolfaCode)).HasMaxLength(SpoBatchRequestDetailConsts.GolfaCodeMaxLength);
-                b.Property(x => x.Action).HasColumnName(nameof(SpoBatchRequestDetail.Action)).HasMaxLength(SpoBatchRequestDetailConsts.ActionMaxLength);
-                b.Property(x => x.ActionDate).HasColumnName(nameof(SpoBatchRequestDetail.ActionDate));
-                b.Property(x => x.Note).HasColumnName(nameof(SpoBatchRequestDetail.Note)).HasMaxLength(SpoBatchRequestDetailConsts.NoteMaxLength);
-            });
-
-        }
+       
         if (builder.IsHostDatabase())
         {
             builder.Entity<CfgDiscountRatio>(b =>
@@ -2078,158 +1504,6 @@ public class QuoteFlowDbContext :
             });
 
         }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<Asset>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "Assets", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-
-                b.Property(x => x.AssetName).HasColumnName(nameof(Asset.AssetName)).IsRequired().HasMaxLength(AssetConsts.AssetNameMaxLength);
-                //b.Property(x => x.Title).HasColumnName(nameof(Asset.Title)).HasMaxLength(AssetConsts.TitleMaxLength);
-                b.Property(x => x.Description).HasColumnName(nameof(Asset.Description)).HasMaxLength(AssetConsts.DescriptionMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(Asset.Qty)).HasColumnType("int");
-                b.Property(x => x.AssetClass).HasColumnName(nameof(Asset.AssetClass)).HasMaxLength(AssetConsts.AssetClassMaxLength);
-                b.Property(x => x.AssetType).HasColumnName(nameof(Asset.AssetType)).HasMaxLength(AssetConsts.AssetTypeMaxLength);
-                b.Property(x => x.WarehouseId).HasColumnName(nameof(Asset.WarehouseId));
-                b.Property(x => x.WarehouseName).HasColumnName(nameof(Asset.WarehouseName)).HasMaxLength(AssetConsts.WarehouseNameMaxLength);
-                b.Property(x => x.SalePIC).HasColumnName(nameof(Asset.SalePIC)).HasMaxLength(AssetConsts.SalePICMaxLength);
-                b.Property(x => x.CodeMain).HasColumnName(nameof(Asset.CodeMain)).HasMaxLength(AssetConsts.CodeMainMaxLength);
-                b.Property(x => x.CodeSub).HasColumnName(nameof(Asset.CodeSub)).HasMaxLength(AssetConsts.CodeSubMaxLength);
-                b.Property(x => x.CodeMain_AF).HasColumnName(nameof(Asset.CodeMain_AF)).HasMaxLength(AssetConsts.CodeMain_AFMaxLength);
-                b.Property(x => x.CodeSub_AF).HasColumnName(nameof(Asset.CodeSub_AF)).HasMaxLength(AssetConsts.CodeSub_AFMaxLength);
-                b.Property(x => x.NumberOfComponent).HasColumnName(nameof(Asset.NumberOfComponent));
-                b.Property(x => x.POR).HasColumnName(nameof(Asset.POR)).HasMaxLength(AssetConsts.PORMaxLength);
-                b.Property(x => x.PR).HasColumnName(nameof(Asset.PR)).HasMaxLength(AssetConsts.PRMaxLength);
-                b.Property(x => x.GIV).HasColumnName(nameof(Asset.GIV)).HasMaxLength(AssetConsts.GIVMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(Asset.MaterialCode)).HasMaxLength(AssetConsts.MaterialCodeMaxLength);
-                b.Property(x => x.ModelName).HasColumnName(nameof(Asset.ModelName)).HasMaxLength(AssetConsts.ModelNameMaxLength);
-                b.Property(x => x.Unit).HasColumnName(nameof(Asset.Unit)).HasMaxLength(AssetConsts.UnitMaxLength);
-
-                b.Property(x => x.Price).HasColumnName(nameof(Asset.Price)).HasColumnType("decimal(18,4)");
-                b.Property(x => x.InvoicePrice).HasColumnName(nameof(Asset.InvoicePrice)).HasColumnType("decimal(18,4)"); // Added
-                b.Property(x => x.Amount).HasColumnName(nameof(Asset.Amount)).HasColumnType("decimal(18,4)");
-
-                b.Property(x => x.Division).HasColumnName(nameof(Asset.Division)).HasMaxLength(AssetConsts.DivisionMaxLength);
-                b.Property(x => x.Department).HasColumnName(nameof(Asset.Department)).HasMaxLength(AssetConsts.DepartmentMaxLength);
-                b.Property(x => x.SectionSAP).HasColumnName(nameof(Asset.SectionSAP)).HasMaxLength(AssetConsts.SectionSAPMaxLength);
-                b.Property(x => x.REG).HasColumnName(nameof(Asset.REG)).HasMaxLength(AssetConsts.REGMaxLength);
-                b.Property(x => x.Source).HasColumnName(nameof(Asset.Source)).HasMaxLength(AssetConsts.SourceMaxLength);
-                b.Property(x => x.RequestNo).HasColumnName(nameof(Asset.RequestNo)).HasMaxLength(AssetConsts.RequestNoMaxLength);
-
-                b.Property(x => x.Section).HasColumnName(nameof(Asset.Section)).HasMaxLength(AssetConsts.SectionMaxLength);
-                b.Property(x => x.Status).HasColumnName(nameof(Asset.Status)).HasMaxLength(AssetConsts.StatusMaxLength);
-                b.Property(x => x.LendingInformation).HasColumnName(nameof(Asset.LendingInformation)).HasMaxLength(AssetConsts.LendingInformationMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(Asset.Note));
-                b.Property(x => x.IsPendingApproval).HasColumnName(nameof(Asset.IsPendingApproval));
-
-                b.HasMany(x => x.HistoryTrackings).WithOne().HasForeignKey(x => x.AssetId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<AssetRequest>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "AssetRequest", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.RequestNo).HasColumnName(nameof(AssetRequest.RequestNo)).IsRequired().HasMaxLength(AssetRequestConsts.RequestNoMaxLength);
-                b.Property(x => x.Title).HasColumnName(nameof(AssetRequest.Title)).HasMaxLength(AssetRequestConsts.TitleMaxLength);
-                b.Property(x => x.RequestType).HasColumnName(nameof(AssetRequest.RequestType)).HasMaxLength(AssetRequestConsts.RequestTypeMaxLength);
-                b.Property(x => x.Status).HasColumnName(nameof(AssetRequest.Status)).HasMaxLength(AssetRequestConsts.StatusMaxLength);
-                b.Property(x => x.WarehouseSrcId).HasColumnName(nameof(AssetRequest.WarehouseSrcId));
-                b.Property(x => x.WarehouseSrcName).HasColumnName(nameof(AssetRequest.WarehouseSrcName)).HasMaxLength(AssetRequestConsts.WarehouseSrcNameMaxLength);
-                b.Property(x => x.WarehouseDestId).HasColumnName(nameof(AssetRequest.WarehouseDestId));
-                b.Property(x => x.WarehouseDestName).HasColumnName(nameof(AssetRequest.WarehouseDestName)).HasMaxLength(AssetRequestConsts.WarehouseDestNameMaxLength);
-                b.Property(x => x.PIC_Src).HasColumnName(nameof(AssetRequest.PIC_Src)).HasMaxLength(AssetRequestConsts.PIC_SrcMaxLength);
-                b.Property(x => x.PIC_Dest).HasColumnName(nameof(AssetRequest.PIC_Dest)).HasMaxLength(AssetRequestConsts.PIC_DestMaxLength);
-                b.Property(x => x.Lending_CustomerTaxCode).HasColumnName(nameof(AssetRequest.Lending_CustomerTaxCode)).HasMaxLength(AssetRequestConsts.Lending_CustomerTaxCodeMaxLength);
-                b.Property(x => x.Lending_ReturnDate).HasColumnName(nameof(AssetRequest.Lending_ReturnDate));
-                b.Property(x => x.Lending_ActualReturnDate).HasColumnName(nameof(AssetRequest.Lending_ActualReturnDate));
-                b.Property(x => x.RequestOwner).HasColumnName(nameof(AssetRequest.RequestOwner)).HasMaxLength(AssetRequestConsts.RequestOwnerMaxLength);
-                b.Property(x => x.SubmittedDate).HasColumnName(nameof(AssetRequest.SubmittedDate));
-                b.Property(x => x.Note).HasColumnName(nameof(AssetRequest.Note));
-                b.Property(x => x.CurrentApprovalRouteInstanceId).HasColumnName(nameof(AssetRequest.CurrentApprovalRouteInstanceId));
-                b.Property(x => x.CurrentApprovalStepSequence).HasColumnName(nameof(AssetRequest.CurrentApprovalStepSequence));
-                b.Property(x => x.CurrentApproverRoleName).HasColumnName(nameof(AssetRequest.CurrentApproverRoleName)).HasMaxLength(AssetRequestConsts.CurrentApproverRoleNameMaxLength);
-                b.Property(x => x.CurrentApproverRoleCode).HasColumnName(nameof(AssetRequest.CurrentApproverRoleCode)).HasMaxLength(AssetRequestConsts.CurrentApproverRoleCodeMaxLength);
-                b.Property(x => x.CurrentApprovalRound).HasColumnName(nameof(AssetRequest.CurrentApprovalRound)).HasMaxLength(AssetRequestConsts.CurrentApprovalRoundMaxLength);
-                b.Property(x => x.Lending_CustomerName).HasColumnName(nameof(AssetRequest.Lending_CustomerName)).HasMaxLength(AssetRequestConsts.Lending_CustomerNameMaxLength);
-                b.Property(x => x.AgreementNo).HasColumnName(nameof(AssetRequest.AgreementNo)).HasMaxLength(AssetRequestConsts.AgreementNoMaxLength);
-                b.Property(x => x.LendingInvoiceNo).HasColumnName(nameof(AssetRequest.LendingInvoiceNo)).HasMaxLength(AssetRequestConsts.LendingInvoiceNoMaxLength);
-                b.Property(x => x.ReturnInvoiceNo).HasColumnName(nameof(AssetRequest.ReturnInvoiceNo)).HasMaxLength(AssetRequestConsts.ReturnInvoiceNoMaxLength);
-                b.Property(x => x.Lending_Target).HasColumnName(nameof(AssetRequest.Lending_Target)).HasMaxLength(AssetRequestConsts.Lending_Target);
-                b.Property(x => x.ExtensionDoc).HasColumnName(nameof(AssetRequest.ExtensionDoc)).HasMaxLength(AssetRequestConsts.ExtensionDoc);
-                b.Property(x => x.DeliveryNote).HasColumnName(nameof(AssetRequest.DeliveryNote)).HasMaxLength(AssetRequestConsts.DeliveryNote);
-                b.Property(x => x.Audit_FromDate).HasColumnName(nameof(AssetRequest.Audit_FromDate));
-                b.Property(x => x.Audit_ToDate).HasColumnName(nameof(AssetRequest.Audit_ToDate));
-
-                b.HasMany(x => x.ApprovalRoutes).WithOne().HasForeignKey(x => x.AssetRequestId).OnDelete(DeleteBehavior.Cascade);
-                b.HasMany(x => x.ApprovalHistories).WithOne().HasForeignKey(x => x.AssetRequestId).OnDelete(DeleteBehavior.Cascade);
-            });
-
-        }
-        if (builder.IsHostDatabase())
-        {
-            builder.Entity<AssetRequestDetail>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "AssetRequestDetail", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.RequestId).HasColumnName(nameof(AssetRequestDetail.RequestId)).IsRequired();
-                b.Property(x => x.AssetId).HasColumnName(nameof(AssetRequestDetail.AssetId));
-                b.Property(x => x.AssetName).HasColumnName(nameof(AssetRequestDetail.AssetName)).IsRequired().HasMaxLength(AssetRequestDetailConsts.AssetNameMaxLength);
-                b.Property(x => x.IsDeleted).HasColumnName(nameof(AssetRequestDetail.IsDeleted)).IsRequired();
-                b.Property(x => x.Status).HasColumnName(nameof(AssetRequestDetail.Status)).HasMaxLength(AssetRequestDetailConsts.StatusMaxLength);
-                b.Property(x => x.AuditNote).HasColumnName(nameof(AssetRequestDetail.AuditNote)).HasMaxLength(AssetRequestDetailConsts.NoteMaxLength);
-                b.Property(x => x.AuditResult).HasColumnName(nameof(AssetRequestDetail.AuditResult)).HasMaxLength(AssetRequestDetailConsts.AuditResultMaxLength);
-                b.Property(x => x.Note).HasColumnName(nameof(AssetRequestDetail.Note)).HasMaxLength(AssetRequestDetailConsts.NoteMaxLength);
-                b.Property(x => x.Counted_Quantity).HasColumnName(nameof(AssetRequestDetail.Counted_Quantity));
-                b.Property(x => x.Variance).HasColumnName(nameof(AssetRequestDetail.Variance));
-                b.Property(x => x.FAI_PIC).HasColumnName(nameof(AssetRequestDetail.FAI_PIC)).HasMaxLength(AssetRequestDetailConsts.FAI_PICMaxLength);
-                b.Property(x => x.FAP_PIC).HasColumnName(nameof(AssetRequestDetail.FAP_PIC)).HasMaxLength(AssetRequestDetailConsts.FAP_PICMaxLength);
-                b.Property(x => x.IA_PIC).HasColumnName(nameof(AssetRequestDetail.IA_PIC)).HasMaxLength(AssetRequestDetailConsts.IA_PICMaxLength);
-                b.Property(x => x.AF_PIC).HasColumnName(nameof(AssetRequestDetail.AF_PIC)).HasMaxLength(AssetRequestDetailConsts.AF_PICMaxLength);
-                //
-                b.Property(x => x.AssetClass).HasColumnName(nameof(AssetRequestDetail.AssetClass)).HasMaxLength(AssetRequestDetailConsts.AssetClassMaxLength);
-                b.Property(x => x.AssetType).HasColumnName(nameof(AssetRequestDetail.AssetType)).HasMaxLength(AssetRequestDetailConsts.AssetTypeMaxLength);
-                b.Property(x => x.WarehouseId).HasColumnName(nameof(AssetRequestDetail.WarehouseId));
-                b.Property(x => x.WarehouseName).HasColumnName(nameof(AssetRequestDetail.WarehouseName)).HasMaxLength(AssetRequestDetailConsts.WarehouseNameMaxLength);
-                b.Property(x => x.SalePIC).HasColumnName(nameof(AssetRequestDetail.SalePIC)).HasMaxLength(AssetRequestDetailConsts.SalePICMaxLength);
-                b.Property(x => x.CodeMain).HasColumnName(nameof(AssetRequestDetail.CodeMain)).HasMaxLength(AssetRequestDetailConsts.CodeMainMaxLength);
-                b.Property(x => x.CodeSub).HasColumnName(nameof(AssetRequestDetail.CodeSub)).HasMaxLength(AssetRequestDetailConsts.CodeSubMaxLength);
-                b.Property(x => x.CodeMain_AF).HasColumnName(nameof(AssetRequestDetail.CodeMain_AF)).HasMaxLength(AssetRequestDetailConsts.CodeMain_AFMaxLength);
-                b.Property(x => x.CodeSub_AF).HasColumnName(nameof(AssetRequestDetail.CodeSub_AF)).HasMaxLength(AssetRequestDetailConsts.CodeSub_AFMaxLength);
-                b.Property(x => x.NumberOfComponent).HasColumnName(nameof(AssetRequestDetail.NumberOfComponent));
-                b.Property(x => x.POR).HasColumnName(nameof(AssetRequestDetail.POR)).HasMaxLength(AssetRequestDetailConsts.PORMaxLength);
-                b.Property(x => x.PR).HasColumnName(nameof(AssetRequestDetail.PR)).HasMaxLength(AssetRequestDetailConsts.PRMaxLength);
-                b.Property(x => x.GIV).HasColumnName(nameof(AssetRequestDetail.GIV)).HasMaxLength(AssetRequestDetailConsts.GIVMaxLength);
-                b.Property(x => x.MaterialCode).HasColumnName(nameof(AssetRequestDetail.MaterialCode)).HasMaxLength(AssetRequestDetailConsts.MaterialCodeMaxLength);
-                b.Property(x => x.ModelName).HasColumnName(nameof(AssetRequestDetail.ModelName)).HasMaxLength(AssetRequestDetailConsts.ModelNameMaxLength);
-                b.Property(x => x.Unit).HasColumnName(nameof(AssetRequestDetail.Unit)).HasMaxLength(AssetRequestDetailConsts.UnitMaxLength);
-                b.Property(x => x.Price).HasColumnName(nameof(AssetRequestDetail.Price)).HasColumnType("decimal(18,4)");
-                b.Property(x => x.InvoicePrice).HasColumnName(nameof(AssetRequestDetail.InvoicePrice)).HasColumnType("decimal(18,4)");
-                b.Property(x => x.Amount).HasColumnName(nameof(AssetRequestDetail.Amount)).HasColumnType("decimal(18,4)");
-                b.Property(x => x.Division).HasColumnName(nameof(AssetRequestDetail.Division)).HasMaxLength(AssetRequestDetailConsts.DivisionMaxLength);
-                b.Property(x => x.Department).HasColumnName(nameof(AssetRequestDetail.Department)).HasMaxLength(AssetRequestDetailConsts.DepartmentMaxLength);
-                b.Property(x => x.Section).HasColumnName(nameof(AssetRequestDetail.Section)).HasMaxLength(AssetRequestDetailConsts.SectionMaxLength);
-                b.Property(x => x.REG).HasColumnName(nameof(AssetRequestDetail.REG)).HasMaxLength(AssetRequestDetailConsts.REGMaxLength);
-                b.Property(x => x.Source).HasColumnName(nameof(AssetRequestDetail.Source)).HasMaxLength(AssetRequestDetailConsts.SourceMaxLength);
-                b.Property(x => x.SectionSAP).HasColumnName(nameof(AssetRequestDetail.SectionSAP)).HasMaxLength(AssetRequestDetailConsts.SectionSAPMaxLength);
-                b.Property(x => x.Description).HasColumnName(nameof(AssetRequestDetail.Description)).HasMaxLength(AssetRequestDetailConsts.DescriptionMaxLength);
-                b.Property(x => x.Qty).HasColumnName(nameof(AssetRequestDetail.Qty));
-                b.Property(x => x.AssetNote).HasColumnName(nameof(AssetRequestDetail.AssetNote));
-                b.HasOne<AssetRequest>(x => x.Request)
-                    .WithMany(x => x.Details)
-                    .HasForeignKey(x => x.RequestId)
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                b.HasOne<Asset>(x => x.Asset)
-                     .WithMany()
-                     .HasForeignKey(x => x.AssetId)
-                     .OnDelete(DeleteBehavior.Restrict);
-            });
-
-        }
+       
     }
 }

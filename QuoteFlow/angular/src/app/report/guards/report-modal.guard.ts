@@ -3,7 +3,6 @@ import { CanActivateFn } from '@angular/router';
 import { ReportMenuService } from '../services/report-menu.service';
 import { AppRoutes } from '@app/app.routes';
 import { StockReportDialogService } from '@app/stock-management/services/stock-report-dialog.service';
-import { PSIReportDialogService } from '@app/psis/services/psi-report-dialog.service';
 import { SaleReportDialogService } from '@app/stock-management/services/sale-report-dialog.service';
 import { SaleReportGeneralDialogService } from '@app/stock-management/services/sale-report-general-dialog.service';
 

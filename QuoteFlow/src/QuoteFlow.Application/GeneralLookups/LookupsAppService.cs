@@ -7,21 +7,16 @@ using QuoteFlow.Customers;
 using QuoteFlow.Customers.ParameterObjects;
 using QuoteFlow.DistributorTargets;
 using QuoteFlow.DPOs;
-using QuoteFlow.KeyAccounts;
 using QuoteFlow.Materials.MaterialGroups;
 using QuoteFlow.Materials.MaterialGroups.ParameterObject;
 using QuoteFlow.Materials.MaterialStocks;
 using QuoteFlow.PriceOffers;
 using QuoteFlow.PriceOffers.PriceOfferDetails;
-using QuoteFlow.PSIs;
-using QuoteFlow.PurchaseOrders;
 using QuoteFlow.RequesterContexts;
 using QuoteFlow.SaleOrders;
 using QuoteFlow.SalesAssignments;
 using QuoteFlow.Shared;
-using QuoteFlow.Shared.Models;
 using QuoteFlow.Shared.Utils;
-using QuoteFlow.SpecialInputPrices;
 using QuoteFlow.StockCategories;
 using QuoteFlow.SupplierBUs;
 using QuoteFlow.Suppliers;
@@ -50,36 +45,30 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
     protected ISystemCategoryRepository _systemCategoryRepository;
     protected IBuyerRepository _buyerRepository;
     protected IStockCategoryRepository _stockCategoryRepository;
-    protected IKeyAccountRepository _keyAccountRepository;
     protected IIdentityUserRepository _identityUserRepository;
-    protected ISpecialInputPriceRepository _specialInputPriceRepository;
     protected IMaterialGroupRepository _materialGroupRepository;
     protected ISupplierRepository _supplierRepository;
     protected ISupplierBURepository _supplierBURepository;
     protected IMaterialStockRepository _materialStockRepository;
     protected IDistributorTargetRepository _distributorTargetRepository;
-    protected IPurchaseOrderRepository _purchaseOrderRepository;
     protected IWorkflowConfigurationRepository _workflowConfigurationRepository;
     protected ISalesAssignmentRepository _salesAssignmentRepository;
     protected IEffectiveUserContext _effectiveUserContext;
     protected IBuyerAccessService _buyerAccessService;
     protected IWorkflowApproverRepository _workflowApproverRepository;
-    protected IPSIRepository _psiRepository;
     protected IApprovalHistoryRepository _approvalHistoryRepository;
     protected IAddMoreItemHistoryRepository _addMoreItemHistoryRepository;
     protected ICfgDiscountRatioRepository _cfgDiscountRatioRepository;
     protected ILogger<LookupsAppService> _logger;
     protected ICustomerRepository _customerRepository;
 
-    public LookupsAppService(IMemoryCache lookupsCache, ISystemCategoryRepository systemCategoryRepository, IIdentityUserRepository identityUserRepository, IBuyerRepository buyerRepository, IStockCategoryRepository stockCategoryRepository, IKeyAccountRepository keyAccountRepository, ISpecialInputPriceRepository specialInputPriceRepository, IMaterialGroupRepository materialGroupRepository, ISupplierRepository supplierRepository, ISupplierBURepository supplierBURepository, IMaterialStockRepository materialStockRepository, IDistributorTargetRepository distributorTargetRepository, IPurchaseOrderRepository purchaseOrderRepository, IWorkflowConfigurationRepository workflowConfigurationRepository, ISalesAssignmentRepository salesAssignmentRepository, IEffectiveUserContext effectiveUserContext, IBuyerAccessService buyerAccessService, IWorkflowApproverRepository workflowApproverRepository, IPSIRepository psiRepository, ILogger<LookupsAppService> logger, IApprovalHistoryRepository approvalHistoryRepository, ICfgDiscountRatioRepository cfgDiscountRatioRepository, IAddMoreItemHistoryRepository addMoreItemHistoryRepository, ICustomerRepository customerRepository)
+    public LookupsAppService(IMemoryCache lookupsCache, ISystemCategoryRepository systemCategoryRepository, IIdentityUserRepository identityUserRepository, IBuyerRepository buyerRepository, IStockCategoryRepository stockCategoryRepository,  IMaterialGroupRepository materialGroupRepository, ISupplierRepository supplierRepository, ISupplierBURepository supplierBURepository, IMaterialStockRepository materialStockRepository, IDistributorTargetRepository distributorTargetRepository,  IWorkflowConfigurationRepository workflowConfigurationRepository, ISalesAssignmentRepository salesAssignmentRepository, IEffectiveUserContext effectiveUserContext, IBuyerAccessService buyerAccessService, IWorkflowApproverRepository workflowApproverRepository, ILogger<LookupsAppService> logger, IApprovalHistoryRepository approvalHistoryRepository, ICfgDiscountRatioRepository cfgDiscountRatioRepository, IAddMoreItemHistoryRepository addMoreItemHistoryRepository, ICustomerRepository customerRepository)
     {
         _lookupsCache = lookupsCache;
         _systemCategoryRepository = systemCategoryRepository;
         _identityUserRepository = identityUserRepository;
         _buyerRepository = buyerRepository;
         _stockCategoryRepository = stockCategoryRepository;
-        _keyAccountRepository = keyAccountRepository;
-        _specialInputPriceRepository = specialInputPriceRepository;
         _materialGroupRepository = materialGroupRepository;
         _supplierRepository = supplierRepository;
         _supplierBURepository = supplierBURepository;
@@ -89,9 +78,7 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
         _effectiveUserContext = effectiveUserContext;
         _buyerAccessService = buyerAccessService;
         _workflowApproverRepository = workflowApproverRepository;
-        _purchaseOrderRepository = purchaseOrderRepository;
         _workflowConfigurationRepository = workflowConfigurationRepository;
-        _psiRepository = psiRepository;
         _logger = logger;
         _approvalHistoryRepository = approvalHistoryRepository;
         _cfgDiscountRatioRepository = cfgDiscountRatioRepository;
@@ -686,62 +673,62 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
             return new ListResultDto<KeyAccountLookupDto<Guid>>(new List<KeyAccountLookupDto<Guid>>());
         }
 
-        var keyAccounts = await _keyAccountRepository.GetListAsync(new()
-        {
-            BuyerId = buyerId,
-            Status = QuoteFlowStatuses.Approved
-        });
+        //var keyAccounts = await _keyAccountRepository.GetListAsync(new()
+        //{
+        //    BuyerId = buyerId,
+        //    Status = QuoteFlowStatuses.Approved
+        //});
 
-        // Filter by materialType if provided
-        if (!string.IsNullOrWhiteSpace(materialType))
-        {
-            keyAccounts = keyAccounts
-                .Where(ka => string.Equals(ka.MaterialType, materialType, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-
-        if (keyAccounts == null || keyAccounts.Count == 0)
-        {
-            return new ListResultDto<KeyAccountLookupDto<Guid>>(new List<KeyAccountLookupDto<Guid>>());
-        }
-
-        IEnumerable<string> classOrTypeCategoryTypes = [
-            CategoryTypes.KeyAccountClassify,
-            CategoryTypes.KeyAccountType
-        ];
-
-        var systemCategories = await _systemCategoryRepository.GetListAsync(x =>
-            classOrTypeCategoryTypes.Contains(x.CategoryType) && x.IsDeactive == false
-        );
-
-        var lookup = new ListResultDto<KeyAccountLookupDto<Guid>>(
-            [.. keyAccounts.Select(item =>
-                {
-                    var keyAccountClass = systemCategories.FirstOrDefault(sc =>
-                        sc.CategoryType == CategoryTypes.KeyAccountClassify &&
-                        sc.Code == item.KeyAccountClass);
-
-                    var keyAccountType = systemCategories.FirstOrDefault(sc =>
-                        sc.CategoryType == CategoryTypes.KeyAccountType &&
-                        sc.Code == item.KeyAccountType);
-
-                    return new KeyAccountLookupDto<Guid>
-                    {
-                        Id = item.Id,
-                        DisplayName = item.KeyAccountName ?? "",
-
-                        KeyAccountClassName = item.KeyAccountClass ?? "",
-                        KeyAccountTypeName = item.KeyAccountType ?? "",
-
-                        KeyAccountClassId = keyAccountClass?.Id ?? Guid.Empty,
-                        KeyAccountTypeId = keyAccountType?.Id ?? Guid.Empty
-                    };
-                })
-            ]);
-        //_lookupsCache.Set(cacheKey, lookup, GetCacheExpirationTime(1));
-        return lookup;
+        //// Filter by materialType if provided
+        //if (!string.IsNullOrWhiteSpace(materialType))
+        //{
+        //    keyAccounts = keyAccounts
+        //        .Where(ka => string.Equals(ka.MaterialType, materialType, StringComparison.OrdinalIgnoreCase))
+        //        .ToList();
         //}
-        //return lookup ?? new();
+
+        //if (keyAccounts == null || keyAccounts.Count == 0)
+        //{
+        //    return new ListResultDto<KeyAccountLookupDto<Guid>>(new List<KeyAccountLookupDto<Guid>>());
+        //}
+
+        //IEnumerable<string> classOrTypeCategoryTypes = [
+        //    CategoryTypes.KeyAccountClassify,
+        //    CategoryTypes.KeyAccountType
+        //];
+
+        //var systemCategories = await _systemCategoryRepository.GetListAsync(x =>
+        //    classOrTypeCategoryTypes.Contains(x.CategoryType) && x.IsDeactive == false
+        //);
+
+        //var lookup = new ListResultDto<KeyAccountLookupDto<Guid>>(
+        //    [.. keyAccounts.Select(item =>
+        //        {
+        //            var keyAccountClass = systemCategories.FirstOrDefault(sc =>
+        //                sc.CategoryType == CategoryTypes.KeyAccountClassify &&
+        //                sc.Code == item.KeyAccountClass);
+
+        //            var keyAccountType = systemCategories.FirstOrDefault(sc =>
+        //                sc.CategoryType == CategoryTypes.KeyAccountType &&
+        //                sc.Code == item.KeyAccountType);
+
+        //            return new KeyAccountLookupDto<Guid>
+        //            {
+        //                Id = item.Id,
+        //                DisplayName = item.KeyAccountName ?? "",
+
+        //                KeyAccountClassName = item.KeyAccountClass ?? "",
+        //                KeyAccountTypeName = item.KeyAccountType ?? "",
+
+        //                KeyAccountClassId = keyAccountClass?.Id ?? Guid.Empty,
+        //                KeyAccountTypeId = keyAccountType?.Id ?? Guid.Empty
+        //            };
+        //        })
+        //    ]);
+        //_lookupsCache.Set(cacheKey, lookup, GetCacheExpirationTime(1));
+        //return lookup;
+        //}
+        return new();
     }
     public virtual async Task<ListResultDto<LookupDto<Guid>>> GetFinancialCategoryLookupAsync()
     {
@@ -759,8 +746,12 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
                 DisplayName = items.Description
             })]
         };
+        return new ListResultDto<LookupDto<Guid>>()
+        {
+            Items = lookup.Items.Where(x => x.DisplayCode != "N/A").ToList()
+        };
         //_lookupsCache.Set(cacheKey, lookup, GetCacheExpirationTime());
-        return lookup;
+        //return lookup;
         //}
 
         //return lookup ?? new();
@@ -842,46 +833,47 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
 
 
 
-    public virtual async Task<ListResultDto<SpecialInputPriceLookupDto<Guid>>> GetSpecialInputPriceLookupAsync(string? materialType)
-    {
-        //var cacheKey = "SpecialInputPriceLookup";
-        //if (!_lookupsCache.TryGetValue(cacheKey, out ListResultDto<SpecialInputPriceLookupDto<Guid>>? lookup))
-        //{
-        var items = await _specialInputPriceRepository.GetListAsync(x =>
-        (x.Status == QuoteFlowStatuses.SpecialInputPrice.Valid || x.Status == QuoteFlowStatuses.SpecialInputPrice.Expired)
-        && (string.IsNullOrWhiteSpace(materialType) || x.MaterialType == materialType)
-    );
+    //public virtual async Task<ListResultDto<SpecialInputPriceLookupDto<Guid>>> GetSpecialInputPriceLookupAsync(string? materialType)
+    //{
+    //    //var cacheKey = "SpecialInputPriceLookup";
+    //    //if (!_lookupsCache.TryGetValue(cacheKey, out ListResultDto<SpecialInputPriceLookupDto<Guid>>? lookup))
+    //    //{
+    //    var items = await _specialInputPriceRepository.GetListAsync(x =>
+    //    (x.Status == QuoteFlowStatuses.SpecialInputPrice.Valid || x.Status == QuoteFlowStatuses.SpecialInputPrice.Expired)
+    //    && (string.IsNullOrWhiteSpace(materialType) || x.MaterialType == materialType)
+    //);
 
-        var lookup = new ListResultDto<SpecialInputPriceLookupDto<Guid>>()
-        {
-            Items = [..items.Select(item => new SpecialInputPriceLookupDto<Guid>()
-            {
-                Id = item.Id,
-                AccountNo = item.AccountNo,
-                AccountName = item.AccountName,
-                Status = item.Status,
-                MaterialType = item.MaterialType
-            })]
-        };
-        //_lookupsCache.Set(cacheKey, lookup, GetCacheExpirationTime());
-        return lookup;
-        //}
-        //return lookup ?? new();
-    }
+    //    var lookup = new ListResultDto<SpecialInputPriceLookupDto<Guid>>()
+    //    {
+    //        Items = [..items.Select(item => new SpecialInputPriceLookupDto<Guid>()
+    //        {
+    //            Id = item.Id,
+    //            AccountNo = item.AccountNo,
+    //            AccountName = item.AccountName,
+    //            Status = item.Status,
+    //            MaterialType = item.MaterialType
+    //        })]
+    //    };
+    //    //_lookupsCache.Set(cacheKey, lookup, GetCacheExpirationTime());
+    //    return lookup;
+    //    //}
+    //    //return lookup ?? new();
+    //}
     public async Task<List<SupplierPOLookupDto>> GetSupplierPOLookupAsync(string? materialType, string? currency, string? createSource, bool? epa)
     {
-        _logger.LogInformation("GetSupplierPOLookupAsync called with materialType: {MaterialType}, currency: {Currency}, createSource: {CreateSource}, epa: {Epa}", materialType, currency, createSource, epa);
-        var items = await _purchaseOrderRepository.PurchaseOrderSupplierBUAsync(materialType, currency, createSource, epa);
+       // _logger.LogInformation("GetSupplierPOLookupAsync called with materialType: {MaterialType}, currency: {Currency}, createSource: {CreateSource}, epa: {Epa}", materialType, currency, createSource, epa);
+        //var items = await _purchaseOrderRepository.PurchaseOrderSupplierBUAsync(materialType, currency, createSource, epa);
 
-        _logger.LogInformation("Retrieved {Count} items from PurchaseOrderSupplierBUAsync", items.Count);
-        return [.. items.Select(item => new SupplierPOLookupDto
-        {
-            SupplierId = item.SupplierId,
-            SupplierBUId = item.SupplierBUId,
-            SupplierCode = item.SupplierCode,
-            SupplierBUCode = item.SupplierBUCode,
+       // _logger.LogInformation("Retrieved {Count} items from PurchaseOrderSupplierBUAsync", items.Count);
+        //return [.. items.Select(item => new SupplierPOLookupDto
+        //{
+        //    SupplierId = item.SupplierId,
+        //    SupplierBUId = item.SupplierBUId,
+        //    SupplierCode = item.SupplierCode,
+        //    SupplierBUCode = item.SupplierBUCode,
 
-        })];
+        //})];
+        return new List<SupplierPOLookupDto>(); // Placeholder return statement
     }
     public virtual async Task<ListResultDto<LookupDto<Guid>>> GetSupplierLookupAsync()
     {
@@ -951,23 +943,23 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
         //return lookup ?? new();
     }
 
-    public virtual async Task<ListResultDto<AccountCodeLookupDto>> GetAccountNoAsync(string materialCode)
-    {
-        var items = await _specialInputPriceRepository.GetDetailsByMaterialCodeAsync(materialCode);
-        var lookup = new ListResultDto<AccountCodeLookupDto>()
-        {
-            Items = [..items.Select(item => new AccountCodeLookupDto()
-            {
-                AccountNo = item.AccountNo,
-                AccountName = item.AccountName,
-                InputPrice = item.InputPrice,
-                LandedCost = item.LandedCost,
-                MaterialCode = item.MaterialCode,
-                Status = item.Status
-            })]
-        };
-        return lookup ?? new();
-    }
+    //public virtual async Task<ListResultDto<AccountCodeLookupDto>> GetAccountNoAsync(string materialCode)
+    //{
+    //    var items = await _specialInputPriceRepository.GetDetailsByMaterialCodeAsync(materialCode);
+    //    var lookup = new ListResultDto<AccountCodeLookupDto>()
+    //    {
+    //        Items = [..items.Select(item => new AccountCodeLookupDto()
+    //        {
+    //            AccountNo = item.AccountNo,
+    //            AccountName = item.AccountName,
+    //            InputPrice = item.InputPrice,
+    //            LandedCost = item.LandedCost,
+    //            MaterialCode = item.MaterialCode,
+    //            Status = item.Status
+    //        })]
+    //    };
+    //    return lookup ?? new();
+    //}
 
     public async Task<List<Shared.UserLookupDto>> GetListUserLookup(string name)
     {
@@ -1326,19 +1318,19 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
     }
 
 
-    public virtual async Task<ListResultDto<int?>> GetYearLookupKeyAccountAsync()
-    {
-        var keyAccounts = await _keyAccountRepository.GetListAsync();
+    //public virtual async Task<ListResultDto<int?>> GetYearLookupKeyAccountAsync()
+    //{
+    //    var keyAccounts = await _keyAccountRepository.GetListAsync();
 
-        var years = keyAccounts
-            .Where(x => x.RegistrationYear.HasValue)
-            .Select(x => (int?)x.RegistrationYear)
-            .Distinct()
-            .OrderByDescending(y => y)             // order
-            .ToList();
+    //    var years = keyAccounts
+    //        .Where(x => x.RegistrationYear.HasValue)
+    //        .Select(x => (int?)x.RegistrationYear)
+    //        .Distinct()
+    //        .OrderByDescending(y => y)             // order
+    //        .ToList();
 
-        return new ListResultDto<int?>(years);
-    }
+    //    return new ListResultDto<int?>(years);
+    //}
 
     public virtual async Task<ListResultDto<short?>> GetLevelLookupWorkflowAsync(string type)
     {
@@ -1364,17 +1356,17 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
         return new ListResultDto<string?>(conditions);
     }
 
-    public virtual async Task<ListResultDto<int?>> GetYearDistinctPSIAsync()
-    {
-        var psis = await _psiRepository.GetListAsync();
+    //public virtual async Task<ListResultDto<int?>> GetYearDistinctPSIAsync()
+    //{
+    //    var psis = await _psiRepository.GetListAsync();
 
-        var years = psis
-            .Select(w => (int?)w.FY)
-            .Distinct()
-            .OrderByDescending(y => y)             // order
-            .ToList();
-        return new ListResultDto<int?>(years);
-    }
+    //    var years = psis
+    //        .Select(w => (int?)w.FY)
+    //        .Distinct()
+    //        .OrderByDescending(y => y)             // order
+    //        .ToList();
+    //    return new ListResultDto<int?>(years);
+    //}
 
     // LookupsAppService.cs
 
@@ -1441,4 +1433,8 @@ public class LookupsAppService : ApplicationService, ILookupsAppService
         return lookup ?? new();
     }
 
+    public Task<ListResultDto<int?>> GetYearLookupKeyAccountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,8 +1,6 @@
 using Asp.Versioning;
 using QuoteFlow.Dashboards;
 using QuoteFlow.DPOs;
-using QuoteFlow.GICs;
-using QuoteFlow.GKRs;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -31,19 +29,6 @@ public class DashboardController : AbpController, IDashboardAppService
         return _dashboardAppService.GetDPOStatusSummaryAsync(input);
     }
 
-    [HttpGet]
-    [Route("gic-status-summary")]
-    public virtual Task<GICStatusSummaryDto> GetGICStatusSummaryAsync(GetGICsInput input)
-    {
-        return _dashboardAppService.GetGICStatusSummaryAsync(input);
-    }
-
-    [HttpGet]
-    [Route("gkr-status-summary")]
-    public virtual Task<GKRStatusSummaryDto> GetGKRStatusSummaryAsync(GetGKRsInput input)
-    {
-        return _dashboardAppService.GetGKRStatusSummaryAsync(input);
-    }
 
     [HttpGet]
     [Route("sale-result-by-buyer")]

@@ -177,41 +177,6 @@ export class AppRoutes {
       TITLE: 'Import Stock Details | Stock Management',
     },
   };
-  static readonly KEY_ACCOUNTS = {
-    BASE: 'key-accounts',
-    ORDER: 5,
-    TITLE: 'Key Accounts',
-    LIST: {
-      BASE: 'list',
-      ORDER: 1,
-      TITLE: 'Key Accounts List | Key Accounts',
-    },
-    MY_APPROVALS: {
-      BASE: 'my-approvals',
-      ORDER: 2,
-      TITLE: 'My Approvals | Key Accounts',
-    },
-    CLASS_ADJUSTMENT: {
-      BASE: 'class-adjustment',
-      ORDER: 5,
-      TITLE: 'Class Adjustment| Key Accounts',
-    },
-    GENERAL_REPORT: {
-      BASE: 'general-report',
-      ORDER: 3,
-      TITLE: 'General Report| Key Accounts',
-    },
-    DETAILED_REPORT: {
-      BASE: 'detailed-report',
-      ORDER: 4,
-      TITLE: 'Detailed Report| Key Accounts',
-    },
-    DETAILS: {
-      BASE: 'details',
-      ORDER: 6,
-      TITLE: 'Key Account Details | Key Accounts',
-    },
-  };
   static readonly SPECIAL_PRICE_OFFERS = {
     BASE: 'price-offer',
     ORDER: 6,
@@ -718,11 +683,6 @@ export class AppRoutes {
       ORDER: 1,
       TITLE: 'Sale Orders (DPO)',
     },
-    GIC: {
-      BASE: 'sale-orders-gic',
-      ORDER: 2,
-      TITLE: 'Sale Orders (GIC)',
-    },
   };
   static readonly DPO = {
     BASE: 'dpo',
@@ -742,41 +702,6 @@ export class AppRoutes {
       BASE: 'report',
       ORDER: 3,
       TITLE: 'DPO Received | DPO Management',
-    },
-  };
-  static readonly GIC = {
-    BASE: 'gic',
-    ORDER: 2,
-    TITLE: 'GIC Management',
-    LIST: {
-      BASE: 'list',
-      ORDER: 1,
-      TITLE: 'GIC List | GIC Management',
-    },
-    DETAILS: {
-      BASE: 'details',
-      ORDER: 2,
-      TITLE: 'GIC Details | GIC Management',
-    },
-  };
-  static readonly GKR = {
-    BASE: 'gkr',
-    ORDER: 3,
-    TITLE: 'GKR Management',
-    LIST: {
-      BASE: 'list',
-      ORDER: 1,
-      TITLE: 'GKR List | GKR Management',
-    },
-    DETAILS: {
-      BASE: 'details',
-      ORDER: 2,
-      TITLE: 'GKR Details | GKR Management',
-    },
-    APPROVALS: {
-      BASE: 'approvals',
-      ORDER: 3,
-      TITLE: 'GKR Approvals | GKR Management',
     },
   };
   static readonly SPECIAL_INPUT_PRICE = {

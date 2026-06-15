@@ -1,5 +1,4 @@
-﻿using QuoteFlow.GICs;
-using QuoteFlow.Materials;
+﻿using QuoteFlow.Materials;
 using QuoteFlow.PriceOffers;
 using Microsoft.AspNetCore.Authorization;
 using System;
@@ -317,26 +316,26 @@ public class TemplateAppService : QuoteFlowAppService, ITemplateAppService
         return fileWithContent;
     }
 
-    [AllowAnonymous]
-    public async Task<IRemoteStreamContent> GetGICTemplateAsync(string gicType)
-    {
-        var fileName = string.Empty;
+    //[AllowAnonymous]
+    //public async Task<IRemoteStreamContent> GetGICTemplateAsync(string gicType)
+    //{
+    //    var fileName = string.Empty;
 
-        fileName = gicType switch
-        {
-            GICTypeCodes.Internal => "Template_GIC_Import_IU.xlsx",
-            GICTypeCodes.GivingSponsor => "Template_GIC_Import_FOC.xlsx",
-            GICTypeCodes.Warranty => "Template_GIC_Import_WR.xlsx",
-            GICTypeCodes.WriteOff => "Template_GIC_Import_WO.xlsx",
-            _ => throw new UserFriendlyException($"Invalid GIC type specified, valid types are: {string.Join(", ", GICTypeCodes.AllTypes)}"),
-        };
-        var fileDescriptor = await _fileDescriptorRepository.FirstOrDefaultAsync(fd => fd.Name == fileName)
-            ?? throw new UserFriendlyException("The excel template does not exist in the system.");
+    //    fileName = gicType switch
+    //    {
+    //        GICTypeCodes.Internal => "Template_GIC_Import_IU.xlsx",
+    //        GICTypeCodes.GivingSponsor => "Template_GIC_Import_FOC.xlsx",
+    //        GICTypeCodes.Warranty => "Template_GIC_Import_WR.xlsx",
+    //        GICTypeCodes.WriteOff => "Template_GIC_Import_WO.xlsx",
+    //        _ => throw new UserFriendlyException($"Invalid GIC type specified, valid types are: {string.Join(", ", GICTypeCodes.AllTypes)}"),
+    //    };
+    //    var fileDescriptor = await _fileDescriptorRepository.FirstOrDefaultAsync(fd => fd.Name == fileName)
+    //        ?? throw new UserFriendlyException("The excel template does not exist in the system.");
 
-        var token = await _fileDescriptorAppService.GetDownloadTokenAsync(fileDescriptor.Id);
-        var fileWithContent = await _fileDescriptorAppService.DownloadAsync(fileDescriptor.Id, token.Token);
-        return fileWithContent;
-    }
+    //    var token = await _fileDescriptorAppService.GetDownloadTokenAsync(fileDescriptor.Id);
+    //    var fileWithContent = await _fileDescriptorAppService.DownloadAsync(fileDescriptor.Id, token.Token);
+    //    return fileWithContent;
+    //}
 
     [AllowAnonymous]
     public async Task<IRemoteStreamContent> GetSpecialInputPriceTemplateAsync()
@@ -360,5 +359,10 @@ public class TemplateAppService : QuoteFlowAppService, ITemplateAppService
         var token = await _fileDescriptorAppService.GetDownloadTokenAsync(fileDescriptor.Id);
         var fileWithContent = await _fileDescriptorAppService.DownloadAsync(fileDescriptor.Id, token.Token);
         return fileWithContent;
+    }
+
+    public Task<IRemoteStreamContent> GetGICTemplateAsync(string gicType)
+    {
+        throw new NotImplementedException();
     }
 }

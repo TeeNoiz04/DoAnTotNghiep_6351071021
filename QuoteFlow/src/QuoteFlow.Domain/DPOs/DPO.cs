@@ -1,7 +1,6 @@
 using JetBrains.Annotations;
 using QuoteFlow.DPOs.DPODetails;
 using QuoteFlow.DPOs.ParameterObjects;
-using QuoteFlow.GICs;
 using QuoteFlow.Shared.Interfaces;
 using QuoteFlow.Shared.Models;
 using System;
@@ -234,8 +233,8 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
         {
             throw new BusinessException(QuoteFlowDomainErrorCodes.DPO.OnlyConfirmedDPOCanBeLockedStock);
         }
-
-        if ((!string.IsNullOrWhiteSpace(GICType) && GICType == GICTypeCodes.WriteOff) || Details.All(d => d.NeedDelivery == 0))
+        // Need to check 
+        if ( Details.All(d => d.NeedDelivery == 0))
         {
             Status = QuoteFlowStatuses.InProgress;
         }

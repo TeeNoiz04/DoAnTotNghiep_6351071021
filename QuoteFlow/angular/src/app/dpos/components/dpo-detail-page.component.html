@@ -198,65 +198,6 @@
           </div>
         </app-expandable-panel-v2>
 
-        <!-- GKR Application section-->
-        <app-expandable-panel-v2
-          *ngIf="service?.dpo?.flags?.canAllocateGKR || service?.gkrAllocations?.length > 0"
-          headerText="GKR Allocations"
-          panelId="gkr_allocations"
-          [defaultCollapsed]="!service?.dpo?.flags?.canAllocateGKR"
-          icon="bi bi-box-seam"
-          [isDisabled]="false">
-          <ng-template #headerActions> </ng-template>
-          <div class="row mb-2 align-items-center">
-            <div class="col-lg-5 col-md-5">
-              <div class="d-flex gap-2 align-items-center">
-                <div class="input-group flex-grow-1">
-                  <span class="input-group-text">
-                    <i class="bi bi-search"></i>
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    autocomplete="off"
-                    [(ngModel)]="gkrSearchText"
-                    #searchInput
-                    [ngbTooltip]="'Search in: GKR No, Material Type, Buyer, Confirm Date, Exp. Date, Remark'"
-                    triggers="focus"
-                    placement="top" />
-                  <button
-                    *ngIf="gkrSearchText"
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    (click)="clearGkrSearch()"
-                    title="Clear search">
-                    <i class="bi bi-x"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-7 col-md-7">
-              <!--Allocate-->
-              <div class="d-flex justify-content-end gap-2">
-                <button
-                  class="btn btn-sm btn-outline-secondary"
-                  *ngIf="service?.dpo?.flags?.canAllocateGKR"
-                  (click)="onAddGkrAllocation()">
-                  <i class="bi bi-plus"></i> Allocate
-                </button>
-              </div>
-            </div>
-          </div>
-          <ng-container *ngIf="gkrAllocations && !service?.loadingGkrAllocations; else loadingTemplate">
-            <!-- [height]="'400px'" -->
-            <app-gkr-allocation-table
-              [data]="gkrAllocations"
-              [enableSelection]="false"
-              [showLinkedNote]="true"
-              (selectionChange)="onGkrSelectionChange($event)">
-            </app-gkr-allocation-table>
-          </ng-container>
-        </app-expandable-panel-v2>
-
         <app-expandable-panel-v2
           headerText="Order Items"
           panelId="sale_order_items"
@@ -861,49 +802,6 @@
   (itemUpdated)="onDPOItemUpdated()">
 </app-edit-dpo-item-dialog>
 
-<!-- GKR Allocation Modal -->
-<abp-modal
-  [(visible)]="showGkrAllocationModal"
-  [busy]="service.gkrAllocationBusy"
-  [suppressUnsavedChangesWarning]="true"
-  [options]="{
-    centered: true,
-    backdrop: 'static',
-    keyboard: true,
-    size: 'xl',
-  }">
-  <ng-template #abpHeader>
-    <h3>GKR Allocation</h3>
-  </ng-template>
-
-  <ng-template #abpBody>
-    <!-- [height]="'400px'" -->
-    <app-gkr-allocation-table
-      [data]="service?.availableGkrAllocations"
-      [enableSelection]="true"
-      [showLinkedNote]="false"
-      (selectionChange)="onGkrSelectionChange($event)">
-    </app-gkr-allocation-table>
-
-    <div class="mt-1">
-      <label>Note</label>
-      <textarea [(ngModel)]="gkrAllocationNote" rows="3" class="form-control"></textarea>
-    </div>
-  </ng-template>
-
-  <ng-template #abpFooter>
-    <button type="button" class="btn btn-secondary" abpClose>
-      {{ '::Cancel' | abpLocalization }}
-    </button>
-    <button
-      class="btn btn-primary"
-      type="button"
-      (click)="onAllocateGkr()"
-      [disabled]="service.gkrAllocationBusy || !selectedGkrId">
-      {{ '::Allocate' | abpLocalization }}
-    </button>
-  </ng-template>
-</abp-modal>
 <app-history-modal
   appEscCloseModal
   [isVisible]="showHistoryModal"

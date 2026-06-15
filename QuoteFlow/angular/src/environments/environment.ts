@@ -7,7 +7,7 @@ const oAuthConfig = {
   redirectUri: baseUrl,
   clientId: 'QuoteFlow_App',
   responseType: 'code',
-  scope: 'offline_access QuoteFlow',
+  scope: 'QuoteFlow',
   requireHttps: false,
 };
 

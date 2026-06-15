@@ -138,69 +138,6 @@ public class SaleOrderController : AbpController, ISaleOrdersAppService
         return _saleOrdersAppService.ImportSOAsync(data);
     }
     [HttpPost]
-    [Route("validate-and-parse-gic-write-off")]
-    public Task<ExcelValidationResult<SaleOrderGICWriteOffExcelDto>> ValidateAndParseGICWriteOffAsync(IRemoteStreamContent file, string gicType)
-    {
-        return _saleOrdersAppService.ValidateAndParseGICWriteOffAsync(file, gicType);
-    }
-    [HttpPost]
-    [Route("import-gic-write-off")]
-    public Task ImportSOGICWriteOffAsync(ExcelValidationResult<SaleOrderGICWriteOffExcelDto> data)
-    {
-        return _saleOrdersAppService.ImportSOGICWriteOffAsync(data);
-    }
-    [HttpPost]
-    [Route("validate-and-parse-gic-warranty")]
-    public Task<ExcelValidationResult<SaleOrderGICWarrantyExcelDto>> ValidateAndParseGICWarrantyAsync(IRemoteStreamContent file, string gicType)
-    {
-        return _saleOrdersAppService.ValidateAndParseGICWarrantyAsync(file, gicType);
-    }
-    [HttpPost]
-    [Route("import-gic-warranty")]
-    public Task ImportSOGICWarrantyAsync(ExcelValidationResult<SaleOrderGICWarrantyExcelDto> data)
-    {
-        return _saleOrdersAppService.ImportSOGICWarrantyAsync(data);
-    }
-
-    [HttpPost]
-    [Route("validate-and-parse-gic-internal-use")]
-    public Task<ExcelValidationResult<SaleOrderGICInternalUseExcelDto>> ValidateAndParseGICInternalUseAsync(IRemoteStreamContent file, string gicType)
-    {
-        return _saleOrdersAppService.ValidateAndParseGICInternalUseAsync(file, gicType);
-    }
-    [HttpPost]
-    [Route("import-gic-internal-use")]
-    public Task ImportSOGICInternalUseAsync(ExcelValidationResult<SaleOrderGICInternalUseExcelDto> data)
-    {
-        return _saleOrdersAppService.ImportSOGICInternalUseAsync(data);
-    }
-    [HttpPost]
-    [Route("validate-and-parse-gic-internal-use-change")]
-    public Task<ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto>> ValidateAndParseGICInternalUseChangeAsync(IRemoteStreamContent file, string gicType)
-    {
-        return _saleOrdersAppService.ValidateAndParseGICInternalUseChangeAsync(file, gicType);
-    }
-    [HttpPost]
-    [Route("import-gic-internal-use-change")]
-    public Task ImportSOGICInternalUseChangeAsync(ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto> data)
-    {
-        return _saleOrdersAppService.ImportSOGICInternalUseChangeAsync(data);
-    }
-
-    [HttpPost]
-    [Route("validate-and-parse-gic-foc")]
-    public Task<ExcelValidationResult<SaleOrderGICFOCExcelDto>> ValidateAndParseGICFOCAsync(IRemoteStreamContent file, string gicType)
-    {
-        return _saleOrdersAppService.ValidateAndParseGICFOCAsync(file, gicType);
-    }
-    [HttpPost]
-    [Route("import-gic-foc")]
-    public Task ImportSOGICFOCAsync(ExcelValidationResult<SaleOrderGICFOCExcelDto> data)
-    {
-        return _saleOrdersAppService.ImportSOGICFOCAsync(data);
-    }
-
-    [HttpPost]
     [Route("export-so-gic-data")]
     public Task<IRemoteStreamContent> GetListGICAsExcelFileAsync(GetSaleOrdersInput input)
     {

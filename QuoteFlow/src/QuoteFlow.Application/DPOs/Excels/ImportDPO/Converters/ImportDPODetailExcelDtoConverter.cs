@@ -1,13 +1,10 @@
 using QuoteFlow.DPOs.DPODetails;
 using QuoteFlow.DPOs.DPODetails.ParameterObjects;
 using QuoteFlow.Shared.Excels;
-using QuoteFlow.SpecialInputPrices;
-using QuoteFlow.SpecialInputPrices.SpecialInputPriceDetails;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Guids;
 using Volo.Abp.ObjectMapping;
 using static QuoteFlow.Shared.Excels.ExcelImportContextKeys;
@@ -16,16 +13,11 @@ namespace QuoteFlow.DPOs.Excels.ImportDPO.Converters;
 
 public class ImportDPODetailExcelDtoConverter : ExcelDtoConverter<ImportDPODetailDto, DPODetailCreateParams>
 {
-    public ISpecialInputPriceDetailRepository _specialInputPriceDetailRepository;
-    public ISpecialInputPriceRepository _specialInputPriceRepository;
+
     public ImportDPODetailExcelDtoConverter(
         IObjectMapper objectMapper,
-        IGuidGenerator guidGenerator,
-        ISpecialInputPriceDetailRepository specialInputPriceDetailRepository,
-        ISpecialInputPriceRepository specialInputPriceRepository) : base(objectMapper, guidGenerator)
+        IGuidGenerator guidGenerator) : base(objectMapper, guidGenerator)
     {
-        _specialInputPriceDetailRepository = specialInputPriceDetailRepository;
-        _specialInputPriceRepository = specialInputPriceRepository;
     }
 
     protected override IEnumerable<string> RequiredValidationContextKeys => [
@@ -52,16 +44,7 @@ public class ImportDPODetailExcelDtoConverter : ExcelDtoConverter<ImportDPODetai
             {
                 accountNo = null; // Ensure accountNo is null if empty
             }
-            else
-            {
-                var specialInputPrice = await _specialInputPriceRepository.FirstOrDefaultAsync(x => x.AccountNo == accountNo);
-                var exitsGolfaCodeOfAccountNo = await _specialInputPriceDetailRepository.FirstOrDefaultAsync(x => x.MaterialCode == importDto.GolfaCode && x.SpecialInputPriceId == specialInputPrice.Id);
-
-                if (exitsGolfaCodeOfAccountNo == null)
-                {
-                    accountNo = null;
-                }
-            }
+           
         }
 
         // Get customer info from pre-resolved customer lookup maps

@@ -2,7 +2,6 @@
 using QuoteFlow.ApprovalHistories;
 using QuoteFlow.Customers;
 using QuoteFlow.Shared;
-using QuoteFlow.SpecialInputPrices;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,7 +38,6 @@ public interface ILookupsAppService : IApplicationService
     Task<ListResultDto<LookupDto<Guid>>> GetProductCategoryLookupAsync();
     Task<ListResultDto<LookupDto<Guid>>> GetFinancialCategoryLookupAsync();
     Task<ListResultDto<LookupDto<Guid>>> GetKeyAccountClassChildLookupAsync(string keyAccountTypeCode, bool hiddenNA);
-    Task<ListResultDto<SpecialInputPriceLookupDto<Guid>>> GetSpecialInputPriceLookupAsync(string? materialType);
     Task<ListResultDto<LookupDto<Guid>>> GetSupplierLookupAsync();
     Task<ListResultDto<LookupDto<Guid>>> GetSupplierBULookupAsync();
     Task<List<SupplierPOLookupDto>> GetSupplierPOLookupAsync(string? materialType, string? currency, string? createSource, bool? epa);
@@ -48,8 +46,6 @@ public interface ILookupsAppService : IApplicationService
     Task<ListResultDto<LookupDto<Guid>>> GetSupplierByMaterialTypeLookupAsync(string materialType);
 
     Task<ListResultDto<SupplierBULookupDto<Guid>>> GetSupplierBUBySupplierAndMaterialTypeLookupAsync(Guid supplierId, string materialType);
-
-    Task<ListResultDto<AccountCodeLookupDto>> GetAccountNoAsync(string materialCode);
     Task<List<Shared.UserLookupDto>> GetListUserLookup(string name);
     Task<List<Shared.UserLookupDto>> GetListAllUserLookup();
     Task<List<Shared.UserLookupDto>> GetListUserPICLookup(GetSalePICLookupInput input);
@@ -69,7 +65,6 @@ public interface ILookupsAppService : IApplicationService
 
     Task<ListResultDto<short?>> GetLevelLookupWorkflowAsync(string type);
     Task<ListResultDto<string?>> GetConditionLookupWorkflowAsync(string type);
-    Task<ListResultDto<int?>> GetYearDistinctPSIAsync();
     Task<List<string>> GetSpoTypeLookupAsync();
     Task<List<string?>> GetKAbySPOAsync(string spoType);
 

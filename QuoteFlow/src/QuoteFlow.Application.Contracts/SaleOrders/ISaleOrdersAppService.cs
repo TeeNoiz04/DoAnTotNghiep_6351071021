@@ -34,24 +34,6 @@ public interface ISaleOrdersAppService
     Task UpdateSODetailExtrafeeAsync(SODetailExtrafeeUpdateInput input);
     //Task<List<SAPDataDto>> GetExpportSAPDataAsync(GetSaleOrdersInput input);
     Task<IRemoteStreamContent> GetListSODataAsExcelFileAsync(GetSaleOrdersInput input);
-    Task<ExcelValidationResult<SaleOrderGICWriteOffExcelDto>> ValidateAndParseGICWriteOffAsync(IRemoteStreamContent file, string gicType);
-
-    Task ImportSOGICWriteOffAsync(ExcelValidationResult<SaleOrderGICWriteOffExcelDto> data);
-    Task<ExcelValidationResult<SaleOrderGICWarrantyExcelDto>> ValidateAndParseGICWarrantyAsync(IRemoteStreamContent file, string gicType);
-
-    Task ImportSOGICWarrantyAsync(ExcelValidationResult<SaleOrderGICWarrantyExcelDto> data);
-
-    Task<ExcelValidationResult<SaleOrderGICInternalUseExcelDto>> ValidateAndParseGICInternalUseAsync(IRemoteStreamContent file, string gicType);
-
-    Task ImportSOGICInternalUseAsync(ExcelValidationResult<SaleOrderGICInternalUseExcelDto> data);
-
-    Task<ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto>> ValidateAndParseGICInternalUseChangeAsync(IRemoteStreamContent file, string gicType);
-
-    Task ImportSOGICInternalUseChangeAsync(ExcelValidationResult<SaleOrderGICInternalUseChangeExcelDto> data);
-
-    Task<ExcelValidationResult<SaleOrderGICFOCExcelDto>> ValidateAndParseGICFOCAsync(IRemoteStreamContent file, string gicType);
-
-    Task ImportSOGICFOCAsync(ExcelValidationResult<SaleOrderGICFOCExcelDto> data);
 
 
 }
