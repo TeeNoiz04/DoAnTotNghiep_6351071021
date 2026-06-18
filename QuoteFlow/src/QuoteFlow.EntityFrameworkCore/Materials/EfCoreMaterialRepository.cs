@@ -164,7 +164,7 @@ public class EfCoreMaterialRepository : EfCoreRepository<QuoteFlowDbContext, Mat
             materialGroup = filterParams.MaterialGroup,
             stockCategoryId = filterParams.StockCategoryId,
             greaterStockQty = filterParams.GreaterStockQty,
-            greaterOnOrderStockQty = filterParams.GreaterOnOrderStockQty,
+            greaterOnOrderStockQty = filterParams.GreaterOnOrderStockQty, // Can delete
             exportExcel = exportExcel,
             status = filterParams.Status,
             restrictedMaterialTypes,

@@ -414,8 +414,6 @@ public class StockManagementAppService : ApplicationService, IStockManagementApp
             row.Cell(col++).Value = item.Locked_Qty;           // P: Locked Qty
             row.Cell(col++).Value = item.LockStockSO_Qty;      // Q: LockStockSO Qty
             row.Cell(col++).Value = item.Available_Qty;        // R: Available Qty
-            row.Cell(col++).Value = item.Lockshipment_Qty;     // S: Lockshipment Qty
-            row.Cell(col++).Value = item.OnOderStock;          // T: On Order Stock
         }
         var outputStream = new MemoryStream();
         workbook.SaveAs(outputStream);

@@ -50,8 +50,6 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         var priceOfferPermission = myGroup.AddPermission(QuoteFlowPermissions.PriceOffers.Default, L("Permission:PriceOffers"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.PriceOfferList, L("Permission:PriceOfferList"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.BatchRequest, L("Permission:BatchRequest"));
-        priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.GeneralReport, L("Menu:PriceOffers:GeneralReport"));
-        priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.DetailedReport, L("Menu:PriceOffers:DetailReport"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.ApplySpecialInputPrice, L("Permission:ApplySpecialInputPrice"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.Close, L("Permission:Close"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.Cancel, L("Permission:Cancel"));
@@ -94,7 +92,7 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.ImportInternalUseChange, L("Permission:ImportInternalUseChange"));
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.ImportSAPSO, L("Permission:ImportSAPSO"));
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.ExportSAPData, L("Permission:ExportSAPData"));
-        saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.ExportReportData, L("Permission:ExportReportData"));
+
         saleOrderPermission.AddChild(QuoteFlowPermissions.SaleOrders.SAPLandingCost, L("Permission:SAPLandingCost"));
 
      

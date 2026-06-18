@@ -1883,9 +1883,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         var materialStocks = await _materialStockRepository.GetListAsync(x =>
             allGolfaCodes.Contains(x.GolfaCode) && !damagedOrFOCStock.Select(stock => stock.Id).Contains(x.StockCategoryId)
         );
-        var materialLockShipments = await _materialStockLockShipmentRepository.GetListAsync(x =>
-            allGolfaCodes.Contains(x.GolfaCode)
-        );
         var materialNotActive = await _materialRepository.GetListAsync(
             x => allGolfaCodes.Contains(x.GolfaCode) && x.MaterialStatus != MaterialStatuses.Active
         );
@@ -1923,10 +1920,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
             dto.AvailableStockQty = materialStocks
                 .Where(x => x.GolfaCode.Equals(dto.GolfaCode, StringComparison.OrdinalIgnoreCase))
                 .Sum(x => x.Available_Qty) ?? 0;
-
-            dto.OnOrderStockAvailable = materialLockShipments
-                .Where(x => x.GolfaCode.Equals(dto.GolfaCode, StringComparison.OrdinalIgnoreCase))
-                .FirstOrDefault()?.StockOnOrder ?? 0;
 
             if (materialStatusLookup.TryGetValue(dto.GolfaCode, out var status))
                 dto.MaterialStatus = status;

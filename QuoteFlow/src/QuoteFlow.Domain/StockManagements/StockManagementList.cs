@@ -18,8 +18,6 @@ public class StockManagementList
     public decimal Locked_Qty { get; set; }
     public decimal LockStockSO_Qty { get; set; }
     public decimal Available_Qty { get; set; }
-    public decimal Lockshipment_Qty { get; set; }
-    public decimal OnOderStock { get; set; }
     public string? StockCode { get; set; }
     public string? StockName { get; set; }
     public Guid? StockCategoryId { get; set; }
