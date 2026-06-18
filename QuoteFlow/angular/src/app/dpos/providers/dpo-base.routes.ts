@@ -8,9 +8,16 @@ export const DPO_BASE_ROUTES: ABP.Route[] = [
     iconClass: 'fa-solid fa-clipboard-check',
     name: '::Menu:DPOs',
     layout: eLayoutType.application,
-    parentName: '::Menu:MovingOrders',
     requiredPolicy: `${AppPermissions.MovingOrders.DPOs.DPODefault}`,
     breadcrumbText: '::DPOManagement',
-    order: AppRoutes.DPO.ORDER,
+    order: 7,
+  },
+  {
+    // Layout anchor for detail routes - invisible, no menu entry
+    path: `/${AppRoutes.DPO.BASE}`,
+    name: '__dpo_layout_anchor__',
+    invisible: true,
+    layout: eLayoutType.application,
+    requiredPolicy: `${AppPermissions.MovingOrders.DPOs.DPODefault}`,
   },
 ];

@@ -13,6 +13,14 @@ export const PRICE_OFFER_BASE_ROUTES: ABP.Route[] = [
     order: AppRoutes.SPECIAL_PRICE_OFFERS.ORDER,
   },
   {
+    // Layout anchor for SPO detail routes - no menu entry
+    path: `/${AppRoutes.SPECIAL_PRICE_OFFERS.BASE}`,
+    name: '__spo_layout_anchor__',
+    invisible: true,
+    layout: eLayoutType.application,
+    requiredPolicy: `${AppPermissions.PriceOffers.Default}`,
+  },
+  {
     path: `/${AppRoutes.SPECIAL_PRICE_OFFERS.BASE}/${AppRoutes.SPECIAL_PRICE_OFFERS.LIST.BASE}`,
     iconClass: 'fas fa-list',
     name: '::Menu:PriceOffers:List',
@@ -52,7 +60,6 @@ export const PRICE_OFFER_BASE_ROUTES: ABP.Route[] = [
     parentName: '::Menu:PriceOffers',
     requiredPolicy: `${AppPermissions.PriceOffers.DetailedReport}`,
   },
-
   {
     path: `/${AppRoutes.SPECIAL_PRICE_OFFERS.BASE}/${AppRoutes.SPECIAL_PRICE_OFFERS.BATCH_REQUEST.BASE}`,
     iconClass: 'fas fa-file-upload',
@@ -61,7 +68,6 @@ export const PRICE_OFFER_BASE_ROUTES: ABP.Route[] = [
     breadcrumbText: '::BatchRequest',
     order: AppRoutes.SPECIAL_PRICE_OFFERS.BATCH_REQUEST.ORDER,
     parentName: '::Menu:PriceOffers',
-
     requiredPolicy: `${AppPermissions.PriceOffers.BatchRequest}`,
   },
 ];

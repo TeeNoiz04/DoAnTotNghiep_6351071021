@@ -13,7 +13,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { LookupService } from '@proxy/general-lookups';
 import { LookupDto } from '@proxy/shared';
-import { PriceOfferTypes } from '../../price-offer.types';
 
 @Component({
   selector: 'app-special-price-offer-filter',
@@ -40,13 +39,6 @@ export class SpecialPriceOfferFilterComponent
   private readonly lookupService = inject(LookupService);
 
   // Dropdown options
-  priceOfferTypeOptions = [
-    { value: PriceOfferTypes.Project, label: 'Project Price Offer' },
-    { value: PriceOfferTypes.KeyAccount, label: 'Key-Account Price Offer' },
-    { value: PriceOfferTypes.Distributor, label: 'Distributor Price Offer' },
-    { value: PriceOfferTypes.NoBuyer, label: 'Price Offer Without Buyer' },
-  ];
-
   materialTypeOptions: LookupDto<string>[] = [];
   buyerOptions: LookupDto<string>[] = [];
 
@@ -107,7 +99,6 @@ export class SpecialPriceOfferFilterComponent
     return {
       ...this.filters,
       filterText: formValue.filterText || '',
-      priceOfferType: formValue.priceOfferType || '',
       materialType: formValue.materialType || '',
       buyerId: formValue.buyerId || '',
       priceOfferCode: formValue.priceOfferCode || '',

@@ -38,27 +38,19 @@ function configureRoutes() {
       parentName: '::Menu:Dashboard',
     },
     {
-      iconClass: 'fas fa-box',
-      name: '::Menu:MovingOrders',
-      layout: eLayoutType.application,
-      breadcrumbText: '::MovingOrders',
-      requiredPolicy: `${AppPermissions.MovingOrders.Default}`,
-      order: 6,
-    },
-    {
       path: `/${AppRoutes.SALE_ORDERS.DPO.BASE}/list`,
       name: `${AppRoutes.SALE_ORDERS.DPO.TITLE}`,
       iconClass: 'fas fa-clipboard-check',
-      order: AppRoutes.SALE_ORDERS.DPO.ORDER,
+      order: 8,
       layout: eLayoutType.application,
       requiredPolicy: `${AppPermissions.SaleOrders.Default}`,
-      parentName: `${AppRoutes.SALE_ORDERS.TITLE}`,
     },
     {
-      iconClass: 'fas fa-file-signature',
-      name: `${AppRoutes.SALE_ORDERS.TITLE}`,
+      // Layout anchor for SO detail routes - no menu entry
+      path: `/${AppRoutes.SALE_ORDERS.DPO.BASE}`,
+      name: '__so_layout_anchor__',
+      invisible: true,
       layout: eLayoutType.application,
-      order: AppRoutes.SALE_ORDERS.ORDER,
       requiredPolicy: `${AppPermissions.SaleOrders.Default}`,
     },
   ]);

@@ -6,7 +6,7 @@ import { AppRoutes } from './app.routes';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard/base',
+    redirectTo: 'materials/list',
     pathMatch: 'full',
   },
   // {
@@ -123,10 +123,6 @@ const routes: Routes = [
       import('./system-categories/workflow-configuration/workflow-configuration.module').then(
         m => m.WorkflowConfigurationModule,
       ),
-  },
-  {
-    path: `${AppRoutes.REPORT.BASE}`,
-    loadChildren: () => import('./report/report.module').then(m => m.ReportModule),
   },
   {
     path: `${AppRoutes.SPECIAL_INPUT_PRICE.BASE}`,

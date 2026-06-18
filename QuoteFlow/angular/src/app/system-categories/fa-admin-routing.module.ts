@@ -7,8 +7,6 @@ import { SpecialInputPriceComponent } from './special-input-prices/components/sp
 import { SpecialInputPriceDetailComponent } from './special-input-prices/components/special-input-price-detail-page.component';
 import { PriceOfferWorkflowComponent } from './workflow-configuration/components/price-offer-workflow/price-offer-workflow.component';
 import { MaterialStockWorkflowComponent } from './workflow-configuration/components/material-stock-workflow/material-stock-workflow.component';
-import { PSIWorkflowComponent } from './workflow-configuration/components/psi-workflow/psi-workflow.component';
-import { KeyAccountWorkflowComponent } from './workflow-configuration/components/key-account-workflow/key-account-workflow.component';
 import { SpoDiscountComponent } from './spo-discount/components/spo-discount.component';
 
 export const routes: Routes = [

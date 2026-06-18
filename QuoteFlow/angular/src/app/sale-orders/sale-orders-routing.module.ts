@@ -1,4 +1,4 @@
-import { authGuard, permissionGuard } from '@abp/ng.core';
+import { authGuard, eLayoutType, permissionGuard } from '@abp/ng.core';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppPermissions } from '@app/app.permissions';
@@ -18,6 +18,7 @@ export const routes: Routes = [
     canActivate: [authGuard, permissionGuard],
     data: {
       title: AppRoutes.SALE_ORDERS_MANAGEMENT.LIST.TITLE,
+      layout: eLayoutType.application,
     },
   },
   {
@@ -26,6 +27,7 @@ export const routes: Routes = [
     canActivate: [authGuard, permissionGuard],
     data: {
       title: AppRoutes.SALE_ORDERS_MANAGEMENT.NEW.TITLE,
+      layout: eLayoutType.application,
       requiredPolicy: `${AppPermissions.SaleOrders.Default}`,
     },
   },
@@ -35,6 +37,7 @@ export const routes: Routes = [
     canActivate: [authGuard, permissionGuard],
     data: {
       title: AppRoutes.SALE_ORDERS_MANAGEMENT.DETAILS.TITLE,
+      layout: eLayoutType.application,
       requiredPolicy: `${AppPermissions.SaleOrders.Default}`,
     },
   },

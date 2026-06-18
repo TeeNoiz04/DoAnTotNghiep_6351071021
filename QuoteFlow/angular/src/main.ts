@@ -19,7 +19,6 @@ import { CUSTOMER_ROUTE_PROVIDER } from '@app/customer/providers/customer-route.
 import { DPO_ROUTE_PROVIDERS } from '@app/dpos/providers/dpo-route.provider';
 import { MATERIALS_MATERIAL_ROUTE_PROVIDER } from '@app/materials/providers/material-route.provider';
 import { PRICE_OFFERS_PRICE_OFFER_ROUTE_PROVIDER } from '@app/price-offers/providers/price-offer-route.provider';
-import { REPORT_ROUTE_PROVIDER } from '@app/report/providers/report-route.provider';
 import { SALE_ORDERS_MANAGEMENT_ROUTE_PROVIDER } from '@app/sale-orders/providers/sale-orders-route.provider';
 import { CustomNgbDatePickerFormatter } from '@app/shared/formatters/custom-ngb-datepicker';
 import { InternalServerErrorHandlerService } from '@app/shared/http-error-handler/internal-error-handler';
@@ -137,7 +136,6 @@ bootstrapApplication(AppComponent, {
     SPECIAL_INPUT_PRICE_ROUTE_PROVIDER,
     WORKFLOW_CONFIGURATION_ROUTE_PROVIDER,
     STOCK_MANAGEMENT_ROUTE_PROVIDER,
-    REPORT_ROUTE_PROVIDER,
     SALE_ORDERS_MANAGEMENT_ROUTE_PROVIDER,
     provideAnimations(),
     provideAppInitializer(() => {

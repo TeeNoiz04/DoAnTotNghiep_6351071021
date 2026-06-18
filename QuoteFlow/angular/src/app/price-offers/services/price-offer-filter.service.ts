@@ -34,7 +34,7 @@ export class PriceOfferFilterService extends BaseFilterService<
       relatedToMe: false,
       sorting: 'creationTime desc',
       filterText: null,
-      priceOfferType: null,
+      priceOfferType: 'PP',
       materialType: null,
       buyerId: null,
       priceOfferCode: null,
@@ -51,7 +51,6 @@ export class PriceOfferFilterService extends BaseFilterService<
   protected buildSearchFormControls(): { [key: string]: any } {
     return {
       filterText: [null],
-      priceOfferType: [null],
       materialType: [null],
       buyerId: [null],
       priceOfferCode: [null],
@@ -80,7 +79,7 @@ export class PriceOfferFilterService extends BaseFilterService<
     return {
       ...this.filters,
       filterText: formValue.filterText || null,
-      priceOfferType: formValue.priceOfferType || null,
+      priceOfferType: 'PP',
       materialType: formValue.materialType || null,
       buyerId: formValue.buyerId || null,
       priceOfferCode: formValue.priceOfferCode || null,

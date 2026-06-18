@@ -3,10 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppRoutes } from '@app/app.routes';
 import { PriceOfferWorkflowComponent } from './components/price-offer-workflow/price-offer-workflow.component';
 import { MaterialStockWorkflowComponent } from './components/material-stock-workflow/material-stock-workflow.component';
-import { PSIWorkflowComponent } from './components/psi-workflow/psi-workflow.component';
-import { KeyAccountWorkflowComponent } from './components/key-account-workflow/key-account-workflow.component';
-import { GKRWorkflowComponent } from './components/gkr/gkr-workflow.component';
-import { AssetManagementComponent } from './components/asset-management/asset-management.component';
 
 export const routes: Routes = [
   {
@@ -21,34 +17,6 @@ export const routes: Routes = [
     component: MaterialStockWorkflowComponent,
     data: {
       title: AppRoutes.WORKFLOW_CONFIGURATION.MATERIAL_STOCK_WORKFLOW.TITLE,
-    },
-  },
-  {
-    path: `${AppRoutes.WORKFLOW_CONFIGURATION.PSI_WORKFLOW.BASE}`,
-    component: PSIWorkflowComponent,
-    data: {
-      title: AppRoutes.WORKFLOW_CONFIGURATION.PSI_WORKFLOW.TITLE,
-    },
-  },
-  {
-    path: `${AppRoutes.WORKFLOW_CONFIGURATION.KEY_ACCOUNT_WORKFLOW.BASE}`,
-    component: KeyAccountWorkflowComponent,
-    data: {
-      title: AppRoutes.WORKFLOW_CONFIGURATION.KEY_ACCOUNT_WORKFLOW.TITLE,
-    },
-  },
-  {
-    path: `${AppRoutes.WORKFLOW_CONFIGURATION.GKR_WORKFLOW.BASE}`,
-    component: GKRWorkflowComponent,
-    data: {
-      title: AppRoutes.WORKFLOW_CONFIGURATION.GKR_WORKFLOW.TITLE,
-    },
-  },
-  {
-    path: `${AppRoutes.WORKFLOW_CONFIGURATION.ASSET_MANAGEMENT.BASE}`,
-    component: AssetManagementComponent,
-    data: {
-      title: AppRoutes.WORKFLOW_CONFIGURATION.ASSET_MANAGEMENT.TITLE,
     },
   },
 ];
