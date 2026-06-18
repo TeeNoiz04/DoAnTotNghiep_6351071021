@@ -68,7 +68,6 @@ export class MaterialDetailsModalComponent implements OnInit, OnChanges {
   buildForms(): void {
     this.basicInfoForm = this.fb.group({
       golfaCode: [this.selected?.golfaCode, [Validators.required]],
-      sapCode: [this.selected?.sap_Code],
       model: [this.selected?.model, [Validators.required]],
       registrationDate: [this.selected?.registrationDate ? this.selected.registrationDate.substring(0, 10) : ''],
       validFrom: [this.selected?.validFrom ? this.selected.validFrom.substring(0, 10) : ''],
@@ -97,15 +96,11 @@ export class MaterialDetailsModalComponent implements OnInit, OnChanges {
       unit: [this.selected?.unit],
       materialClass: [this.selected?.materialClass],
       materialSecClassification: [this.selected?.materialClass],
-      sapMatGroup: [this.selected?.sapMatGroup],
       productHierarchy: [this.selected?.product_Hierarchy],
       countryOfOrigin: [this.selected?.countryOfOrigin],
       warrantyTimeMonth: [this.selected?.warrantyTime],
-      inventoryCategory: [this.selected?.inventoryCategory],
-      maxLot: [this.selected?.maxlot],
       stockWarning: [this.selected?.stockWarning],
       vat: [this.selected?.vat],
-      hsCode: [this.selected?.hs_Code],
     });
 
     // Specifications section form

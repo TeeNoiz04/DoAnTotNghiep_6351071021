@@ -199,16 +199,6 @@ export class ImportMaterialDetailComponent implements OnInit {
     ],
 
     'MATERIAL.LEADTIME': ['materialStatus', 'golfaCode', 'model', 'referenceLeadTime', 'countryOfOrigin', 'maxlot'],
-
-    'MATERIAL.SAP_CODE': [
-      'materialStatus',
-      'golfaCode',
-      'model',
-      'sap_Code',
-      'description_VN',
-      'product_Hierarchy',
-      'vat',
-    ],
   };
   requestId: string | null;
   importType = ImportMaterialManagementType;

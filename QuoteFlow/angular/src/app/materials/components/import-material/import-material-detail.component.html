@@ -241,13 +241,6 @@
                     width="180px"
                     [formatter]="formatDate"></app-table-column>
 
-                  <app-table-column
-                    *ngIf="field === 'sap_Code'"
-                    field="sap_Code"
-                    header="SAP Code"
-                    width="120px"
-                    [formatter]="formatStringDelete"></app-table-column>
-
                   <!-- Specifications -->
                   <app-table-column
                     *ngIf="field === 'spec1'"
@@ -324,23 +317,6 @@
                     [formatter]="formatStringDelete"></app-table-column>
 
                   <app-table-column
-                    *ngIf="field === 'sapMatGroup'"
-                    field="sapMatGroup"
-                    header="SAP Mat Group"
-                    width="120px"
-                    [formatter]="formatStringDelete"></app-table-column>
-                  <!-- <app-table-column
-                    *ngIf="field === 'product_Hierarchy'"
-                    field="product_Hierarchy"
-                    header="Product Hierarchy"
-                    width="160px"></app-table-column> -->
-                  <app-table-column
-                    *ngIf="field === 'inventoryCategory'"
-                    field="inventoryCategory"
-                    header="Inventory Category"
-                    width="160px"
-                    [formatter]="formatStringDelete"></app-table-column>
-                  <app-table-column
                     *ngIf="field === 'warrantyTime'"
                     field="warrantyTime"
                     header="Warranty Time"
@@ -380,12 +356,6 @@
                     [formatter]="formatNegative"></app-table-column>
 
                   <app-table-column
-                    *ngIf="field === 'cargoNote'"
-                    field="cargoNote"
-                    header="Cargo Note"
-                    width="140px"
-                    [formatter]="formatStringDelete"></app-table-column>
-                  <app-table-column
                     *ngIf="field === 'size'"
                     field="size"
                     header="Size"
@@ -403,13 +373,6 @@
                     header="QR Code"
                     width="140px"
                     [formatter]="formatStringDelete"></app-table-column>
-
-                  <app-table-column
-                    *ngIf="field === 'maxlot'"
-                    field="maxlot"
-                    header="Max Lot"
-                    width="100px"
-                    [formatter]="formatNumber"></app-table-column>
 
                   <app-table-column
                     *ngIf="field === 'referenceLeadTime'"
@@ -544,30 +507,12 @@
                     width="150px"
                     textAlign="end"
                     [formatter]="formatCurrencyDelete"></app-table-column>
-                  <!--product_Hierarchy-->
-                  <app-table-column
-                    *ngIf="field === 'product_Hierarchy'"
-                    field="product_Hierarchy"
-                    header="Product Hierarchy"
-                    width="150px"
-                    [formatter]="formatStringDelete"></app-table-column>
-                  <app-table-column
-                    *ngIf="field === 'productHierarchyDescription'"
-                    field="productHierarchyDescription"
-                    header="Product Hierarchy Description"
-                    width="150px"></app-table-column>
                   <!-- Origin & Codes -->
                   <app-table-column
                     *ngIf="field === 'countryOfOrigin'"
                     field="countryOfOrigin"
                     header="Country of Origin"
                     width="150px"
-                    [formatter]="formatStringDelete"></app-table-column>
-                  <app-table-column
-                    *ngIf="field === 'hS_Code'"
-                    field="hS_Code"
-                    header="HS Code"
-                    width="120px"
                     [formatter]="formatStringDelete"></app-table-column>
 
                   <app-table-column

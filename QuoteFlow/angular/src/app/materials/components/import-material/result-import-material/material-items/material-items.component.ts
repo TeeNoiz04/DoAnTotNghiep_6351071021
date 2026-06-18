@@ -80,7 +80,6 @@ export class MaterialItemsComponent implements OnChanges {
                 class: 'width_180',
                 formatter: val => formatDateTime(val),
               },
-              { field: 'rowData.sapCode', header: 'SAP Code', width: '180px', class: 'width_180' },
               { field: 'rowData.spec1', header: 'Spec1', width: '180px', class: 'width_180' },
               { field: 'rowData.spec2', header: 'Spec2', width: '180px', class: 'width_180' },
               { field: 'rowData.spec3', header: 'Spec3', width: '180px', class: 'width_180' },
@@ -97,14 +96,7 @@ export class MaterialItemsComponent implements OnChanges {
                 class: 'width_180',
               },
               { field: 'rowData.materialGroup', header: 'Material Group', width: '180px', class: 'width_180' },
-              { field: 'rowData.sapGroup', header: 'SAP Mat Group', width: '180px', class: 'width_180' },
               { field: 'rowData.productHierarchy', header: 'Product Hierarchy', width: '180px', class: 'width_180' },
-              {
-                field: 'rowData.productHierarchy_Description',
-                header: 'Product Hierachy description',
-                width: '180px',
-                class: 'width_180',
-              },
               {
                 field: 'rowData.countryOfOrigin',
                 header: 'Country of Origin',
@@ -125,24 +117,9 @@ export class MaterialItemsComponent implements OnChanges {
                 width: '180px',
                 class: 'width_180',
               },
-              {
-                field: 'rowData.inventoryCategory',
-                header: 'Inventory Category',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              { field: 'rowData.cargoNote', header: 'Cargo Note', width: '180px', class: 'width_180' },
               { field: 'rowData.weight', header: 'Weight', width: '180px', class: 'width_180' },
               { field: 'rowData.size', header: 'Material Size', width: '180px', class: 'width_180' },
               { field: 'rowData.qrCode', header: 'QR Code', width: '180px', class: 'width_180' },
-              {
-                field: 'rowData.maxLot',
-                header: 'Max lot',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatNumberDelete(val),
-              },
               {
                 field: 'rowData.stockWarning',
                 header: 'Stock Warning',
@@ -157,7 +134,6 @@ export class MaterialItemsComponent implements OnChanges {
                 class: 'width_180',
                 formatter: val => formatNegative(val),
               },
-              { field: 'rowData.hsCode', header: 'HS Code', width: '180px', class: 'width_180' },
               { field: 'rowData.supplier', header: 'Supplier', width: '180px', class: 'width_180' },
               { field: 'rowData.supplierBU', header: 'Supplier BU', width: '180px', class: 'width_180' },
               { field: 'rowData.factory', header: 'Factory', width: '180px', class: 'width_180' },
@@ -493,20 +469,6 @@ export class MaterialItemsComponent implements OnChanges {
                 formatter: val => formatStringDelete(val),
               },
               {
-                field: 'rowData.sapGroup',
-                header: 'SAP Mat Group',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
-                field: 'rowData.productHierarchy_Description',
-                header: 'Product Hierachy description',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
                 field: 'rowData.countryOfOrigin',
                 header: 'Origin',
                 width: '180px',
@@ -526,20 +488,6 @@ export class MaterialItemsComponent implements OnChanges {
                 width: '180px',
                 class: 'width_180',
                 formatter: val => formatNumberDelete(val),
-              },
-              {
-                field: 'rowData.inventoryCategory',
-                header: 'Inventory Category',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
-                field: 'rowData.cargoNote',
-                header: 'Cargo Note',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
               },
               {
                 field: 'rowData.weight',
@@ -563,13 +511,6 @@ export class MaterialItemsComponent implements OnChanges {
                 formatter: val => formatStringDelete(val),
               },
               {
-                field: 'rowData.maxLot',
-                header: 'Max lot',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatNumberDelete(val),
-              },
-              {
                 field: 'rowData.stockWarning',
                 header: 'Stock Warning',
                 width: '180px',
@@ -582,13 +523,6 @@ export class MaterialItemsComponent implements OnChanges {
                 width: '180px',
                 class: 'width_180',
                 formatter: val => formatNumberDelete(val),
-              },
-              {
-                field: 'rowData.hsCode',
-                header: 'HS Code',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
               },
             ],
           },
@@ -736,58 +670,7 @@ export class MaterialItemsComponent implements OnChanges {
         ];
         break;
 
-      case ImportMaterialManagementType.SAPCode:
-        this.columnGroups = [
-          {
-            name: 'Material Detail',
-            class: 'group-header item-group',
-            columns: [
-              {
-                field: 'no',
-                header: 'No',
-                width: '50px',
-                formatter: (val, row) => {
-                  const index = this.data.indexOf(row) + 1;
-                  return index.toString();
-                },
-                class: 'text-center width_50',
-                textAlign: 'center',
-              },
-              { field: 'rowData.golfaCode', header: 'Material Code', width: '180px', class: 'width_180' },
-              { field: 'rowData.model', header: 'Model', width: '180px', class: 'width_180' },
-              {
-                field: 'rowData.sapCode',
-                header: 'SAP Code',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
-                field: 'rowData.descriptionVN',
-                header: 'Description VN',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
-                field: 'rowData.productHiearchy',
-                header: 'Product Hierarchy',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatStringDelete(val),
-              },
-              {
-                field: 'rowData.vat',
-                header: 'VAT',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatNegative(val),
-              },
-            ],
-          },
-        ];
-        break;
-
+      
       default:
         this.columnGroups = [];
         break;

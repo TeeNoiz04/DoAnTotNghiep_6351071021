@@ -25,12 +25,6 @@
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label" for="sapCode">SAP Code</label>
-              <input autocomplete="off" type="text" id="sapCode" formControlName="sapCode" class="form-control" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
               <label class="form-label" for="model">{{ '::Model' | abpLocalization }}</label>
               <input autocomplete="off" type="text" id="model" formControlName="model" class="form-control" />
             </div>
@@ -268,66 +262,6 @@
         </form>
       </app-expandable-panel>
 
-      <!-- Purchase Section -->
-      <app-expandable-panel
-        *abpPermission="AppPermissions.Materials.ViewPurchaseArea"
-        headerText="Purchase"
-        panelId="admin-section"
-        [defaultCollapsed]="true"
-        iconPosition="start"
-        headerStyle="background-color: #4472c4; color: white;">
-        <form [formGroup]="adminAreaForm">
-          <div class="row g-2">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label" for="inputPrice">{{ '::Input Price' | abpLocalization }}</label>
-                <app-input-number formControlName="inputPrice" [allowDecimal]="true" />
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-group">
-                <div class="form-group">
-                  <label class="form-label" for="inputCurrency">
-                    {{ '::Input Currency' | abpLocalization }}
-                  </label>
-                  <input
-                    autocomplete="off"
-                    type="text"
-                    id="inputCurrency"
-                    formControlName="inputCurrency"
-                    class="form-control" />
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label" for="landedCost">{{ '::Landed Cost' | abpLocalization }}</label>
-                <app-input-number formControlName="landedCost" [allowDecimal]="true" />
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label" for="percentSaleDiscount"
-                  >{{ '::Percent Sale Discount' | abpLocalization }} <strong>(%)</strong></label
-                >
-                <app-input-number formControlName="percentSaleDiscount" [allowDecimal]="true" />
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-group">
-                <label class="form-label" for="percentManagerDiscount"
-                  >{{ '::Percent Manager Discount' | abpLocalization }} <strong>(%)</strong></label
-                >
-                <app-input-number formControlName="percentManagerDiscount" [allowDecimal]="true" />
-              </div>
-            </div>
-          </div>
-        </form>
-      </app-expandable-panel>
     </div>
   </ng-template>
 

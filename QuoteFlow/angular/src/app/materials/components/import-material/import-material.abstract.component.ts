@@ -159,7 +159,6 @@ export abstract class AbstractImportMaterialComponent implements OnInit, OnDestr
       [ImportMaterialManagementType.InventoryPlanning]: () =>
         this.proxyService.validateAndParseUpdateInventoryPlan(formData),
       [ImportMaterialManagementType.Leadtime]: () => this.proxyService.validateAndParseFactory(formData),
-      [ImportMaterialManagementType.SAPCode]: () => this.proxyService.validateAndParseSAP(formData),
     };
 
     const handler = importHandlers[this.importMode];
@@ -220,7 +219,6 @@ export abstract class AbstractImportMaterialComponent implements OnInit, OnDestr
       [ImportMaterialManagementType.InventoryPlanning]: () =>
         this.proxyService.materialUpdateInventoryPlan(resultImport, values.note),
       [ImportMaterialManagementType.Leadtime]: () => this.proxyService.updateMaterialFactory(resultImport, values.note),
-      [ImportMaterialManagementType.SAPCode]: () => this.proxyService.updateMaterialSAP(resultImport, values.note),
     };
 
     const requestFn = importHandlers[this.importMode];

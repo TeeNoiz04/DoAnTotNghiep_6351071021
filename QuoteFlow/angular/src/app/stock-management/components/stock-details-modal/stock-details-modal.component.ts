@@ -42,8 +42,6 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
   informationForm: FormGroup;
   specificationsForm: FormGroup;
   priceInfosForm: FormGroup;
-  adminAreaForm: FormGroup;
-
   currencyTypeOptions: { value: string; label: string }[] = [];
   AppPermissions = AppPermissions;
 
@@ -64,18 +62,8 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
   }
 
   buildForms(): void {
-    const percentSaleDiscount =
-      this.selected?.standard_Price && this.selected?.sellingPrice1
-        ? ((this.selected.standard_Price - this.selected.sellingPrice1) / this.selected.standard_Price) * 100
-        : null;
-
-    const percentManagerDiscount =
-      this.selected?.standard_Price && this.selected?.maxMangerOfferPrice
-        ? ((this.selected.standard_Price - this.selected.maxMangerOfferPrice) / this.selected.standard_Price) * 100
-        : null;
     this.basicInfoForm = this.fb.group({
       golfaCode: [this.selected?.golfaCode, [Validators.required]],
-      sapCode: [this.selected?.sap_Code],
       model: [this.selected?.model, [Validators.required]],
       materialGroup: [this.selected?.material_Group],
     });
@@ -114,14 +102,6 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
       buyerPrice5: [this.selected?.sellingPrice5],
     });
 
-    // Admin Area section form
-    this.adminAreaForm = this.fb.group({
-      inputPrice: [this.selected?.input_Price],
-      inputCurrency: [this.selected?.inputCurrency],
-      landedCost: [this.selected?.landedCost],
-      percentSaleDiscount: [percentSaleDiscount],
-      percentManagerDiscount: [percentManagerDiscount],
-    });
   }
 
   patchFormValues(): void {
@@ -153,11 +133,6 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
         standardPrice: 0, // material.standardPrice,
       });
 
-      this.adminAreaForm.patchValue({
-        inputPrice: 0, // material.inputPrice,
-        inputCurrency: material.inputCurrency,
-        landedCost: material.landedCost,
-      });
     }
   }
 
@@ -166,7 +141,6 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
       ...this.informationForm.value,
       ...this.specificationsForm.value,
       ...this.priceInfosForm.value,
-      ...this.adminAreaForm.value,
     };
 
     this.service.form.patchValue(formValues);
@@ -196,7 +170,6 @@ export class StockDetailsModalComponent implements OnInit, OnChanges {
     disableFormGroup(this.informationForm);
     disableFormGroup(this.specificationsForm);
     disableFormGroup(this.priceInfosForm);
-    disableFormGroup(this.adminAreaForm);
   }
 
   getCurrencyLookup() {
