@@ -56,20 +56,20 @@ internal class MaterialUpdateWhitoutPriceExcelDtoConverter : ExcelDtoConverter<M
             MaterialType = input.MaterialType,             // O
             Unit = input.Unit,                             // P
             Material_Group = input.MaterialGroup,        // MaterialGroupId
-            SAPMatGroup = input.SAPGroup,                  // R
-            ProductHierarchyDescription = input.ProductHierarchy_Description, // S
+            //SAPMatGroup = input.SAPGroup,                  // R
+           // ProductHierarchyDescription = input.ProductHierarchy_Description, // S
             CountryOfOrigin = input.CountryOfOrigin,       // T
             ReferenceLeadTime = input.ReferenceLeadTime,   // U
             WarrantyTime = input.WarrantyTime,             // V
-            InventoryCategory = input.InventoryCategory,   // W
-            CargoNote = input.CargoNote,                 // x
+          //  InventoryCategory = input.InventoryCategory,   // W
+         //   CargoNote = input.CargoNote,                 // x
             Weight = input.Weight,                         // Y
             Size = input.Size,                             // Z
             QRCode = input.QRCode,                       // AA
-            Maxlot = input.MaxLot,                         // AB
+         //   Maxlot = input.MaxLot,                         // AB
             StockWarning = input.StockWarning,             // AC
             StockQty = input.StockQty,                     // AD
-            HS_Code = input.HSCode,                        // AE
+         //   HS_Code = input.HSCode,                        // AE
             ConcurrencyStamp = input.ConcurrencyStamp!,
         };
     }

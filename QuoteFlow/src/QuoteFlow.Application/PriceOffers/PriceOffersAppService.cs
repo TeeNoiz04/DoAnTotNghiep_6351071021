@@ -819,7 +819,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         await using var stream = file.GetStream();
         var context = new ExcelImportContext();
         context.SetData(ExcelImportContextKeys.PriceOffer.MaterialType, input.MaterialType ?? string.Empty);
-        context.SetData(ExcelImportContextKeys.PriceOffer.KeyAccountClassId, input.KeyAccountClassId);
         context.SetData(ExcelImportContextKeys.PriceOffer.KeyAccountId, input.KeyAccountId);
         context.SetData(ExcelImportContextKeys.PriceOffer.GetPriceAuto, input.GetPriceAutomatically);
         context.SetData(ExcelImportContextKeys.PriceOffer.BuyerTypeId, input.BuyerTypeId);
@@ -847,8 +846,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         priceOffer.LocationId = input.LocationId;
         priceOffer.ProjectName = input.ProjectName;
         priceOffer.KeyAccountId = input.KeyAccountId;
-        priceOffer.KeyAccountTypeId = input.KeyAccountTypeId;
-        priceOffer.KeyAccountClassId = input.KeyAccountClassId;
         priceOffer.MaterialType = input.MaterialType;
         priceOffer.Note = input.Note;
 

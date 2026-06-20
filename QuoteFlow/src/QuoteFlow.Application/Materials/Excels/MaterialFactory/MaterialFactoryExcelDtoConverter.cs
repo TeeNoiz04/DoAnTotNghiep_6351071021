@@ -43,7 +43,7 @@ public class MaterialFactoryExcelDtoConverter : ExcelDtoConverter<MaterialFactor
             Model = importDto.Model,
             ReferenceLeadTime = importDto.ReferenceLeadTime,
             CountryOfOrigin = importDto.CountryOfOrigin,
-            Maxlot = importDto.Maxlot,
+         //   Maxlot = importDto.Maxlot,
             ConcurrencyStamp = importDto.ConcurrencyStamp,
         };
     }

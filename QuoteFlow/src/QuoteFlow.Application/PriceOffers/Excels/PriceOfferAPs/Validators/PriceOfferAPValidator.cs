@@ -58,8 +58,7 @@ public class PriceOfferAPValidator : IExcelValidator<PriceOfferImportDto>
             ?? throw new ArgumentNullException(nameof(context), "Material type must be provided in the context");
         var locationId = context?.GetData<Guid?>(ExcelImportContextKeys.PriceOffer.LocationId)
             ?? throw new ArgumentNullException(nameof(context), "LocationId must be provided in the context");
-        var keyAccountClassId = context?.GetData<Guid?>(ExcelImportContextKeys.PriceOffer.KeyAccountClassId)
-            ?? throw new ArgumentNullException(nameof(context), "Key Account Class Id must be provided in the context");
+        var keyAccountClassId = context?.GetData<Guid?>(ExcelImportContextKeys.PriceOffer.KeyAccountClassId);
         var keyAccountId = context?.GetData<Guid?>(ExcelImportContextKeys.PriceOffer.KeyAccountId)
             ?? throw new ArgumentNullException(nameof(context), "Key Account Id must be provided in the context");
         var getPriceAuto = context?.GetData<bool?>(ExcelImportContextKeys.PriceOffer.GetPriceAuto)
@@ -110,9 +109,9 @@ public class PriceOfferAPValidator : IExcelValidator<PriceOfferImportDto>
             }
 
             var totalMEVNOfferAmount = rowData.TotalMEVNOfferAmount ?? 0;
-            if (keyAccountClassId != Guid.Empty)
+            if (keyAccountClassId.HasValue && keyAccountClassId != Guid.Empty)
             {
-                var keyAccountClass = await _systemCategoryRepository.GetAsync(keyAccountClassId, false);
+                var keyAccountClass = await _systemCategoryRepository.GetAsync(keyAccountClassId.Value, false);
 
                 if (!string.IsNullOrEmpty(materialType) && totalMEVNOfferAmount > 0)
                 {

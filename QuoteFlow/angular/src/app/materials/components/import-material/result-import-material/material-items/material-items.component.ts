@@ -658,13 +658,6 @@ export class MaterialItemsComponent implements OnChanges {
                 class: 'width_180',
                 formatter: val => formatStringDelete(val),
               },
-              {
-                field: 'rowData.maxlot',
-                header: 'Max lot',
-                width: '180px',
-                class: 'width_180',
-                formatter: val => formatNumberDelete(val),
-              },
             ],
           },
         ];

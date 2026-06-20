@@ -1,4 +1,4 @@
-﻿using QuoteFlow.Shared.Excels;
+using QuoteFlow.Shared.Excels;
 using System;
 using System.Collections.Generic;
 
@@ -15,25 +15,19 @@ public class MaterialUpdateWithoutPriceRowValidator : IExcelRowValidator<Materia
     {
         var result = new ValidationResult();
 
-
         var materialCode = ExcelParser.GetValue<string?>(rowData, "A")?.Trim(); // A*
         var modelName = ExcelParser.GetValue<string?>(rowData, "B")?.Trim(); // B
-        var registrationDate = ExcelParser.GetValue<DateTime?>(rowData, "C"); //C -reset
+        var registrationDate = ExcelParser.GetValue<DateTime?>(rowData, "C"); //C
         var validFrom = ExcelParser.GetValue<DateTime?>(rowData, "D"); // D
         var validTo = ExcelParser.GetValue<DateTime?>(rowData, "E"); // E
-        var referenceLeadTime = ExcelParser.GetValue<string?>(rowData, "U");            // U
-        var warrantyTime = ExcelParser.GetValue<string?>(rowData, "V");
-        var maxLot = ExcelParser.GetValue<string?>(rowData, "AB");               // AB
-        var stockWarning = ExcelParser.GetValue<string?>(rowData, "AC"); //AC
-        var stockQty = ExcelParser.GetValue<string?>(rowData, "AD");    //AD
-
-
+        var referenceLeadTime = ExcelParser.GetValue<string?>(rowData, "S"); // S
+        var warrantyTime = ExcelParser.GetValue<string?>(rowData, "T");      // T
+        var stockWarning = ExcelParser.GetValue<string?>(rowData, "X");      // X
+        var stockQty = ExcelParser.GetValue<string?>(rowData, "Y");          // Y
 
         if (string.IsNullOrWhiteSpace(materialCode))
             result.AddError("Material Code (A) is required.");
 
-        //if (string.IsNullOrWhiteSpace(modelName))
-        //    result.AddError("Model Name (B) is required.");
         var registrationDateStr = ExcelParser.GetValue<string?>(rowData, "C");
         if (registrationDateStr?.ToUpper() != "NULL")
         {
@@ -41,39 +35,28 @@ public class MaterialUpdateWithoutPriceRowValidator : IExcelRowValidator<Materia
                 result.AddError("Registration Date is invalid.");
         }
 
-
-        //if (!validFrom.HasValue || validFrom.Value == DateTime.MinValue)
-        //    result.AddError("Valid From is required or invalid.");
-
-        //if (!validTo.HasValue || validTo.Value == DateTime.MinValue)
-        //    result.AddError("Valid To is required or invalid.");
-
         if (validFrom.HasValue && validTo.HasValue && validFrom > validTo)
             result.AddError("Price Valid From must be earlier than or equal to Price Valid To.");
+
         if (referenceLeadTime?.ToUpper() != "NULL")
         {
-            ValidateIntergerField(referenceLeadTime, "Reference Lead Time (U)", false);
+            ValidateIntergerField(referenceLeadTime, "Reference Lead Time (S)", false);
         }
-        ValidateIntergerField(warrantyTime, "Warranty Time (V)", false); // dont allow "NULL"
-        if (maxLot?.ToUpper() != "NULL")
-        {
-            ValidateIntergerField(maxLot, "Max Lot (AB)", false);
-        }
+        ValidateIntergerField(warrantyTime, "Warranty Time (T)", false);
         if (stockWarning?.ToUpper() != "NULL")
         {
-            ValidateIntergerField(stockWarning, "Stock Warning (AC)", false);
+            ValidateIntergerField(stockWarning, "Stock Warning (X)", false);
         }
         if (stockQty?.ToUpper() != "NULL")
         {
-            ValidateIntergerField(stockQty, "Stock Qty (AD)", false);
+            ValidateIntergerField(stockQty, "Stock Qty (Y)", false);
         }
-
 
         void ValidateIntergerField(string? value, string fieldName, bool required)
         {
             if (!int.TryParse(value, out var parsedValue) && !string.IsNullOrWhiteSpace(value))
             {
-                result.AddError($"{fieldName} must be a valid decimal number.");
+                result.AddError($"{fieldName} must be a valid integer.");
             }
             else if (parsedValue < 0)
             {
@@ -83,7 +66,6 @@ public class MaterialUpdateWithoutPriceRowValidator : IExcelRowValidator<Materia
 
         return result;
     }
-
 
     public MaterialUpdateWithoutPriceImportDto ParseRow(IDictionary<string, object> rowData)
     {
@@ -102,6 +84,7 @@ public class MaterialUpdateWithoutPriceRowValidator : IExcelRowValidator<Materia
             }
             return ExcelParser.GetValue<int?>(rowData, column);
         }
+
         DateTime? GetDate(string column)
         {
             var value = ExcelParser.GetValue<string?>(rowData, column)?.Trim();
@@ -109,57 +92,36 @@ public class MaterialUpdateWithoutPriceRowValidator : IExcelRowValidator<Materia
             {
                 return DateTime.MinValue;
             }
-            else
-            {
-                return ExcelParser.GetValue<DateTime?>(rowData, column);
-            }
-
-            //return null; // hoặc throw exception nếu muốn chặt chẽ hơn
+            return ExcelParser.GetValue<DateTime?>(rowData, column);
         }
 
         return new MaterialUpdateWithoutPriceImportDto
         {
-            MaterialCode = ExcelParser.GetValue<string?>(rowData, "A")?.Trim(),        // A* - Not allow "NULL"
-            ModelName = ExcelParser.GetValue<string?>(rowData, "B")?.Trim(),           // B* - Not allow "NULL"
-
-            RegistrationDate = GetDate("C"),                                            // C
-
-            ValidFrom = ExcelParser.GetValue<DateTime?>(rowData, "D"),     // D* - Not allow "NULL"
-            ValidTo = ExcelParser.GetValue<DateTime?>(rowData, "E"),       // E* - Not allow "NULL"
-
-            Spec1 = GetString("F"),                                                   // F
-            Spec2 = GetString("G"),                                                   // G
-            Spec3 = GetString("H"),                                                   // H
-            Spec4 = GetString("I"),                                                   // I
-
-            DescriptionEN = ExcelParser.GetValue<string?>(rowData, "J")?.Trim(),      // J* - Not allow "NULL"
-
-            DescriptionVN = GetString("K"),                                           // K
-
-            Supplier = ExcelParser.GetValue<string?>(rowData, "L")?.Trim(),           // L* - Not allow "NULL"
-            SupplierBU = ExcelParser.GetValue<string?>(rowData, "M")?.Trim(),         // M* - Not allow "NULL"
-            Factory = ExcelParser.GetValue<string?>(rowData, "N")?.Trim(),            // N* - Not allow "NULL"
-            MaterialType = ExcelParser.GetValue<string?>(rowData, "O")?.Trim(),       // O* - Not allow "NULL"
-            Unit = ExcelParser.GetValue<string?>(rowData, "P")?.Trim(),               // P* - Not allow "NULL"
-            MaterialGroup = ExcelParser.GetValue<string?>(rowData, "Q")?.Trim(),      // Q* - Not allow "NULL"
-
-            SAPGroup = GetString("R"),                                                // R
-            ProductHierarchy_Description = GetString("S"),                            // S
-            CountryOfOrigin = GetString("T"),                                         // T
-            ReferenceLeadTime = GetInt("U"),                                          // U
-
-            WarrantyTime = ExcelParser.GetValue<int?>(rowData, "V"),                  // V* - Not allow "NULL"
-
-            InventoryCategory = GetString("W"),                                       // W
-            CargoNote = GetString("X"),                                               // X
-            Weight = GetString("Y"),                                                  // Y
-            Size = GetString("Z"),                                                    // Z
-            QRCode = GetString("AA"),                                                 // AA
-            MaxLot = GetInt("AB"),                                                    // AB
-            StockWarning = GetInt("AC"),                                              // AC
-            StockQty = GetInt("AD"),                                                  // AD
-            HSCode = GetString("AE")                                                  // AE
+            MaterialCode = ExcelParser.GetValue<string?>(rowData, "A")?.Trim(),  // A*
+            ModelName = ExcelParser.GetValue<string?>(rowData, "B")?.Trim(),     // B
+            RegistrationDate = GetDate("C"),                                      // C
+            ValidFrom = ExcelParser.GetValue<DateTime?>(rowData, "D"),           // D
+            ValidTo = ExcelParser.GetValue<DateTime?>(rowData, "E"),             // E
+            Spec1 = GetString("F"),                                               // F
+            Spec2 = GetString("G"),                                               // G
+            Spec3 = GetString("H"),                                               // H
+            Spec4 = GetString("I"),                                               // I
+            DescriptionEN = ExcelParser.GetValue<string?>(rowData, "J")?.Trim(), // J
+            DescriptionVN = GetString("K"),                                       // K
+            Supplier = ExcelParser.GetValue<string?>(rowData, "L")?.Trim(),      // L
+            SupplierBU = ExcelParser.GetValue<string?>(rowData, "M")?.Trim(),    // M
+            Factory = ExcelParser.GetValue<string?>(rowData, "N")?.Trim(),       // N
+            MaterialType = ExcelParser.GetValue<string?>(rowData, "O")?.Trim(),  // O
+            Unit = ExcelParser.GetValue<string?>(rowData, "P")?.Trim(),          // P
+            MaterialGroup = ExcelParser.GetValue<string?>(rowData, "Q")?.Trim(), // Q
+            CountryOfOrigin = GetString("R"),                                     // R  (was T)
+            ReferenceLeadTime = GetInt("S"),                                      // S  (was U)
+            WarrantyTime = ExcelParser.GetValue<int?>(rowData, "T"),             // T  (was V)
+            Weight = GetString("U"),                                              // U  (was Y)
+            Size = GetString("V"),                                                // V  (was Z)
+            QRCode = GetString("W"),                                              // W  (was AA)
+            StockWarning = GetInt("X"),                                           // X  (was AC)
+            StockQty = GetInt("Y"),                                               // Y  (was AD)
         };
     }
-
 }

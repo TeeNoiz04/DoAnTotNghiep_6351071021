@@ -56,8 +56,6 @@ public class PriceOfferManager : DomainService
         await PopulateDenormalizationFieldsHelperAsync(
             createParams.ProjectTypeId, description => createParams.ProjectTypeDescription = description, createParams.ProjectTypeDescription,
             createParams.EUIndustryId, description => createParams.EUIndustryDescription = description, createParams.EUIndustryDescription,
-            createParams.KeyAccountClassId, description => createParams.KeyAccountClassDescription = description, createParams.KeyAccountClassDescription,
-            createParams.KeyAccountTypeId, description => createParams.KeyAccountTypeDescription = description, createParams.KeyAccountTypeDescription,
             createParams.LocationId, description => createParams.LocationDescription = description, createParams.LocationDescription,
             createParams.BuyerId, buyerCode => createParams.BuyerCode = buyerCode, createParams.BuyerCode,
             createParams.BuyerTypeId, buyerTypeCode => createParams.BuyerTypeDescription = buyerTypeCode, createParams.BuyerTypeDescription
@@ -69,8 +67,6 @@ public class PriceOfferManager : DomainService
         await PopulateDenormalizationFieldsHelperAsync(
             updateParams.ProjectTypeId, description => updateParams.ProjectTypeDescription = description, updateParams.ProjectTypeDescription,
             updateParams.EUIndustryId, description => updateParams.EUIndustryDescription = description, updateParams.EUIndustryDescription,
-            updateParams.KeyAccountClassId, description => updateParams.KeyAccountClassDescription = description, updateParams.KeyAccountClassDescription,
-            updateParams.KeyAccountTypeId, description => updateParams.KeyAccountTypeDescription = description, updateParams.KeyAccountTypeDescription,
             updateParams.LocationId, description => updateParams.LocationDescription = description, updateParams.LocationDescription,
             updateParams.BuyerId, buyerCode => updateParams.BuyerCode = buyerCode, updateParams.BuyerCode,
             updateParams.BuyerTypeId, buyerTypeCode => updateParams.BuyerTypeDescription = buyerTypeCode, updateParams.BuyerTypeDescription
@@ -80,8 +76,6 @@ public class PriceOfferManager : DomainService
     private async Task PopulateDenormalizationFieldsHelperAsync(
         Guid? projectTypeId, Action<string?> setProjectTypeDescription, string? currentProjectTypeDescription,
         Guid? euIndustryId, Action<string?> setEUIndustryDescription, string? currentEUIndustryDescription,
-        Guid? keyAccountClassId, Action<string?> setKeyAccountClassDescription, string? currentKeyAccountClassDescription,
-        Guid? keyAccountTypeId, Action<string?> setKeyAccountTypeDescription, string? currentKeyAccountTypeDescription,
         Guid? locationId, Action<string?> setLocationDescription, string? currentLocationDescription,
         Guid? buyerId, Action<string?> setBuyerCode, string? currentBuyerCode,
         Guid? buyerTypeId, Action<string?> setBuyerTypeCode, string? currentBuyerTypeCode)
@@ -93,10 +87,6 @@ public class PriceOfferManager : DomainService
             idsToLookup.Add(projectTypeId.Value);
         if (euIndustryId.HasValue && string.IsNullOrEmpty(currentEUIndustryDescription))
             idsToLookup.Add(euIndustryId.Value);
-        if (keyAccountClassId.HasValue && string.IsNullOrEmpty(currentKeyAccountClassDescription))
-            idsToLookup.Add(keyAccountClassId.Value);
-        if (keyAccountTypeId.HasValue && string.IsNullOrEmpty(currentKeyAccountTypeDescription))
-            idsToLookup.Add(keyAccountTypeId.Value);
         if (locationId.HasValue && string.IsNullOrEmpty(currentLocationDescription))
             idsToLookup.Add(locationId.Value);
         if (buyerTypeId.HasValue && string.IsNullOrEmpty(currentBuyerTypeCode))
@@ -114,14 +104,6 @@ public class PriceOfferManager : DomainService
             if (euIndustryId.HasValue && string.IsNullOrEmpty(currentEUIndustryDescription) &&
                 systemCategoryDict.TryGetValue(euIndustryId.Value, out var euIndustryDesc))
                 setEUIndustryDescription(euIndustryDesc);
-
-            if (keyAccountClassId.HasValue && string.IsNullOrEmpty(currentKeyAccountClassDescription) &&
-                systemCategoryDict.TryGetValue(keyAccountClassId.Value, out var keyAccountClassDesc))
-                setKeyAccountClassDescription(keyAccountClassDesc);
-
-            if (keyAccountTypeId.HasValue && string.IsNullOrEmpty(currentKeyAccountTypeDescription) &&
-                systemCategoryDict.TryGetValue(keyAccountTypeId.Value, out var keyAccountTypeDesc))
-                setKeyAccountTypeDescription(keyAccountTypeDesc);
 
             if (locationId.HasValue && string.IsNullOrEmpty(currentLocationDescription) &&
                 systemCategoryDict.TryGetValue(locationId.Value, out var locationDesc))
@@ -181,13 +163,9 @@ public class PriceOfferManager : DomainService
         priceOffer.TotalMEVNOfferAmount = updateParams.TotalMEVNOfferAmount;
         priceOffer.AccountNo = updateParams.AccountNo;
         priceOffer.KeyAccountId = updateParams.KeyAccountId;
-        priceOffer.KeyAccountTypeId = updateParams.KeyAccountTypeId;
-        priceOffer.KeyAccountClassId = updateParams.KeyAccountClassId;
         priceOffer.BuyerTypeDescription = updateParams.BuyerTypeDescription;
         priceOffer.ProjectTypeDescription = updateParams.ProjectTypeDescription;
         priceOffer.EUIndustryDescription = updateParams.EUIndustryDescription;
-        priceOffer.KeyAccountClassDescription = updateParams.KeyAccountClassDescription;
-        priceOffer.KeyAccountTypeDescription = updateParams.KeyAccountTypeDescription;
         priceOffer.LocationDescription = updateParams.LocationDescription;
 
         priceOffer.SetConcurrencyStampIfNotNull(updateParams.ConcurrencyStamp);
@@ -238,8 +216,6 @@ public class PriceOfferManager : DomainService
         var priceOffersToUpdate = priceOffers
             .Where(p => p.ProjectTypeDescription == null ||
                        p.EUIndustryDescription == null ||
-                       p.KeyAccountClassDescription == null ||
-                       p.KeyAccountTypeDescription == null ||
                        p.LocationDescription == null)
             .ToList();
 
@@ -266,26 +242,6 @@ public class PriceOfferManager : DomainService
                 if (systemCategoryDict.TryGetValue(priceOffer.EUIndustryId.Value, out var euIndustryDesc))
                 {
                     priceOffer.EUIndustryDescription = euIndustryDesc;
-                    hasChanges = true;
-                }
-            }
-
-            // Update KeyAccountClassDescription
-            if (priceOffer.KeyAccountClassId.HasValue && string.IsNullOrEmpty(priceOffer.KeyAccountClassDescription))
-            {
-                if (systemCategoryDict.TryGetValue(priceOffer.KeyAccountClassId.Value, out var keyAccountClassDesc))
-                {
-                    priceOffer.KeyAccountClassDescription = keyAccountClassDesc;
-                    hasChanges = true;
-                }
-            }
-
-            // Update KeyAccountTypeDescription
-            if (priceOffer.KeyAccountTypeId.HasValue && string.IsNullOrEmpty(priceOffer.KeyAccountTypeDescription))
-            {
-                if (systemCategoryDict.TryGetValue(priceOffer.KeyAccountTypeId.Value, out var keyAccountTypeDesc))
-                {
-                    priceOffer.KeyAccountTypeDescription = keyAccountTypeDesc;
                     hasChanges = true;
                 }
             }

@@ -87,9 +87,7 @@ public class PriceOfferDSExcelDtoConverter : ExcelDtoConverter<PriceOfferImportD
             details,
             importDto.Note,
             importDto.CloseDate,
-            importDto.KeyAccountId,
-            importDto.KeyAccountTypeId,
-            importDto.KeyAccountClassId
+            importDto.KeyAccountId
         )
         {
             Id = context.GetData<Guid>(ExcelImportContextKeys.ParentEntityId),

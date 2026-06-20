@@ -46,20 +46,11 @@ public class PriceOfferUpdateDto : IHasConcurrencyStamp
     [StringLength(PriceOfferConsts.AccountNoMaxLength)]
     public string? AccountNo { get; set; }
     public Guid? KeyAccountId { get; set; }
-    public Guid? KeyAccountTypeId { get; set; }
-    public Guid? KeyAccountClassId { get; set; }
-
     [StringLength(PriceOfferConsts.ProjectTypeDescriptionMaxLength)]
     public string? ProjectTypeDescription { get; set; }
 
     [StringLength(PriceOfferConsts.EUIndustryDescriptionMaxLength)]
     public string? EUIndustryDescription { get; set; }
-
-    [StringLength(PriceOfferConsts.KeyAccountClassDescriptionMaxLength)]
-    public string? KeyAccountClassDescription { get; set; }
-
-    [StringLength(PriceOfferConsts.KeyAccountTypeDescriptionMaxLength)]
-    public string? KeyAccountTypeDescription { get; set; }
 
     [StringLength(PriceOfferConsts.LocationDescriptionMaxLength)]
     public string? LocationDescription { get; set; }

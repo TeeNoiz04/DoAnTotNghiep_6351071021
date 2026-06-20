@@ -12,6 +12,14 @@ export const STOCK_MANAGEMENT_BASE_ROUTES: ABP.Route[] = [
     order: AppRoutes.STOCK_MANAGEMENT.ORDER,
   },
   {
+    // Layout anchor for stock management detail routes - no menu entry
+    path: `/${AppRoutes.STOCK_MANAGEMENT.BASE}`,
+    name: '__stock_management_layout_anchor__',
+    invisible: true,
+    layout: eLayoutType.application,
+    requiredPolicy: `${AppPermissions.MaterialStocks.Default}`,
+  },
+  {
     path: `/${AppRoutes.STOCK_MANAGEMENT.BASE}/${AppRoutes.STOCK_MANAGEMENT.LIST.BASE}`,
     iconClass: 'fas fa-list',
     name: '::Menu:StockManagement:List',

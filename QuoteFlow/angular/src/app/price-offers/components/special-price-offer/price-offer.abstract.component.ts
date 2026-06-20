@@ -55,24 +55,9 @@ export abstract class AbstractPriceOfferComponent implements OnInit, OnDestroy {
 
   importPriceOfferOptions: ImportPriceOfferTypeOption[] = [
     {
-      label: 'Key Account Price Offer',
-      value: ImportPriceOfferType.KeyAccountPriceOffer,
-      requiredPolicy: `${AppPermissions.PriceOffers.Uploads.PriceOfferAP}`,
-    },
-    {
-      label: 'Buyer Stock Price Offer',
-      value: ImportPriceOfferType.BuyerStockPriceOffer,
-      requiredPolicy: `${AppPermissions.PriceOffers.Uploads.PriceOfferDS}`,
-    },
-    {
       label: 'Project Price Offer',
       value: ImportPriceOfferType.ProjectPriceOffer,
       requiredPolicy: `${AppPermissions.PriceOffers.Uploads.PriceOfferPP}`,
-    },
-    {
-      label: 'No Buyer Price Offer',
-      value: ImportPriceOfferType.NoBuyerPriceOffer,
-      requiredPolicy: `${AppPermissions.PriceOffers.Uploads.PriceOfferNB}`,
     },
   ];
   importMode: ImportPriceOfferType | undefined;

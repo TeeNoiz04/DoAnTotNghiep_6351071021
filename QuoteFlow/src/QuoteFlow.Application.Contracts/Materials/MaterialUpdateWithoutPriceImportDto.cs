@@ -23,19 +23,13 @@ public class MaterialUpdateWithoutPriceImportDto
     public string? Unit { get; set; } //P
     public string? MaterialGroup { get; set; } //Q
     //public Guid? MaterialGroupId { get; set; }
-    public string? SAPGroup { get; set; } //R
-    public string? ProductHierarchy_Description { get; set; } //S
-    public string? CountryOfOrigin { get; set; } //T
-    public int? ReferenceLeadTime { get; set; } //U
-    public int? WarrantyTime { get; set; } //V
-    public string? InventoryCategory { get; set; } //W
-    public string? CargoNote { get; set; } //x
-    public string? Weight { get; set; } //Y
-    public string? Size { get; set; } //Z
-    public string? QRCode { get; set; } //AA
-    public int? MaxLot { get; set; } //AB
-    public int? StockWarning { get; set; } //AC
-    public int? StockQty { get; set; } //AD
-    public string? HSCode { get; set; } //AE
+    public string? CountryOfOrigin { get; set; } //R
+    public int? ReferenceLeadTime { get; set; } //S
+    public int? WarrantyTime { get; set; } //T
+    public string? Weight { get; set; } //U
+    public string? Size { get; set; } //V
+    public string? QRCode { get; set; } //W
+    public int? StockWarning { get; set; } //X
+    public int? StockQty { get; set; } //Y
     public string? ConcurrencyStamp { get; set; }
 }

@@ -86,10 +86,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
 
     public virtual Guid? KeyAccountId { get; set; }
 
-    public virtual Guid? KeyAccountTypeId { get; set; }
-
-    public virtual Guid? KeyAccountClassId { get; set; }
-
     [CanBeNull]
     public Guid? CurrentApprovalRouteInstanceId { get; set; }
 
@@ -128,12 +124,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
 
     [CanBeNull]
     public virtual string? EUIndustryDescription { get; set; }
-
-    [CanBeNull]
-    public virtual string? KeyAccountClassDescription { get; set; }
-
-    [CanBeNull]
-    public virtual string? KeyAccountTypeDescription { get; set; }
 
     [CanBeNull]
     public virtual string? LocationDescription { get; set; }
@@ -258,12 +248,8 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
         TotalMEVNOfferAmount = createParams.TotalMEVNOfferAmount;
         AccountNo = createParams.AccountNo;
         KeyAccountId = createParams.KeyAccountId;
-        KeyAccountTypeId = createParams.KeyAccountTypeId;
-        KeyAccountClassId = createParams.KeyAccountClassId != Guid.Empty ? createParams.KeyAccountClassId : null;
         ProjectTypeDescription = createParams.ProjectTypeDescription;
         EUIndustryDescription = createParams.EUIndustryDescription;
-        KeyAccountClassDescription = createParams.KeyAccountClassId != Guid.Empty ? createParams.KeyAccountClassDescription : "N/A";
-        KeyAccountTypeDescription = createParams.KeyAccountTypeDescription;
         LocationDescription = createParams.LocationDescription;
 
         ApprovalStatus = QuoteFlowStatuses.Verifying;

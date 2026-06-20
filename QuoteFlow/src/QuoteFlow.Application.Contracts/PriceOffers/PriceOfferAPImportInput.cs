@@ -16,8 +16,6 @@ public class PriceOfferAPImportInput
     public Guid LocationId { get; set; }
 
     public Guid KeyAccountId { get; set; }
-    public Guid KeyAccountTypeId { get; set; }
-    public Guid KeyAccountClassId { get; set; }
 
     public string? SalePIC { get; set; }
     public string? MaterialType { get; set; }

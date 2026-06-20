@@ -40,9 +40,6 @@ public class PriceOfferExcelDownloadDto
     public string? ProjectResultStatus { get; set; }
     public string? AccountNo { get; set; }
     public Guid? KeyAccountId { get; set; }
-    public Guid? KeyAccountTypeId { get; set; }
-    public Guid? KeyAccountClassId { get; set; }
-
     public PriceOfferExcelDownloadDto()
     {
 

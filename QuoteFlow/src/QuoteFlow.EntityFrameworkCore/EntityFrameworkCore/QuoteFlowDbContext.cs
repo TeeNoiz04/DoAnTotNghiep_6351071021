@@ -280,8 +280,6 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.TotalMEVNOfferAmount).HasColumnName(nameof(PriceOffer.TotalMEVNOfferAmount)).HasPrecision(18, 2);
                 b.Property(x => x.AccountNo).HasColumnName(nameof(PriceOffer.AccountNo)).HasMaxLength(PriceOfferConsts.AccountNoMaxLength);
                 b.Property(x => x.KeyAccountId).HasColumnName(nameof(PriceOffer.KeyAccountId));
-                b.Property(x => x.KeyAccountTypeId).HasColumnName(nameof(PriceOffer.KeyAccountTypeId));
-                b.Property(x => x.KeyAccountClassId).HasColumnName(nameof(PriceOffer.KeyAccountClassId));
                 b.Property(x => x.ProjectResultStatus).HasColumnName(nameof(PriceOffer.ProjectResultStatus)).HasMaxLength(PriceOfferConsts.ProjectResultStatusMaxLength);
                 b.Property(x => x.ProjectResultNote).HasColumnName(nameof(PriceOffer.ProjectResultNote)).HasMaxLength(PriceOfferConsts.ProjectResultNoteMaxLength);
                 b.Property(x => x.ProjectResultSubmittedAt).HasColumnName(nameof(PriceOffer.ProjectResultSubmittedAt));
@@ -301,8 +299,6 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.BuyerTypeDescription).HasColumnName(nameof(PriceOffer.BuyerTypeDescription)).HasMaxLength(PriceOfferConsts.BuyerTypeDescriptionMaxLength);
                 b.Property(x => x.ProjectTypeDescription).HasColumnName(nameof(PriceOffer.ProjectTypeDescription)).HasMaxLength(PriceOfferConsts.ProjectTypeDescriptionMaxLength);
                 b.Property(x => x.EUIndustryDescription).HasColumnName(nameof(PriceOffer.EUIndustryDescription)).HasMaxLength(PriceOfferConsts.EUIndustryDescriptionMaxLength);
-                b.Property(x => x.KeyAccountClassDescription).HasColumnName(nameof(PriceOffer.KeyAccountClassDescription)).HasMaxLength(PriceOfferConsts.KeyAccountClassDescriptionMaxLength);
-                b.Property(x => x.KeyAccountTypeDescription).HasColumnName(nameof(PriceOffer.KeyAccountTypeDescription)).HasMaxLength(PriceOfferConsts.KeyAccountTypeDescriptionMaxLength);
                 b.Property(x => x.LocationDescription).HasColumnName(nameof(PriceOffer.LocationDescription)).HasMaxLength(PriceOfferConsts.LocationDescriptionMaxLength);
 
                 b.HasOne(x => x.Buyer).WithMany().HasForeignKey(x => x.BuyerId).OnDelete(DeleteBehavior.Restrict);

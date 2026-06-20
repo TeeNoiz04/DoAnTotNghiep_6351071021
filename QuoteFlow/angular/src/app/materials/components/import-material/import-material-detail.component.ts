@@ -161,20 +161,14 @@ export class ImportMaterialDetailComponent implements OnInit {
       'materialType',
       'unit',
       'material_Group',
-      'sapMatGroup',
-      'productHierarchyDescription',
       'countryOfOrigin',
       'referenceLeadTime',
       'warrantyTime',
-      'inventoryCategory',
-      'cargoNote',
       'weight',
       'size',
       'qrCode',
-      'maxlot',
       'stockWarning',
       'stockQty',
-      'hS_Code',
     ],
 
     'MATERIAL.STATUS': [
@@ -198,7 +192,7 @@ export class ImportMaterialDetailComponent implements OnInit {
       'stockWarning',
     ],
 
-    'MATERIAL.LEADTIME': ['materialStatus', 'golfaCode', 'model', 'referenceLeadTime', 'countryOfOrigin', 'maxlot'],
+    'MATERIAL.LEADTIME': ['materialStatus', 'golfaCode', 'model', 'referenceLeadTime', 'countryOfOrigin'],
   };
   requestId: string | null;
   importType = ImportMaterialManagementType;

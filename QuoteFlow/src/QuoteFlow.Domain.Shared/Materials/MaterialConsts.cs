@@ -64,13 +64,13 @@ public static class MaterialConsts
     public const string ExcelMaterialFactoryStartColumn = "A";
     public const string ExcelMaterialStatusStartColumn = "A";
 
-    public const string ExcelUpdateWithoutEndColumn = "AE"; // M3U
-    public const string ExcelSellingPrice5_NewRegistrationColumn = "AX";
+    public const string ExcelUpdateWithoutEndColumn = "Y"; // M3U
+    public const string ExcelSellingPrice5_NewRegistrationColumn = "AQ";
 
     public const string ExcelSellingPrice5Column = "V";
     public const string ExcelStockWarningColumn = "D";
     public const string ExcelMaterialSAPEndColumn = "F";
-    public const string ExcelMaterialFactoryEndColumn = "E"; //M6U
+    public const string ExcelMaterialFactoryEndColumn = "D"; //M6U
     public const string ExcelMaterialStatusEndColumn = "H";
 
     // Cells
@@ -78,10 +78,10 @@ public static class MaterialConsts
     public const string ExcelUpdatePriceEndCell = "V100000";
 
     public const string ExcelNewRegistrationStartCell = "A4";
-    public const string ExcelNewRegistrationEndCell = "AX100000";
+    public const string ExcelNewRegistrationEndCell = "AQ100000";
 
     public const string ExcelUpdateWithoutPriceStatCell = "A4"; // M3U 
-    public const string ExcelUpdateWithoutPriceEndCell = "AE100000";// M3U
+    public const string ExcelUpdateWithoutPriceEndCell = "Y100000"; // M3U
 
     public const string ExcelUpdateInventoryPlanStatCell = "A2";
     public const string ExcelUpdateInventoryPlanEndCell = "D100000";
@@ -90,7 +90,7 @@ public static class MaterialConsts
     public const string ExcelMaterialSAPEndCell = "F100000";
 
     public const string ExcelMaterialFactoryStartCell = "A2";
-    public const string ExcelMaterialFactoryEndCell = "E100000";
+    public const string ExcelMaterialFactoryEndCell = "D100000";
 
     public const string ExcelMaterialStatusStartCell = "A2";
     public const string ExcelMaterialStatusEndCell = "H100000";

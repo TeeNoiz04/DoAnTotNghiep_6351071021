@@ -199,7 +199,7 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
 
             row.Cell(col++).Value = item.GolfaCode;
             row.Cell(col++).Value = item.Model;
-            row.Cell(col++).Value = item.SAP_Code;
+            //row.Cell(col++).Value = item.SAP_Code; check here
             row.Cell(col++).Value = item.Spec1;
             row.Cell(col++).Value = item.Spec2;
             row.Cell(col++).Value = item.Spec3;
@@ -211,21 +211,21 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
             row.Cell(col++).Value = item.MaterialClass;
             row.Cell(col++).Value = item.Material_SEC_Classification;
             row.Cell(col++).Value = item.Material_Group;
-            row.Cell(col++).Value = item.SAPMatGroup;
+           // row.Cell(col++).Value = item.SAPMatGroup; check here
             row.Cell(col++).Value = item.Product_Hierarchy;
-            row.Cell(col++).Value = item.ProductHierarchyDescription;
+          //  row.Cell(col++).Value = item.ProductHierarchyDescription; check here
             row.Cell(col++).Value = item.CountryOfOrigin;
             row.Cell(col++).Value = item.ReferenceLeadTime;
             row.Cell(col++).Value = item.WarrantyTime;
-            row.Cell(col++).Value = item.InventoryCategory;
-            row.Cell(col++).Value = item.CargoNote;
+           // row.Cell(col++).Value = item.InventoryCategory; check here
+          //   row.Cell(col++).Value = item.CargoNote; check here
             row.Cell(col++).Value = item.Weight;
             row.Cell(col++).Value = item.Size;
             row.Cell(col++).Value = item.QRCode;
-            row.Cell(col++).Value = item.Maxlot;
+           // row.Cell(col++).Value = item.Maxlot;
             row.Cell(col++).Value = item.StockWarning;
             row.Cell(col++).Value = item.VAT;
-            row.Cell(col++).Value = item.HS_Code;
+          //  row.Cell(col++).Value = item.HS_Code; check here 
             row.Cell(col++).Value = item.SupplierCode;
             row.Cell(col++).Value = item.SupplierBUCode;
             row.Cell(col++).Value = item.Factory_Text;
@@ -1081,8 +1081,8 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
                 golfaCode: row.RowData.GolfaCode!,
                 model: row.RowData.Model!,
                 referenceLeadTime: row.RowData.ReferenceLeadTime,
-                country: row.RowData.CountryOfOrigin,
-                maxlot: row.RowData.Maxlot
+                country: row.RowData.CountryOfOrigin
+               
             )
         )).ToList();
 

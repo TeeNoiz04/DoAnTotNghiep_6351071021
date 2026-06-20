@@ -9,6 +9,5 @@ public class MaterialFactoryUpdateExcelDto
     public string? Model { get; set; }
     public int? ReferenceLeadTime { get; set; }
     public string? CountryOfOrigin { get; set; }
-    public int? Maxlot { get; set; }
     public string? ConcurrencyStamp { get; set; }
 }

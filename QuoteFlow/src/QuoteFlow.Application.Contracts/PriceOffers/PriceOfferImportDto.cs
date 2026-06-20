@@ -25,9 +25,6 @@ public class PriceOfferImportDto
     public string? Note { get; set; }
     public DateTime CloseDate { get; set; }
     public Guid? KeyAccountId { get; set; }
-    public Guid? KeyAccountTypeId { get; set; }
-    public Guid? KeyAccountClassId { get; set; }
-
     // In Excel file
     public string? MaterialType { get; set; } = null!;
     public string? ProjectName { get; set; }

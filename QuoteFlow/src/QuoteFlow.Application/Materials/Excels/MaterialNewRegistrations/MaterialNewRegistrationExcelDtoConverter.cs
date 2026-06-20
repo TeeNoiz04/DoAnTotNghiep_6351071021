@@ -1,4 +1,4 @@
-﻿using QuoteFlow.Materials.MaterialApprovalRequestDetails.ParameterObjects;
+using QuoteFlow.Materials.MaterialApprovalRequestDetails.ParameterObjects;
 using QuoteFlow.Shared.Excels;
 using System;
 using System.Collections.Generic;
@@ -50,7 +50,6 @@ public class MaterialNewRegistrationExcelDtoConverter : ExcelDtoConverter<Materi
             RegistrationDate = importDto.RegistrationDate,
             ValidFrom = importDto.ValidFrom,
             ValidTo = importDto.ValidTo,
-            SAP_Code = importDto.SAPCode,
             Spec1 = importDto.Spec1,
             Spec2 = importDto.Spec2,
             Spec3 = importDto.Spec3,
@@ -61,20 +60,17 @@ public class MaterialNewRegistrationExcelDtoConverter : ExcelDtoConverter<Materi
             Unit = importDto.Unit,
             Material_SEC_Classification = importDto.MaterialSECClassification,
             Material_Group = importDto.MaterialGroup,
-            SAPMatGroup = importDto.SAPGroup,
             Product_Hierarchy = importDto.ProductHierarchy,
-            ProductHierarchyDescription = importDto.ProductHierarchy_Description,
             CountryOfOrigin = importDto.CountryOfOrigin,
             ReferenceLeadTime = importDto.ReferenceLeadTime,
             WarrantyTime = importDto.WarrantyTime,
-            InventoryCategory = importDto.InventoryCategory,
-            Maxlot = importDto.MaxLot,
+            Weight = importDto.Weight,
+            Size = importDto.Size,
+            QRCode = importDto.QRCode,
             StockWarning = importDto.StockWarning,
             VAT = importDto.VAT,
-            HS_Code = importDto.HSCode,
             SupplierBUId = importDto.SupplierBUId,
             SupplierBUCode = importDto.SupplierBU,
-            //Factory = importDto.FactoryId,
             Factory_Text = importDto.Factory,
             Input_Price = importDto.InputPrice,
             InputCurrency = importDto.InputCurrency,
@@ -92,10 +88,6 @@ public class MaterialNewRegistrationExcelDtoConverter : ExcelDtoConverter<Materi
             SellingPrice4 = importDto.SellingPrice4,
             SellingPrice5 = importDto.SellingPrice5,
             SupplierCode = importDto.Supplier,
-            CargoNote = importDto.CargoNote,
-            Weight = importDto.Weight,
-            Size = importDto.Size,
-            QRCode = importDto.QRCode,
         };
     }
 }

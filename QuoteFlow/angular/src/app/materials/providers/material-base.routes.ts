@@ -12,6 +12,14 @@ export const MATERIAL_BASE_ROUTES: ABP.Route[] = [
     order: AppRoutes.MATERIAL_STOCK.ORDER,
   },
   {
+    // Layout anchor for material detail routes - no menu entry
+    path: `/${AppRoutes.MATERIAL_STOCK.BASE}`,
+    name: '__material_layout_anchor__',
+    invisible: true,
+    layout: eLayoutType.application,
+    requiredPolicy: `${AppPermissions.Materials.Default}`,
+  },
+  {
     path: `/${AppRoutes.MATERIAL_STOCK.BASE}/${AppRoutes.MATERIAL_STOCK.LIST.BASE}`,
     iconClass: 'fas fa-list',
     name: '::Menu:Materials:List',

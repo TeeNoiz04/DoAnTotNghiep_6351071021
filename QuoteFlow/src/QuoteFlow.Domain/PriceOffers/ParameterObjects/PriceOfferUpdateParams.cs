@@ -78,10 +78,6 @@ public class PriceOfferUpdateParams : BaseUpdateParams
 
     public Guid? KeyAccountId { get; set; }
 
-    public Guid? KeyAccountTypeId { get; set; }
-
-    public Guid? KeyAccountClassId { get; set; }
-
     [StringLength(PriceOfferConsts.BuyerTypeDescriptionMaxLength)]
     public string? BuyerTypeDescription { get; set; }
 
@@ -90,12 +86,6 @@ public class PriceOfferUpdateParams : BaseUpdateParams
 
     [StringLength(PriceOfferConsts.EUIndustryDescriptionMaxLength)]
     public string? EUIndustryDescription { get; set; }
-
-    [StringLength(PriceOfferConsts.KeyAccountClassDescriptionMaxLength)]
-    public string? KeyAccountClassDescription { get; set; }
-
-    [StringLength(PriceOfferConsts.KeyAccountTypeDescriptionMaxLength)]
-    public string? KeyAccountTypeDescription { get; set; }
 
     [StringLength(PriceOfferConsts.LocationDescriptionMaxLength)]
     public string? LocationDescription { get; set; }

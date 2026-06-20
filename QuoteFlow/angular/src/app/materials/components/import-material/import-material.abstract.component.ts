@@ -171,12 +171,14 @@ export abstract class AbstractImportMaterialComponent implements OnInit, OnDestr
 
     handler().subscribe({
       next: result => {
-        result.listData = result.listData.map(row => ({
+        result.listData = (result.listData ?? []).map(row => ({
           ...row,
-          rowData: {
-            ...row.rowData,
-            productionDate: this.formatDate(row.rowData.productionDate),
-          },
+          rowData: row.rowData
+            ? {
+                ...row.rowData,
+                productionDate: this.formatDate(row.rowData.productionDate),
+              }
+            : row.rowData,
         }));
 
         this.resultImports[this.importMode] = result;
@@ -237,6 +239,7 @@ export abstract class AbstractImportMaterialComponent implements OnInit, OnDestr
         this.showResultImport = false;
         this.submitting = false;
         this.service.hookToQuery();
+        this.list.get();
       },
       error: () => {
         this.toast.error('Failed to import Material. Please try again.');

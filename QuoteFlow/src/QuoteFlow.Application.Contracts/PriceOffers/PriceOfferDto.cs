@@ -40,8 +40,6 @@ public class PriceOfferDto : ExtendedAuditedEntityDto<Guid>, IHasConcurrencyStam
     public decimal? TotalMEVNOfferAmount { get; set; }
     public string? ApprovalStatus { get; set; }
     public Guid? KeyAccountId { get; set; }
-    public Guid? KeyAccountTypeId { get; set; }
-    public Guid? KeyAccountClassId { get; set; }
     public Guid? CurrentApprovalRouteInstanceId { get; set; }
     public string? CurrentApprovalStepSequence { get; set; }
     public string? CurrentApproverRoleName { get; set; }
@@ -54,8 +52,6 @@ public class PriceOfferDto : ExtendedAuditedEntityDto<Guid>, IHasConcurrencyStam
 
     public string? ProjectTypeDescription { get; set; }
     public string? EUIndustryDescription { get; set; }
-    public string? KeyAccountClassDescription { get; set; }
-    public string? KeyAccountTypeDescription { get; set; }
     public string? LocationDescription { get; set; }
 
     public decimal? TotalUsableOfferAmount { get; set; }
