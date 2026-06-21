@@ -681,7 +681,7 @@ export class AppRoutes {
     DPO: {
       BASE: 'sale-orders',
       ORDER: 1,
-      TITLE: 'Sale Orders (DPO)',
+      TITLE: 'Sale Orders',
     },
   };
   static readonly DPO = {

@@ -22,7 +22,6 @@ import {
 import { StockManagementViewService } from '../../services/stock-management.service';
 import { StockManagementDetailViewService } from '../../services/stock-management-detail.service';
 import { StatusLabelComponent } from '@app/shared/status/components/status-label.component';
-import { LockShipmentDetailModalComponent } from './components/lock-shipment-detail-modal/lock-shipment-detail-modal.component';
 import { OnOrderStockDetailModalComponent } from './components/on-order-stock-detail-modal/on-order-stock-detail-modal.component';
 import { LockStockSODetailModalComponent } from './components/lock-stock-so-detail-modal/lock-stock-so-detail-modal.component';
 import { StockLockedDetailModalComponent } from './components/stock-locked-detail-modal/stock-locked-detail-modal.component';
@@ -46,7 +45,6 @@ import { TableEdgeScrollerComponent } from '@app/shared/components/table-edge-sc
     CommercialUiModule,
     MatCheckboxModule,
     StatusLabelComponent,
-    LockShipmentDetailModalComponent,
     OnOrderStockDetailModalComponent,
     LockStockSODetailModalComponent,
     StockQtyDetailModalComponent,

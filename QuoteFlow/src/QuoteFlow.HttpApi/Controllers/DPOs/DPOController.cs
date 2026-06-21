@@ -140,12 +140,6 @@ public class DPOController : AbpController, IDPOsAppService
         return _dPOsAppService.LockStockAutoV2Async(input);
     }
 
-    [HttpPost]
-    [Route("lock-shipment-auto")]
-    public virtual Task LockShipmentAutoAsync(DPOLockShipmentAutoDto input)
-    {
-        return _dPOsAppService.LockShipmentAutoAsync(input);
-    }
 
     [HttpPost]
     [Route("{id}/confirm-lock-stock")]
@@ -175,12 +169,6 @@ public class DPOController : AbpController, IDPOsAppService
         return _dPOsAppService.GetListLockOnOrderStockAsync(dpoId, dpoDetailId);
     }
 
-    [HttpPost]
-    [Route("{dpoDetailId}/lock-shipment")]
-    public Task LockShipmentAsync(Guid dpoDetailId, DPOLockShipmentDto input)
-    {
-        return _dPOsAppService.LockShipmentAsync(dpoDetailId, input);
-    }
 
     [HttpGet]
     [Route("{dpoDetailId}/lock-stock-eta-etd/{poDetailId}")]
@@ -196,12 +184,6 @@ public class DPOController : AbpController, IDPOsAppService
         return _dPOsAppService.UpdateLockStockDetailAsync(dpoDetailId, input);
     }
 
-    [HttpPost]
-    [Route("{dpoDetailId}/lock-shipment-item/{poDetailId}")]
-    public Task UpdateLockShipmentAsync(Guid dpoDetailId, Guid poDetailId, DPOLockShipmentItemUpdateDto input)
-    {
-        return _dPOsAppService.UpdateLockShipmentAsync(dpoDetailId, poDetailId, input);
-    }
 
     [HttpDelete]
     [Route("{dpoDetailId}/lock-stocks/{lockStockId}")]

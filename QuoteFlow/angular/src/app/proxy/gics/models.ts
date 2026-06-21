@@ -198,3 +198,8 @@ export interface GetGICsInput extends PagedAndSortedResultRequestDto {
   totalAmountMax?: number;
   remark?: string;
 }
+
+export interface GICLockShipmentAutoDto {
+  dpoDetailIds: string[];
+  note?: string;
+}

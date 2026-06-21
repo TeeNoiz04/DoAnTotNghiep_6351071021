@@ -13,7 +13,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DPODto, DPOListPOsDto, DPOLockShipmentItemDto, DPOService } from '@app/proxy/dpos';
+import { DPODto, DPOListPOsDto, DPOService } from '@app/proxy/dpos';
 // import { DPODetailService } from '@app/proxy/dpos/dpodetails/dpodetail.service';
 import { AppPermissions } from '@app/app.permissions';
 import { DPODetailDto } from '@app/proxy/dpos/dpodetails/models';
@@ -306,27 +306,15 @@ export class LockOnOrderStockAvailableDetailModalComponent implements OnInit, On
         golfaCode: item?.golfaCode,
         qty: item?.locked,
         note: item?.note,
-      } as DPOLockShipmentItemDto;
+      };
     });
 
     // Get all objects that have a defined (non-null/undefined) qty
     const resultArr = items.filter(item => item.qty);
 
-    this.dpoService
-      .lockShipment(this.dpoDetailId, { items: resultArr })
-      .pipe(finalize(() => (this.isBusy = false)))
-      .subscribe({
-        next: result => {
-          this.toasterService.success('Lock successfully', 'Success');
-          this.modalResult.emit(result);
-          // Refresh DPO detail data and reload available POs after successful lock
-          this.refreshDataAfterLock();
-        },
-        error: error => {
-          console.error('Error updating lock stock:', error);
-          this.toasterService.error('Failed to update lock stock', 'Error');
-        },
-      });
+    // LockShipment feature removed
+    this.isBusy = false;
+    this.toasterService.warn('Lock Shipment feature is not available', 'Not Available');
   }
 
   onRowClick(event: any): void {

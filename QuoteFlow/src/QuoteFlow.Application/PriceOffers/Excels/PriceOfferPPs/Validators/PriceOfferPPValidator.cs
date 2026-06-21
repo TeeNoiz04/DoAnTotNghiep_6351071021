@@ -191,26 +191,8 @@ public class PriceOfferPPValidator : IExcelValidator<PriceOfferImportDto>
 
     protected virtual ValidationResult PreValidate(IEnumerable<IDictionary<string, object>> rows)
     {
-        var result = new ValidationResult();
-        // Check if all rows in M (Correct information confirmation) are filled
-        var hasBlankCorrectedInfo = rows.Any(r =>
-        {
-            if (r.TryGetValue("N", out object? correctInfo))
-            {
-                return correctInfo is null || correctInfo is string correctInfoString && string.IsNullOrWhiteSpace(correctInfoString);
-            }
-            return true;
-        });
-
-        // Check if N11 (SEC Check) is filled
-        var hasBlankSecCheck = rows.FirstOrDefault()?.TryGetValue("O", out object? secCheck) != true ||
-                               secCheck is null || secCheck is string secCheckString && string.IsNullOrWhiteSpace(secCheckString);
-        if (hasBlankCorrectedInfo || hasBlankSecCheck)
-        {
-            result.Errors.Add("All rows must have 'Correct information confirmation' and 'SEC Check' filled out.");
-        }
-
-        return result;
+        // Skip validation for 'The information is corrected?' (col N) and 'SEC Check' (col O)
+        return new ValidationResult();
     }
 
     protected virtual async Task ValidateRowsAsync(

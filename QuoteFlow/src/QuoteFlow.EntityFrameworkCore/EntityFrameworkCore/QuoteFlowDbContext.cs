@@ -19,7 +19,6 @@ using QuoteFlow.Materials.MaterialApprovalRequests;
 using QuoteFlow.Materials.MaterialGroups;
 using QuoteFlow.Materials.MaterialHistories;
 using QuoteFlow.Materials.MaterialStocks;
-using QuoteFlow.Materials.MaterialStocks.MaterialStockLockShipments;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.MaterialStockUploadDetails;
 using QuoteFlow.MaterialStockUploads;
@@ -42,6 +41,8 @@ using QuoteFlow.SystemCategories;
 using QuoteFlow.SystemConfigurations;
 using QuoteFlow.WorkflowApprovers;
 using QuoteFlow.WorkflowConfigurations;
+using QuoteFlow.SpoBatchRequests;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -70,11 +71,12 @@ public class QuoteFlowDbContext :
     AbpDbContext<QuoteFlowDbContext>,
     IIdentityProDbContext
 {
+    public DbSet<SpoBatchRequest> SpoBatchRequests { get; set; } = null!;
+    public DbSet<SpoBatchRequestDetail> SpoBatchRequestDetails { get; set; } = null!;
     public DbSet<CfgDiscountRatio> CfgDiscountRatios { get; set; } = null!;
    
     public DbSet<HistoryTracking> HistoryTrackings { get; set; } = null!;
    
-    public DbSet<MaterialStockLockShipment> MaterialStockLockShipments { get; set; } = null!;
    
     public DbSet<SaleOrdersSapImport> SaleOrdersSapImports { get; set; } = null!;
     public DbSet<DistributorTarget> DistributorTargets { get; set; } = null!;
@@ -1446,16 +1448,6 @@ public class QuoteFlowDbContext :
         }
         if (builder.IsHostDatabase())
         {
-            builder.Entity<MaterialStockLockShipment>(b =>
-            {
-                b.ToTable(QuoteFlowConsts.DbTablePrefix + "MaterialStock_LockShipment", QuoteFlowConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.ConfigureCustomExtendedAuditing();
-                b.Property(x => x.GolfaCode).HasColumnName(nameof(MaterialStockLockShipment.GolfaCode)).IsRequired().HasMaxLength(MaterialStockLockShipmentConsts.GolfaCodeMaxLength);
-                b.Property(x => x.LockOnOrder).HasColumnName(nameof(MaterialStockLockShipment.LockOnOrder));
-                b.Property(x => x.StockOnOrder).HasColumnName(nameof(MaterialStockLockShipment.StockOnOrder));
-                b.Property(x => x.Note).HasColumnName(nameof(MaterialStockLockShipment.Note)).HasMaxLength(MaterialStockLockShipmentConsts.NoteMaxLength);
-            });
 
         }
 
@@ -1500,6 +1492,36 @@ public class QuoteFlowDbContext :
             });
 
         }
-       
+
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<SpoBatchRequest>(b =>
+            {
+                b.ToTable("SPO_BatchRequest", QuoteFlowConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.RequestNo).HasColumnName(nameof(SpoBatchRequest.RequestNo)).IsRequired().HasMaxLength(50);
+                b.Property(x => x.ImportType).HasColumnName(nameof(SpoBatchRequest.ImportType)).IsRequired().HasMaxLength(50);
+                b.Property(x => x.FileName).HasColumnName(nameof(SpoBatchRequest.FileName)).HasMaxLength(400);
+                b.Property(x => x.Note).HasColumnName(nameof(SpoBatchRequest.Note)).HasMaxLength(4000);
+                b.Property(x => x.Status).HasColumnName(nameof(SpoBatchRequest.Status)).HasMaxLength(50);
+                b.Property(x => x.IsDeleted).HasColumnName(nameof(SpoBatchRequest.IsDeleted));
+                b.HasMany(x => x.SpoBatchRequestDetails).WithOne().HasForeignKey(x => x.RequestId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            builder.Entity<SpoBatchRequestDetail>(b =>
+            {
+                b.ToTable("SPO_BatchRequest_Detail", QuoteFlowConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.RequestId).HasColumnName(nameof(SpoBatchRequestDetail.RequestId)).IsRequired();
+                b.Property(x => x.SPOCode).HasColumnName(nameof(SpoBatchRequestDetail.SPOCode)).HasMaxLength(50);
+                b.Property(x => x.GolfaCode).HasColumnName(nameof(SpoBatchRequestDetail.GolfaCode)).HasMaxLength(50);
+                b.Property(x => x.Action).HasColumnName(nameof(SpoBatchRequestDetail.Action)).HasMaxLength(50);
+                b.Property(x => x.ActionDate).HasColumnName(nameof(SpoBatchRequestDetail.ActionDate));
+                b.Property(x => x.Note).HasColumnName(nameof(SpoBatchRequestDetail.Note)).HasMaxLength(4000);
+                b.Property(x => x.Status).HasColumnName(nameof(SpoBatchRequestDetail.Status)).HasMaxLength(50);
+                b.Property(x => x.IsDeleted).HasColumnName(nameof(SpoBatchRequestDetail.IsDeleted));
+            });
+        }
+
     }
 }

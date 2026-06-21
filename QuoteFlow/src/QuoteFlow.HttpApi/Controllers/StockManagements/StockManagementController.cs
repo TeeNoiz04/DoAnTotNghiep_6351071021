@@ -128,11 +128,6 @@ public class StockManagementController : AbpController, IStockManagementAppServi
         return _stockManagementAppService.GetStockOfSOAsync(materialCode, stockId);
     }
 
-    [HttpGet("lock-shipment")]
-    public Task<List<LockShipmentDto>> GetLockShipmentAsync(string? materialCode)
-    {
-        return _stockManagementAppService.GetLockShipmentAsync(materialCode);
-    }
 
     [HttpGet("on-order-stock")]
     public Task<List<OnOrderStockDto>> GetOnOrderStockAsync(string? materialCode)

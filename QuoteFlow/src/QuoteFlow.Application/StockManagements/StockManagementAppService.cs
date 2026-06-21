@@ -447,10 +447,6 @@ public class StockManagementAppService : ApplicationService, IStockManagementApp
         return ObjectMapper.Map<List<StockOfSO>, List<StockOfSODto>>(await _materialRepository.StockOfSOAsync(materialCode, stockId));
     }
 
-    public async Task<List<LockShipmentDto>> GetLockShipmentAsync(string? materialCode)
-    {
-        return ObjectMapper.Map<List<LockShipment>, List<LockShipmentDto>>(await _materialRepository.GetLockShipmentAsync(materialCode));
-    }
 
     public async Task<List<OnOrderStockDto>> GetOnOrderStockAsync(string? materialCode)
     {

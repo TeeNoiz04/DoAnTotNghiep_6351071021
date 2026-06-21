@@ -53,7 +53,6 @@
                   <td
                     [ngClass]="getCellClass('customerTaxCode')"
                     [innerHTML]="formatCellValue('customerTaxCode', item)"></td>
-                  <td>{{ item.rowData?.hasKeyAccount === true ? '✓' : '-' }}</td>
                   <td [ngClass]="getCellClass('customerName')" [innerHTML]="formatCellValue('customerName', item)"></td>
                   <td
                     [ngClass]="getCellClass('customerAddress')"
@@ -71,7 +70,7 @@
               <tr
                 *ngIf="enableErrorHandling && item.hasErrors && expandedRows[item.rowIndex || i]"
                 class="error-details-row">
-                <td colspan="7" class="error-details p-0">
+                <td colspan="8" class="error-details p-0">
                   <div class="error-container p-2">
                     <div class="error-header mb-2">
                       <span class="badge bg-danger me-2">

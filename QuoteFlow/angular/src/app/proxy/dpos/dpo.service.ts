@@ -19,9 +19,6 @@ import type {
   DPOExportDataInputDto,
   DPOListPOsDto,
   DPOLockOnOrderStockDto,
-  DPOLockShipmentAutoDto,
-  DPOLockShipmentDto,
-  DPOLockShipmentItemUpdateDto,
   DPOLockStockAutoDto,
   DPOLockStockAutoV2Dto,
   DPOLockStockEtaEtdDto,
@@ -552,26 +549,6 @@ export class DPOService {
       { apiName: this.apiName, ...config },
     );
 
-  lockShipment = (dpoDetailId: string, input: DPOLockShipmentDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, void>(
-      {
-        method: 'POST',
-        url: `/api/app/dpos/${dpoDetailId}/lock-shipment`,
-        body: input,
-      },
-      { apiName: this.apiName, ...config },
-    );
-
-  lockShipmentAuto = (input: DPOLockShipmentAutoDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, void>(
-      {
-        method: 'POST',
-        url: '/api/app/dpos/lock-shipment-auto',
-        body: input,
-      },
-      { apiName: this.apiName, ...config },
-    );
-
   lockStock = (id: string, input: DPODetailLockStockDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>(
       {
@@ -644,21 +621,6 @@ export class DPOService {
         method: 'PUT',
         url: '/api/app/dpos/update-detail',
         params: { dpoDetailId, qty, confirmNote, note },
-      },
-      { apiName: this.apiName, ...config },
-    );
-
-  updateLockShipment = (
-    dpoDetailId: string,
-    poDetailId: string,
-    input: DPOLockShipmentItemUpdateDto,
-    config?: Partial<Rest.Config>,
-  ) =>
-    this.restService.request<any, void>(
-      {
-        method: 'POST',
-        url: `/api/app/dpos/${dpoDetailId}/lock-shipment-item/${poDetailId}`,
-        body: input,
       },
       { apiName: this.apiName, ...config },
     );

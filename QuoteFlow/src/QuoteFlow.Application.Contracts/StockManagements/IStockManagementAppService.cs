@@ -31,7 +31,6 @@ public interface IStockManagementAppService : IApplicationService
 
     Task<List<LockedDto>> GetLockedAsync(string? materialCode);
     Task<List<StockOfSODto>> GetStockOfSOAsync(string? materialCode, Guid? stockId);
-    Task<List<LockShipmentDto>> GetLockShipmentAsync(string? materialCode);
     Task<List<OnOrderStockDto>> GetOnOrderStockAsync(string? materialCode);
     Task<IRemoteStreamContent> GetListOverallStockReportAsync();
     Task<List<DataMaterialOverallStockReportDto>> GeDataOverallStockReportAsync();

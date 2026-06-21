@@ -19,7 +19,6 @@ using QuoteFlow.Materials.MaterialApprovalRequestDetails;
 using QuoteFlow.Materials.MaterialApprovalRequests;
 using QuoteFlow.Materials.MaterialHistories;
 using QuoteFlow.Materials.MaterialStocks;
-using QuoteFlow.Materials.MaterialStocks.MaterialStockLockShipments;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.MaterialStockUploadDetails;
 using QuoteFlow.MaterialStockUploads;
@@ -159,8 +158,6 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
             options.AddRepository<SaleOrdersSapImport, SaleOrdersSapImports.EfCoreSaleOrdersSapImportRepository>();
 
             options.AddRepository<DistributorTarget, DistributorTargets.EfCoreDistributorTargetRepository>();
-
-            options.AddRepository<MaterialStockLockShipment, EfCoreMaterialStockLockShipmentRepository>();
 
             options.AddRepository<HistoryTracking, HistoryTrackings.EfCoreHistoryTrackingRepository>();
 

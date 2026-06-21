@@ -176,28 +176,6 @@ export interface DPOLockOnOrderStockDto extends ExtendedAuditedEntityDto<string>
   qtyNeedImport?: number;
 }
 
-export interface DPOLockShipmentAutoDto {
-  dpoDetailIds: string[];
-  note?: string;
-}
-
-export interface DPOLockShipmentDto {
-  items: DPOLockShipmentItemDto[];
-}
-
-export interface DPOLockShipmentItemDto {
-  poDetailId: string;
-  golfaCode: string;
-  qty: number;
-  note?: string;
-}
-
-export interface DPOLockShipmentItemUpdateDto {
-  golfaCode: string;
-  qty: number;
-  note?: string;
-}
-
 export interface DPOLockStockAutoDto {
   dpoId: string;
   stockCategoryId: string;

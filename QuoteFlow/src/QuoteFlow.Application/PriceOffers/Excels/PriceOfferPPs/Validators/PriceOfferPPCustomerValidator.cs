@@ -26,52 +26,7 @@ public class PriceOfferPPCustomerValidator : BaseExcelValidator<PriceOfferCustom
 
     protected override async Task<ValidationResult> PreValidateAsync(Stream stream, ExcelImportContext? context)
     {
-        // get the column H and I, check if all the <not blank> row is checked or not
-        var rows = ReadRows(stream);
-        var hasBlankCorrectedInfo = rows.Any(r =>
-        {
-            if (r.TryGetValue("I", out object? correctInfo))
-            {
-                if (correctInfo is null ||
-                    correctInfo is string correctInfoString &&
-                        (string.IsNullOrWhiteSpace(correctInfoString) ||
-                         string.IsNullOrEmpty(correctInfoString)))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return true;
-            }
-            return false;
-        });
-
-        var hasBlankSecCheck = rows.Any(r =>
-        {
-            if (r.TryGetValue("J", out object? secCheck))
-            {
-                if (secCheck is null ||
-                    secCheck is string secCheckString
-                    && (string.IsNullOrWhiteSpace(secCheckString) || string.IsNullOrEmpty(secCheckString)))
-                    return true;
-            }
-            else
-            {
-                return true;
-            }
-
-            return false;
-        });
-
-        if (hasBlankCorrectedInfo || hasBlankSecCheck)
-        {
-            return new ValidationResult
-            {
-                Errors = ["All rows must have 'Correct information confirmation' and 'SEC Check' filled out."]
-            };
-        }
-
+        // Skip validation for 'Correct information confirmation' (col I) and 'Checked by MEVN Sales PIC' (col J)
         return await base.PreValidateAsync(stream, context);
     }
 

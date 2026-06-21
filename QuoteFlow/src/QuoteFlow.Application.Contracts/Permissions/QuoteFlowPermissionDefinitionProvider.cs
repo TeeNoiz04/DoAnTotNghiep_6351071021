@@ -102,13 +102,13 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         stockTracingPermission.AddChild(QuoteFlowPermissions.StockTracings.Searching, L("Permission:Searching"));
 
         // Report
-        var reportsPermission = myGroup.AddPermission(QuoteFlowPermissions.Reports.Default, L("Permission:Reports"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.R25DPOReceivedByMaterialType, L("Permission:R25DPOReceivedByMaterialType"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.R24DPOProcessing, L("Permission:R24DPOProcessing"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.R21OverallStock, L("Permission:R21OverallStock"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.R15Inventory, L("Permission:R15Inventory"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportGeneral, L("Permission:CustomerSaleReportGeneral"));
-        reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportDetail, L("Permission:CustomerSaleReportDetail"));
+        //var reportsPermission = myGroup.AddPermission(QuoteFlowPermissions.Reports.Default, L("Permission:Reports"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R25DPOReceivedByMaterialType, L("Permission:R25DPOReceivedByMaterialType"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R24DPOProcessing, L("Permission:R24DPOProcessing"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R21OverallStock, L("Permission:R21OverallStock"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.R15Inventory, L("Permission:R15Inventory"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportGeneral, L("Permission:CustomerSaleReportGeneral"));
+        //reportsPermission.AddChild(QuoteFlowPermissions.Reports.CustomerSaleReportDetail, L("Permission:CustomerSaleReportDetail"));
 
         // Master Data
         var masterDataPermission = myGroup.AddPermission(QuoteFlowPermissions.MasterDatas.Default, L("Permission:MasterDatas"));

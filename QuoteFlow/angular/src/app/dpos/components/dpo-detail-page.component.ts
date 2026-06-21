@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppPermissions } from '@app/app.permissions';
 import { AppRoutes } from '@app/app.routes';
-import { DpoGkrAllocationDto, DPOLockShipmentAutoDto, DPOService } from '@app/proxy/dpos';
+import { DpoGkrAllocationDto, DPOService } from '@app/proxy/dpos';
 import { DPODetailDto } from '@app/proxy/dpos/dpodetails/models';
 import { NoteMetadataDto } from '@app/proxy/shared/models';
 import {
@@ -252,9 +252,6 @@ export class DPODetailComponent implements OnInit {
     );
   }
 
-  get columnLockShipment(): boolean {
-    return this.service.dpo.status !== RequestStatusEnum.SUBMITTED;
-  }
 
   // Cell class function for accessing row data
   getTextClassForNeedOrder = (value: any, row: DPODetailDto): string => {
@@ -331,9 +328,6 @@ export class DPODetailComponent implements OnInit {
         break;
       case 'saleOrder':
         this.onSaleOrderDetailClick(event.row);
-        break;
-      case 'lockShipment':
-        this.onLockOnOrderStockDetailClick(event.row);
         break;
       case 'delivered':
         this.onDeliveredDetailClick(event.row);
@@ -571,41 +565,6 @@ export class DPODetailComponent implements OnInit {
     this.service.selectedItems = event.selectedItems as DPODetailDto[];
   }
 
-  onLockOnOrderStockAutoModalResult(result: { action: any; comment: string }): void {
-    if (!this.service?.selectedItems?.length) {
-      this.showLockOnOrderStockAutoModal = false;
-      return;
-    }
-
-    this.lockOnOrderStockAutoLoading = true;
-
-    const input: DPOLockShipmentAutoDto = {
-      dpoDetailIds: this.service.selectedItems.map(item => item.id),
-      note: result.comment || '',
-    };
-
-    this.dpoService.lockShipmentAuto(input).subscribe({
-      next: () => {
-        this.toasterService.success('Lock on order stock completed successfully', 'Success');
-
-        // Reload DPO details to reflect changes
-        if (this.service.dpo?.id) {
-          this.service.loadDPODetails(this.service.dpo.id);
-        }
-
-        // Clear selection after successful operation
-        this.service.selectedItems = [];
-        this.showLockOnOrderStockAutoModal = false;
-      },
-      error: error => {
-        console.error('Error locking on order stock auto:', error);
-        this.toasterService.error('Failed to lock on order stock', 'Error');
-      },
-      complete: () => {
-        this.lockOnOrderStockAutoLoading = false;
-      },
-    });
-  }
 
   onCloseLockOnOrderStockAutoModal(): void {
     this.showLockOnOrderStockAutoModal = false;

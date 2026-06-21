@@ -31,7 +31,6 @@ using QuoteFlow.Materials.MaterialGroups.ParameterObject;
 using QuoteFlow.Materials.MaterialHistories;
 using QuoteFlow.Materials.MaterialImport.MaterialStatus;
 using QuoteFlow.Materials.MaterialStocks;
-using QuoteFlow.Materials.MaterialStocks.MaterialStockLockShipments;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks.ParameterObjects;
 using QuoteFlow.Materials.MaterialStocks.ParameterObjects;
@@ -76,6 +75,9 @@ using QuoteFlow.SystemConfigurations;
 using QuoteFlow.WorkflowApprovers;
 using QuoteFlow.WorkflowConfigurations;
 using QuoteFlow.WorkflowConfigurations.ParameterObject;
+using QuoteFlow.SpoBatchRequests;
+using QuoteFlow.SpoBatchRequests.ParameterObject;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
 using System.Linq;
 
 namespace QuoteFlow;
@@ -326,8 +328,6 @@ public class QuoteFlowApplicationAutoMapperProfile : Profile
 
        
 
-        CreateMap<MaterialStockLockShipment, MaterialStockLockShipmentDto>();
-
         CreateMap<StockManagementList, StockManagementListDto>();
         CreateMap<GetStockManagementsListInput, StockManagementFilterParams>();
     
@@ -347,7 +347,6 @@ public class QuoteFlowApplicationAutoMapperProfile : Profile
         CreateMap<StockQty, StockQtyDto>();
         CreateMap<StockOfSO, StockOfSODto>();
         CreateMap<Locked, LockedDto>();
-        CreateMap<LockShipment, LockShipmentDto>();
         CreateMap<OnOrderStock, OnOrderStockDto>();
 
         CreateMap<DPOReportDto, DPODataReportDto>();
@@ -384,6 +383,10 @@ public class QuoteFlowApplicationAutoMapperProfile : Profile
         CreateMap<CfgDiscountRatio, CfgDiscountRatioDto>();
         CreateMap<GetCfgDiscountRatiosInput, CfgDiscountRatioFilterParams>();
         CreateMap<CfgDiscountRatioUpdateDto, CfgDiscountRatioUpdateParams>();
+
+        CreateMap<GetSpoBatchRequestsInput, SpoBatchRequestFilterParams>();
+        CreateMap<SpoBatchRequest, SpoBatchRequestDto>();
+        CreateMap<SpoBatchRequestDetail, SpoBatchRequestDetailDto>();
 
  
     }

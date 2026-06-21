@@ -16,7 +16,6 @@ using QuoteFlow.Emailing.EmailInfoModel;
 using QuoteFlow.Emailing.EmailModels;
 using QuoteFlow.Materials;
 using QuoteFlow.Materials.MaterialStocks;
-using QuoteFlow.Materials.MaterialStocks.MaterialStockLockShipments;
 using QuoteFlow.Materials.MaterialStocks.MaterialStockLockStocks;
 using QuoteFlow.Messages;
 using QuoteFlow.Permissions;
@@ -77,7 +76,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
     private readonly IRepository<FileDescriptor, Guid> _fileDescriptorRepository;
     private readonly FileDescriptorAppService _fileDescriptorAppService;
     protected readonly ISalesAssignmentRepository _salesAssignmentRepository;
-    protected IMaterialStockLockShipmentRepository _materialStockLockShipmentRepository;
     protected IStockCategoryRepository _stockCategoryRepository;
     protected readonly IEmailJobScheduler _emailJobScheduler;
     protected IBuyerAccessService _buyerAccessService;
@@ -104,7 +102,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         ILogger<DPOsAppService> logger,
         IIdentityUserRepository identityUserRepository,
         ISalesAssignmentRepository salesAssignmentRepository,
-        IMaterialStockLockShipmentRepository materialStockLockShipmentRepository,
         IDistributedCache<DPODetailDownloadTokenCacheItem, string> downloadTokenDPODetailCache,
         IStockCategoryRepository stockCategoryRepository,
         IBuyerAccessService buyerAccessService,
@@ -130,7 +127,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         _logger = logger;
         _identityUserRepository = identityUserRepository;
         _salesAssignmentRepository = salesAssignmentRepository;
-        _materialStockLockShipmentRepository = materialStockLockShipmentRepository;
         _downloadTokenDPODetailCache = downloadTokenDPODetailCache;
         _stockCategoryRepository = stockCategoryRepository;
         _emailJobScheduler = emailJobScheduler;
@@ -1944,15 +1940,14 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         try
         {
             var materialStock = await _materialStockRepository.GetAsync(x => x.GolfaCode == itemDto.GolfaCode);
-            var materialLockShipment = await _materialStockLockShipmentRepository.GetAsync(x => x.GolfaCode == itemDto.GolfaCode);
 
             itemDto.AvailableStockQty = materialStock?.Available_Qty ?? 0;
-            itemDto.OnOrderStockAvailable = materialLockShipment?.StockOnOrder ?? 0;
+            itemDto.OnOrderStockAvailable = 0;
         }
         catch (EntityNotFoundException ex)
         {
-            // logs out and ignore if material stock or lock shipment not found
-            if (ex.EntityType != typeof(MaterialStock) && ex.EntityType != typeof(MaterialStockLockShipment))
+            // logs out and ignore if material stock not found
+            if (ex.EntityType != typeof(MaterialStock))
             {
                 throw;
             }
@@ -1961,12 +1956,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
             {
                 Logger.LogWarning($"Material stock not found for GolfaCode: {itemDto.GolfaCode}");
                 itemDto.AvailableStockQty = 0;
-            }
-
-            if (ex.EntityType == typeof(MaterialStockLockShipment))
-            {
-                Logger.LogWarning($"Material lock shipment not found for GolfaCode: {itemDto.GolfaCode}");
-                itemDto.OnOrderStockAvailable = 0;
             }
         }
 
@@ -2090,22 +2079,18 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
 
     private async Task CheckBypassLockOnOrderStockAsync(DPO dpo)
     {
-        var allGolfaCodes = dpo.Details.Select(x => x.GolfaCode).Distinct().ToList();
-
-        var materialLockShipments = await _materialStockLockShipmentRepository.GetListAsync(x =>
-            allGolfaCodes.Contains(x.GolfaCode)
-        );
-        if (materialLockShipments.All(x => (x.StockOnOrder ?? 0) == 0)
-            || dpo.Details.All(x => x.NeedDelivery == 0))
+        // LockShipment feature removed - MaterialStockLockShipment repository no longer available
+        // Default to InProgress since LockShipment check is removed
+        if (dpo.Details.All(x => x.NeedDelivery == 0))
         {
             // bypass lock on order stock
             dpo.Status = QuoteFlowStatuses.InProgress;
-
         }
         else
         {
-            dpo.Status = QuoteFlowStatuses.DPO.LockedStock;
+            dpo.Status = QuoteFlowStatuses.InProgress;
         }
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -2465,20 +2450,8 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         throw new NotImplementedException();
     }
 
-    public Task LockShipmentAsync(Guid dpoDetailId, DPOLockShipmentDto input)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task UpdateLockShipmentAsync(Guid dpoDetailId, Guid poDetailId, DPOLockShipmentItemUpdateDto input)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task LockShipmentAutoAsync(DPOLockShipmentAutoDto input)
-    {
-        throw new NotImplementedException();
-    }
 
     //[Authorize(QuoteFlowPermissions.MovingOrders.DPOs.LockOnOrderStock)]
     //[UnitOfWork(IsDisabled = true)]

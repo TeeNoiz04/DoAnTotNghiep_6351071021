@@ -41,7 +41,6 @@ public interface IMaterialRepository : IRepository<Material, Guid>
 
     Task<List<Locked>> LockedAsync(string? materialCode);
     Task<List<StockOfSO>> StockOfSOAsync(string? materialCode, Guid? stockId);
-    Task<List<LockShipment>> GetLockShipmentAsync(string? materialCode);
     Task<List<OnOrderStock>> OnOrderStockAsync(string? materialCode);
 
     Task<List<MaterialOverallStockReport>> GetListStockOverallAsync();

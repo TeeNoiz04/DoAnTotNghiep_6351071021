@@ -309,8 +309,7 @@ public class EfCorePriceOfferRepository : EfCoreRepository<QuoteFlowDbContext, P
         var connection = dbContext.Database.GetDbConnection();
         var parameters = new
         {
-            priceOfferId,
-            applySpecialAccount = applySpecialInputPrice ? 1 : 0
+            priceOfferId
         };
         await connection.ExecuteAsync(
             "usp_PriceOffer_UpdateDerivedValues",

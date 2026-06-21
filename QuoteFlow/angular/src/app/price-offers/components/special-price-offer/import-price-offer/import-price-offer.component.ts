@@ -633,8 +633,6 @@ export class ImportPriceOfferComponent implements OnInit, OnChanges, OnDestroy {
       { emitEvent: false },
     );
 
-    this.importInformation.buyerTypeId = '';
-    this.importInformation.buyerTypeName = '';
     this.importInformation.buyerId = '';
     this.importInformation.buyerName = '';
     this.importInformation.keyAccountId = '';

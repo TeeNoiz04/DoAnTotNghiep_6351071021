@@ -29,7 +29,6 @@ export abstract class AbstractStockManagementComponent implements OnInit {
 
   protected title = 'Stock Management';
   protected isLoading: boolean = false;
-  protected showLockShipmentDetailModal: boolean = false;
   protected showOnOrderStockDetailModal: boolean = false;
   protected showLockStockSODetailModal: boolean = false;
   protected showStockQtyDetailModal: boolean = false;
@@ -111,10 +110,6 @@ export abstract class AbstractStockManagementComponent implements OnInit {
     this.showOnOrderStockDetailModal = true;
   }
 
-  onViewLockShipmentDetail(item: StockManagementListDto) {
-    this.materialItem = item;
-    this.showLockShipmentDetailModal = true;
-  }
 
   onViewStockHistoryDetail(item: StockManagementListDto) {
     this.materialItem = item;

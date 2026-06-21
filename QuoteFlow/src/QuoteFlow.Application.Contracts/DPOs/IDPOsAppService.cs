@@ -47,8 +47,6 @@ public interface IDPOsAppService : IApplicationService
 
     Task LockStockAutoV2Async(DPOLockStockAutoV2Dto input);
 
-    Task LockShipmentAutoAsync(DPOLockShipmentAutoDto input);
-
     Task<DPODto> ConfirmLockStockAsync(Guid id, NoteMetadataDto input);
 
     Task<DPODto> ConfirmLockOnOrderAsync(Guid id, NoteMetadataDto input);
@@ -56,10 +54,6 @@ public interface IDPOsAppService : IApplicationService
     Task<ListResultDto<DPOListPOsDto>> GetListAvailablePOsAsync(Guid dpoId, Guid dpoDetailId, string? materialCode);
 
     Task<ListResultDto<DPOLockOnOrderStockDto>> GetListLockOnOrderStockAsync(Guid dpoId, Guid dpoDetailId);
-
-    Task LockShipmentAsync(Guid dpoDetailId, DPOLockShipmentDto input);
-
-    Task UpdateLockShipmentAsync(Guid dpoDetailId, Guid poDetailId, DPOLockShipmentItemUpdateDto input);
 
     Task<ListResultDto<DPOLockStockEtaEtdDto>> GetListLockStockEtaEtdAsync(Guid dpoDetailId, Guid poDetailId);
 

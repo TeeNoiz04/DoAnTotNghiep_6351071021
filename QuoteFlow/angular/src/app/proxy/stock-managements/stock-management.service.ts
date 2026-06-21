@@ -5,7 +5,6 @@ import type {
   GetStockManagementApprovalsInput,
   GetStockManagementsListInput,
   InventoryReportDto,
-  LockShipmentDto,
   LockedDto,
   OnOrderStockDto,
   StockManagementListDto,
@@ -195,15 +194,6 @@ export class StockManagementService {
       { apiName: this.apiName, ...config },
     );
 
-  getLockShipment = (materialCode: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, LockShipmentDto[]>(
-      {
-        method: 'GET',
-        url: '/api/app/stock-managements/lock-shipment',
-        params: { materialCode },
-      },
-      { apiName: this.apiName, ...config },
-    );
 
   getLocked = (materialCode: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, LockedDto[]>(

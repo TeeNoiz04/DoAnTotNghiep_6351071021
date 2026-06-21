@@ -177,13 +177,6 @@
                     Reject
                   </button>
                   <button
-                    *ngIf="service?.selected?.flags?.isCancellable"
-                    ngbDropdownItem
-                    (click)="onActionStart(requestHistoryAction.Cancelled)">
-                    <i class="bi bi-x-circle me-2"></i>
-                    Cancel
-                  </button>
-                  <button
                     *ngIf="service?.selected?.flags?.isClosable"
                     ngbDropdownItem
                     (click)="onActionStart(requestHistoryAction.Closed)">
@@ -205,11 +198,11 @@
                     Confirm Pre-order Result
                   </button>
                   <button
-                    *ngIf="service?.selected?.flags?.isSpecialInputPriceApplicable"
+                    *ngIf="service?.selected?.flags?.isCancellable"
                     ngbDropdownItem
-                    (click)="onOpenApplySpecialPriceModal()">
-                    <i class="bi bi-currency-dollar me-2"></i>
-                    Apply Special Price
+                    (click)="onActionStart(requestHistoryAction.Cancelled)">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -1028,7 +1021,7 @@
         <app-header title="Standard Price" name="standardPriceToDist" [className]="'w-10 text-end'"></app-header>
         <app-header title="Standard Amount" name="standardAmount" [className]="'w-10 text-end'"></app-header>
         <app-header title="Buyer Req. Amount" name="requestedAmount" [className]="'w-10 text-end'"></app-header>
-        <app-header title="MEVN Offer Price" name="priceOffer" [className]="'w-10 text-end'"></app-header>
+        <app-header title="Sales Offer Price" name="priceOffer" [className]="'w-10 text-end'"></app-header>
 
         <app-column value="materialCode"></app-column>
         <app-column value="model"></app-column>

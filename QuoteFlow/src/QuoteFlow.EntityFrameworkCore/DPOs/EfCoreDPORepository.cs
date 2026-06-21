@@ -322,39 +322,6 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         }
     }
 
-    public virtual async Task LockShipmentAutoAsync(
-        List<Guid> dpoDetailIds,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var connection = dbContext.Database.GetDbConnection();
-
-        foreach (var dpoDetailId in dpoDetailIds)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@pr_DPOdetailId", dpoDetailId, DbType.Guid);
-            parameters.Add("@note", note, DbType.String, size: 4000);
-            parameters.Add("@UserName", userName, DbType.String, size: 50);
-            parameters.Add("@UserFullName", userFullName, DbType.String, size: 500);
-            parameters.Add("@ErrorMsg", dbType: DbType.String, direction: ParameterDirection.Output, size: -1);
-
-            await connection.ExecuteAsync(
-                "usp_DPO_LockShipmentAuto",
-                parameters,
-                commandType: CommandType.StoredProcedure,
-                transaction: await GetDbTransactionAsync()
-            );
-
-            var errorMessage = parameters.Get<string>("@ErrorMsg");
-            if (!string.IsNullOrEmpty(errorMessage))
-            {
-                throw new UserFriendlyException(errorMessage);
-            }
-        }
-    }
 
     public virtual async Task<List<DPOListPOsModel>> GetListAvailablePOsAsync(
         Guid dpoDetailId,
@@ -378,69 +345,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         return result.ToList();
     }
 
-    public virtual async Task<string?> LockShipmentAsync(
-        Guid poDetailId,
-        Guid dpoDetailId,
-        string golfaCode,
-        int qty,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var connection = dbContext.Database.GetDbConnection();
 
-        var parameters = new DynamicParameters();
-        parameters.Add("@prPODetailId", poDetailId, DbType.Guid);
-        parameters.Add("@prDPOdetailId", dpoDetailId, DbType.Guid);
-        parameters.Add("@golfaCode", golfaCode, DbType.String, size: 50);
-        parameters.Add("@qty", qty, DbType.Int32);
-        parameters.Add("@note", note, DbType.String, size: 4000);
-        parameters.Add("@UserName", userName, DbType.String, size: 50);
-        parameters.Add("@userFullName", userFullName, DbType.String, size: 500);
-        parameters.Add("@errorMsg", dbType: DbType.String, size: 500, direction: ParameterDirection.Output);
-        await connection.ExecuteAsync(
-            "usp_PO_Detail_LockShipment_AddNew",
-            parameters,
-            commandType: CommandType.StoredProcedure,
-            transaction: await GetDbTransactionAsync()
-        );
-        return parameters.Get<string>("@errorMsg");
-    }
-
-    public virtual async Task<string?> UpdateLockShipmentAsync(
-        Guid poDetailId,
-        Guid dpoDetailId,
-        string golfaCode,
-        int qty,
-        string? note,
-        string userName,
-        string userFullName,
-        CancellationToken cancellationToken = default)
-    {
-        var dbContext = await GetDbContextAsync();
-        var connection = dbContext.Database.GetDbConnection();
-
-        var parameters = new DynamicParameters();
-        parameters.Add("@prPODetailId", poDetailId, DbType.Guid);
-        parameters.Add("@prDPOdetailId", dpoDetailId, DbType.Guid);
-        parameters.Add("@golfaCode", golfaCode, DbType.String, size: 50);
-        parameters.Add("@qty", qty, DbType.Int32);
-        parameters.Add("@note", note, DbType.String, size: 4000);
-        parameters.Add("@UserName", userName, DbType.String, size: 50);
-        parameters.Add("@userFullName", userFullName, DbType.String, size: 500);
-        parameters.Add("@errMsg", dbType: DbType.String, direction: ParameterDirection.Output, size: -1);
-
-        await connection.ExecuteAsync(
-            "usp_PO_Detail_LockShipment_Update",
-            parameters,
-            commandType: CommandType.StoredProcedure,
-            transaction: await GetDbTransactionAsync()
-        );
-
-        return parameters.Get<string>("@errMsg");
-    }
 
     public virtual async Task<List<DPOLockStockEtaEtdModel>> GetListLockStockEtaEtdAsync(
         Guid dpoDetailId,

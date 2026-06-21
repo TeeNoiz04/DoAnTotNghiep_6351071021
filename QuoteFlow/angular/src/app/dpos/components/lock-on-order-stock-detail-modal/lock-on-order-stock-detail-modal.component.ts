@@ -3,7 +3,7 @@ import { ThemeSharedModule } from '@abp/ng.theme.shared';
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DPODto, DPOLockOnOrderStockDto, DPOLockShipmentItemUpdateDto, DPOService } from '@app/proxy/dpos';
+import { DPODto, DPOLockOnOrderStockDto, DPOService } from '@app/proxy/dpos';
 import { DPODetailDto } from '@app/proxy/dpos/dpodetails/models';
 import {
   ActionClickEvent,
@@ -176,30 +176,14 @@ export class LockOnOrderStockDetailModalComponent implements OnInit, OnChanges {
 
   private handleSaveAction(row: DPOLockOnOrderStockDto): void {
     this.loading = true;
-    const input: DPOLockShipmentItemUpdateDto = {
+    const input = {
       golfaCode: this.dpoDetail.golfaCode || '',
       qty: row.qtyLocked || 0,
       note: row.note || '',
     };
-    this.dpoService
-      .updateLockShipment(this.dpoDetail.id, row.poDetailId, input)
-      .pipe(
-        tap(() => {
-          this.loadLockOnOrderStockData();
-          this.isDataChanged = true;
-        }),
-        catchError(error => {
-          console.error('Error saving lock on order stock:', error);
-          if (this.currentActionErrorHandler) {
-            this.currentActionErrorHandler();
-          }
-          return EMPTY;
-        }),
-        finalize(() => {
-          this.loading = false;
-        }),
-      )
-      .subscribe();
+    // LockShipment feature removed
+    this.loading = false;
+
   }
 
   private handleDeleteAction(row: DPOLockOnOrderStockDto): void {

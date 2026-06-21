@@ -15,6 +15,7 @@ import type {
   GICLockOnOrderStockDto,
   GICLockShipmentDto,
   GICLockShipmentItemUpdateDto,
+  GICLockShipmentAutoDto,
   GICLockStockAutoDto,
   GICLockStockAutoV2Dto,
   GICLockStockEtaEtdDto,
@@ -25,7 +26,6 @@ import type { ListResultDto, PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
 import type {
   BatchAutoUnlockStockDto,
-  DPOLockShipmentAutoDto,
   GICAllocateGKRDto,
   GicGkrAllocationDto,
 } from '../dpos/models';
@@ -534,7 +534,7 @@ export class GICService {
       { apiName: this.apiName, ...config },
     );
 
-  lockShipmentAuto = (input: DPOLockShipmentAutoDto, config?: Partial<Rest.Config>) =>
+  lockShipmentAuto = (input: GICLockShipmentAutoDto, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>(
       {
         method: 'POST',

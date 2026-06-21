@@ -17,6 +17,7 @@ import type { PriceOfferDto, PriceOfferImportDto } from '../../../proxy/price-of
 import { PriceOfferDetailViewService } from '../../services/price-offer-detail.service';
 import { PriceOfferViewService } from '../../services/price-offer.service';
 import {
+  ImportPriceOfferInformation,
   ImportPriceOfferType,
   ImportPriceOfferTypeMap,
   ImportPriceOfferTypeOption,
@@ -49,6 +50,7 @@ export abstract class AbstractPriceOfferComponent implements OnInit, OnDestroy {
   titleImportKeyAccount = 'Key-Account Price Offer';
   showResultImportPriceOffer = false;
   resultImport: ExcelValidationResult<PriceOfferImportDto | PriceOfferDetailImportDto> | undefined;
+  savedImportInformation: ImportPriceOfferInformation | undefined;
 
   showHistory = false;
   selectedRowForHistory: any = null;

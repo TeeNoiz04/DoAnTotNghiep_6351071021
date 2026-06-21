@@ -62,7 +62,7 @@ export class ImportInformationFormComponent implements OnChanges {
         keyAccountClass: this.importInformation.keyAccountClassName,
         closeDate: this.importInformation.closeDate,
         note: this.importInformation.note,
-        materialType: '',
+        materialType: this.importInformation.materialTypeId || '',
         projectName: this.importInformation.projectName || '',
         buyerType: this.importInformation.buyerTypeName || '',
         autoGetOfferPrice: this.importInformation.autoGetOfferPrice || false,

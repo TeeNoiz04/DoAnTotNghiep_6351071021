@@ -768,10 +768,6 @@ public class EfCoreMaterialRepository : EfCoreRepository<QuoteFlowDbContext, Mat
         }
     }
 
-    public Task<List<LockShipment>> GetLockShipmentAsync(string? materialCode)
-    {
-        throw new NotImplementedException();
-    }
 
     public Task<List<OnOrderStock>> OnOrderStockAsync(string? materialCode)
     {

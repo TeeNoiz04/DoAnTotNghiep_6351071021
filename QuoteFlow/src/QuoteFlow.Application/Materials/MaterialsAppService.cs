@@ -14,7 +14,6 @@ using QuoteFlow.Materials.MaterialImport.MaterialFactory;
 using QuoteFlow.Materials.MaterialImport.MaterialSAP;
 using QuoteFlow.Materials.MaterialImport.MaterialStatus;
 using QuoteFlow.Materials.MaterialStocks;
-using QuoteFlow.Materials.MaterialStocks.MaterialStockLockShipments;
 using QuoteFlow.Materials.MaterialStocks.ParameterObjects;
 using QuoteFlow.Materials.ParameterObjects;
 using QuoteFlow.Permissions;
@@ -71,13 +70,12 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
     protected readonly ApprovalRouteManager _approvalRouteManager;
     protected readonly IStockCategoryRepository _stockCategoryRepository;
     protected readonly MaterialStockManager _materialStockManager;
-    protected readonly MaterialStockLockShipmentManager _materialStockLockShipmentManager;
     private readonly FileDescriptorAppService _fileDescriptorAppService;
     private readonly IRepository<FileDescriptor, Guid> _fileDescriptorRepository;
     protected readonly IBuyerAccessService _buyerAccessService;
     protected readonly IUnitOfWorkManager _unitOfWorkManager;
 
-    public MaterialsAppService(IMaterialRepository materialRepository, MaterialManager materialManager, IExcelImportFactory excelValidatorFactory, IMaterialApprovalRequestRepository materialApprovalRequestRepository, IMaterialApprovalRequestDetailRepository materialApprovalRequestDetailRepository, MaterialApprovalRequestManager materialApprovalRequestManager, MaterialApprovalRequestDetailManager materialApprovalRequestDetailManager, IIdentityUserRepository identityUserRepository, IRequesterContext currentUserFromHeader, ICurrentUser currentUserFromToken, IApprovalRouteRepository approvalRouteRepository, ILocalEventBus localEventBus, IFlaggingService<MaterialApprovalRequest, MaterialFlagsDto> flaggingService, IGuidGenerator guidGenerator, IEffectiveUserContext currentFullUser, ApprovalRouteManager approvalRouteManager, IStockCategoryRepository stockCategoryRepository, MaterialStockManager materialStockManager, FileDescriptorAppService fileDescriptorAppService, IRepository<FileDescriptor, Guid> fileDescriptorRepository, MaterialStockLockShipmentManager materialStockLockShipmentManager, IBuyerAccessService buyerAccessService, IHistoryTrackingRepository historyTrackingRepository, IUnitOfWorkManager unitOfWorkManager)
+    public MaterialsAppService(IMaterialRepository materialRepository, MaterialManager materialManager, IExcelImportFactory excelValidatorFactory, IMaterialApprovalRequestRepository materialApprovalRequestRepository, IMaterialApprovalRequestDetailRepository materialApprovalRequestDetailRepository, MaterialApprovalRequestManager materialApprovalRequestManager, MaterialApprovalRequestDetailManager materialApprovalRequestDetailManager, IIdentityUserRepository identityUserRepository, IRequesterContext currentUserFromHeader, ICurrentUser currentUserFromToken, IApprovalRouteRepository approvalRouteRepository, ILocalEventBus localEventBus, IFlaggingService<MaterialApprovalRequest, MaterialFlagsDto> flaggingService, IGuidGenerator guidGenerator, IEffectiveUserContext currentFullUser, ApprovalRouteManager approvalRouteManager, IStockCategoryRepository stockCategoryRepository, MaterialStockManager materialStockManager, FileDescriptorAppService fileDescriptorAppService, IRepository<FileDescriptor, Guid> fileDescriptorRepository, IBuyerAccessService buyerAccessService, IHistoryTrackingRepository historyTrackingRepository, IUnitOfWorkManager unitOfWorkManager)
     {
 
         _materialRepository = materialRepository;
@@ -101,7 +99,6 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
         _materialStockManager = materialStockManager;
         _fileDescriptorAppService = fileDescriptorAppService;
         _fileDescriptorRepository = fileDescriptorRepository;
-        _materialStockLockShipmentManager = materialStockLockShipmentManager;
         _buyerAccessService = buyerAccessService;
         _historyTrackingRepository = historyTrackingRepository;
         _unitOfWorkManager = unitOfWorkManager;
@@ -739,9 +736,6 @@ public class MaterialsAppService : QuoteFlowAppService, IMaterialsAppService
                     .ToList();
                 await _materialStockManager.CreateListAsync(materialStockCreateParamList);
 
-                var materialStockLockShipmentCreateParamsList = materialNew.Select(detail => new MaterialStockLockShipment(GuidGenerator.Create(), detail.GolfaCode, 0, 0)).ToList();
-
-                await _materialStockLockShipmentManager.CreateListAsync(materialStockLockShipmentCreateParamsList);
 
 
             }

@@ -269,6 +269,9 @@ export class PriceOfferComponent extends AbstractPriceOfferComponent implements 
       this.importPriceOffer.importInformation.projectName = values.projectName || '';
       this.importPriceOffer.importInformation.buyerTypeId = values.buyerType || '';
 
+      // Save a snapshot so the result modal can display data even if the import modal closes
+      this.savedImportInformation = { ...this.importPriceOffer.importInformation };
+
       this.loadingService.show();
       this.importBusy = true;
       this.serviceDetail.importMode = this.importMode;
@@ -554,6 +557,7 @@ export class PriceOfferComponent extends AbstractPriceOfferComponent implements 
     // Clear the result import data
     this.resultImport = undefined;
     this.showResultImportPriceOffer = false;
+    this.savedImportInformation = undefined;
 
     // Clear the file from the import form to prevent errors
     if (this.importPriceOffer) {

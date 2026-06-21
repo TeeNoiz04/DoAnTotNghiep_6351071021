@@ -72,22 +72,6 @@ export interface InventoryReportDto {
   mevnBackOrder_Amount: number;
 }
 
-export interface LockShipmentDto {
-  golfaCode?: string;
-  qty?: number;
-  qtyNeed?: number;
-  qtyDisposed?: number;
-  poNo?: string;
-  dpoNo?: string;
-  createdBy?: string;
-  created?: string;
-  modifiedBy?: string;
-  modified?: string;
-  machineNo?: string;
-  supplierReply?: string;
-  mevnAddRequest?: string;
-  mevnRequest?: string;
-}
 
 export interface LockedDto {
   dpoNo?: string;

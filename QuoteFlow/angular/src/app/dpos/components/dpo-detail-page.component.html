@@ -529,18 +529,6 @@
                   [formatter]="formatNumber">
                 </app-table-column>
 
-                <!-- Lock On Order Stock Column -->
-                <app-table-column
-                  *ngIf="columnLockShipment"
-                  field="lockShipment"
-                  [header]="'Locked Shipment'"
-                  width="70px"
-                  textAlign="end"
-                  componentType="clickCell"
-                  cellClickAction="lockShipment"
-                  [formatter]="formatLockStock">
-                </app-table-column>
-
                 <!-- Sale Order Column -->
                 <app-table-column
                   *ngIf="completedLockStock"

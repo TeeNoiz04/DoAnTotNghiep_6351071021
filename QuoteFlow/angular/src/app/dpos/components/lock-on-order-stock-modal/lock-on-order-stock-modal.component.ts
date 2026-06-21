@@ -9,7 +9,6 @@ import { DPOExtendedService } from '@app/proxy-custom/dpos/dpo-extended.service'
 import {
   BatchAutoUnlockStockDto,
   DPODto,
-  DPOLockShipmentAutoDto,
   DPOLockStockAutoV2Dto,
   DPOService,
 } from '@app/proxy/dpos';
@@ -131,7 +130,7 @@ export class LockOnOrderStockModalComponent implements OnInit {
     this.loadingService.show();
     const formValue = this.form.getRawValue();
 
-    const input: DPOLockShipmentAutoDto = {
+    const input = {
       dpoDetailIds: this.selectedItems.map(item => item.id),
       note: formValue.comment || '',
     };
@@ -150,21 +149,10 @@ export class LockOnOrderStockModalComponent implements OnInit {
     //       this.toasterService.error('Failed to update lock on order stock', 'Error');
     //     },
     //   });
-    this.service.lockShipmentAuto(input).subscribe({
-      next: result => {
-        this.toasterService.success('Lock On Order Stock successfully', 'Success');
-        this.modalResult.emit(result);
-        this.closeDialog();
-      },
-      error: error => {
-        console.error('Error locking on order stock auto:', error);
-        this.toasterService.error('Failed to lock on order stock', 'Error');
-      },
-      complete: () => {
-        this.isBusy = false;
-        this.loadingService.hide();
-      },
-    });
+    // LockShipment feature removed
+    this.isBusy = false;
+    this.loadingService.hide();
+    this.toasterService.warn('Lock On Order Stock feature is not available', 'Not Available');
   }
 
   onReleaseOnOrderStock(): void {
