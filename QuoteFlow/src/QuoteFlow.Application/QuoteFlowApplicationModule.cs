@@ -55,6 +55,10 @@ using QuoteFlow.StockManagements.Excels.StockTransfer.Validators;
 using QuoteFlow.StockTracingDetails.ParameterObjects;
 using QuoteFlow.StockTracings;
 using QuoteFlow.StockTracings.Excels;
+using QuoteFlow.SpoBatchRequests.Excel;
+using QuoteFlow.SpoBatchRequests.Excel.Converters;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails.ParameterObject;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -229,6 +233,7 @@ public class QuoteFlowApplicationModule : AbpModule
         services.AddKeyedScoped<IExcelRowValidator<ImportDPODetailDto>, ImportDPODetailRowValidator>(dpo);
 
         services.AddKeyedScoped<IExcelRowValidator<SaleOrderExcelDto>, SaleOrderExcelRowValidation>(so);
+        services.AddKeyedScoped<IExcelRowValidator<SpoBatchRequestDetailImportDto>, SpoBatchRequestDetailRowValidator>(br);
      
       
         // Sub-list validators
@@ -505,8 +510,15 @@ public class QuoteFlowApplicationModule : AbpModule
             var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SaleOrderExcelDto>>>();
             return new SaleOrderExcelValidator(config, rowValidator, logger, provider);
         });
-      
-    
+        services.AddKeyedScoped<IExcelValidator<SpoBatchRequestDetailImportDto>>(br, (provider, _) =>
+        {
+            var config = new SpoBatchRequestDetailValidationConfig();
+            var rowValidator = provider.GetRequiredKeyedService<IExcelRowValidator<SpoBatchRequestDetailImportDto>>(br);
+            var logger = provider.GetRequiredService<ILogger<BaseExcelValidator<SpoBatchRequestDetailImportDto>>>();
+            return new SpoBatchRequestDetailValidator(config, rowValidator, logger, provider);
+        });
+
+
         //----------------------------------------------------------------
 
         // Excel DTO Converters
@@ -548,6 +560,8 @@ public class QuoteFlowApplicationModule : AbpModule
         // GKR Excel Converters
       
         services.AddKeyedScoped<IExcelDtoConverter<SaleOrderExcelDto, SaleOrderSapImportCreateParams>, SaleOrderExcelConventer>(so);
+        // SPO Batch Request Excel Converter
+        services.AddKeyedScoped<IExcelDtoConverter<SpoBatchRequestDetailImportDto, SpoBatchRequestDetailCreateParams>, SpoBatchRequestDetailExcelDtoConverter>(br);
          // Factories
         services.AddScoped<IExcelImportFactory, ExcelImportFactory>();
     }

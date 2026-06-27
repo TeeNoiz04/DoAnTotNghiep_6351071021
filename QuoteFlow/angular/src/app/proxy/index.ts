@@ -28,8 +28,6 @@ import * as Messages from './messages';
 import * as Microsoft from './microsoft';
 import * as PriceOffers from './price-offers';
 import * as Psis from './psis';
-import * as PurchaseOrders from './purchase-orders';
-import * as PurchaseOrdersSapImports from './purchase-orders-sap-imports';
 import * as SaleOrders from './sale-orders';
 import * as SalesAssignments from './sales-assignments';
 import * as Shared from './shared';
@@ -81,8 +79,6 @@ export {
   Microsoft,
   PriceOffers,
   Psis,
-  PurchaseOrders,
-  PurchaseOrdersSapImports,
   SaleOrders,
   SalesAssignments,
   Shared,

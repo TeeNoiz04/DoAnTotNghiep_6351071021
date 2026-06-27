@@ -35,20 +35,7 @@
             [searchable]="false">
           </ng-select>
         </div>
-        <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
-          <label class="form-label" for="name">
-            {{ '::Material Group PSI' | abpLocalization }}
-          </label>
-          <ng-select
-            [items]="service.materialGroupPSIOptions"
-            bindLabel="displayName"
-            bindValue="displayCode"
-            appendTo="body"
-            formControlName="materialGroupPSI"
-            [clearable]="true"
-            [searchable]="true">
-          </ng-select>
-        </div>
+        <!-- Material Group PSI hidden -->
         <div class="col-12 col-sm-12 col-md-6 col-lg-6 mb-2">
           <div class="checklist-container">
             <mat-slide-toggle id="isDeActive" formControlName="isDeActive"> IsDeactive </mat-slide-toggle>

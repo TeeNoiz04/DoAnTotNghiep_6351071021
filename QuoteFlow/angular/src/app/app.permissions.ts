@@ -206,22 +206,6 @@ export class AppPermissions {
     };
   })();
 
-  static readonly PurchaseOrders = (() => {
-    const Default = AppPermissions.GroupName + '.PurchaseOrders';
-    return {
-      Default,
-      Edit: Default + '.Edit',
-      Create: Default + '.Create',
-      Delete: Default + '.Delete',
-      DeleteItem: Default + '.DeleteItem',
-      ImportSAPPO: Default + '.ImportSAPPO',
-      ExportStandard: Default + '.ExportStandard',
-      ExportFASCM: Default + '.ExportFASCM',
-      ExportPOSAP: Default + '.ExportPOSAP',
-      ExportListPO: Default + '.ExportListPO',
-      PODataReport: Default + '.PODataReport',
-    };
-  })();
 
   static readonly CargoDatas = (() => {
     const Default = AppPermissions.GroupName + '.CargoDatas';

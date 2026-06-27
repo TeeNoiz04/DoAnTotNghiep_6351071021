@@ -41,18 +41,12 @@
 
             <button
               *ngIf="service?.dpo?.flags?.canConfirmLockStock"
-              class="btn"
-              [class.btn-primary]="gkrAllocations?.length > 0"
-              [class.btn-warning]="gkrAllocations?.length === 0"
+              class="btn btn-primary"
               type="button"
               (click)="confirmAction(historyActions.ConfirmLockStock)"
               placement="bottom"
               ngbTooltip="Confirm Lock Stock"
               triggers="hover">
-              <span *ngIf="gkrAllocations?.length > 0" class="badge bg-success me-2">
-                ✓ {{ gkrAllocations.length }} GKR
-              </span>
-              <span *ngIf="gkrAllocations?.length === 0" class="badge bg-danger me-2">⚠️ No GKR</span>
               <span class="ms-1">Confirm Lock Stock</span>
             </button>
 
@@ -281,8 +275,8 @@
                   }}</span>
                 </button>
 
-                <!-- Auto Lock On Order Stock Button -->
-                <button
+                <!-- Auto Lock On Order Stock Button (hidden) -->
+                <!-- <button
                   *abpPermission="AppPermissions.MovingOrders.DPOs.LockOnOrderStock"
                   class="btn btn-outline-warning btn-sm"
                   type="button"
@@ -298,7 +292,7 @@
                   <span *ngIf="service?.selectedItems.length > 0" class="badge bg-warning text-dark ms-1">{{
                     service?.selectedItems.length
                   }}</span>
-                </button>
+                </button> -->
 
                 <!-- Manual Lock Stock Button (requires selection) -->
                 <!-- <button

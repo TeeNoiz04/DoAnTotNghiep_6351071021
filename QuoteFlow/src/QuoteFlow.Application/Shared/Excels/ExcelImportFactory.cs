@@ -21,6 +21,8 @@ using QuoteFlow.PriceOffers.PriceOfferDetails;
 using QuoteFlow.PriceOffers.PriceOfferDetails.ParameterObjects;
 using QuoteFlow.SaleOrders.Excel;
 using QuoteFlow.SaleOrdersSapImports.ParameterObjects;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails;
+using QuoteFlow.SpoBatchRequests.SpoBatchRequestDetails.ParameterObject;
 using QuoteFlow.StockTracingDetails.ParameterObjects;
 using QuoteFlow.StockTracings;
 using QuoteFlow.SupplierBUs;
@@ -63,6 +65,7 @@ public class ExcelImportFactory : IExcelImportFactory
             ExcelImporters.MaterialStatus => (IExcelValidator<T>)_serviceProvider.GetRequiredKeyedService<IExcelValidator<MaterialStatusUpdateExcelDto>>(ExcelValidatorKeys.Materials.STA),
             ExcelImporters.DPO => (IExcelValidator<T>)_serviceProvider.GetRequiredKeyedService<IExcelValidator<ImportDPODto>>(ExcelValidatorKeys.DPOs.DPO),
             ExcelImporters.SaleOrders => (IExcelValidator<T>)_serviceProvider.GetRequiredKeyedService<IExcelValidator<SaleOrderExcelDto>>(ExcelValidatorKeys.SaleOrders.SO),
+            ExcelImporters.BatchRequest => (IExcelValidator<T>)_serviceProvider.GetRequiredKeyedService<IExcelValidator<SpoBatchRequestDetailImportDto>>(ExcelValidatorKeys.PriceOffers.BR),
             _ => throw new ArgumentException($"Unknown validation type: {validationType}")
         };
     }
@@ -100,6 +103,7 @@ public class ExcelImportFactory : IExcelImportFactory
             ExcelImporters.DPO => (IExcelDtoConverter<TImportDto, TCreateParams>)_serviceProvider.GetRequiredKeyedService<IExcelDtoConverter<ImportDPODto, DPOCreateParams>>(ExcelValidatorKeys.DPOs.DPO),
             ExcelImporters.DPODetail => (IExcelDtoConverter<TImportDto, TCreateParams>)_serviceProvider.GetRequiredKeyedService<IExcelDtoConverter<ImportDPODetailDto, DPODetailCreateParams>>(ExcelValidatorKeys.DPOs.DPO),
             ExcelImporters.SaleOrders => (IExcelDtoConverter<TImportDto, TCreateParams>)_serviceProvider.GetRequiredKeyedService<IExcelDtoConverter<SaleOrderExcelDto, SaleOrderSapImportCreateParams>>(ExcelValidatorKeys.SaleOrders.SO),
+            ExcelImporters.BatchRequest => (IExcelDtoConverter<TImportDto, TCreateParams>)_serviceProvider.GetRequiredKeyedService<IExcelDtoConverter<SpoBatchRequestDetailImportDto, SpoBatchRequestDetailCreateParams>>(ExcelValidatorKeys.PriceOffers.BR),
          };
     }
 }

@@ -295,26 +295,6 @@ export class AppRoutes {
       ORDER: 3,
     },
   };
-  static readonly PURCHASE_ORDERS_MANAGEMENT = {
-    BASE: 'purchase-orders',
-    ORDER: 10,
-    TITLE: 'Purchase Orders Management',
-    LIST: {
-      BASE: 'list',
-      ORDER: 1,
-      TITLE: 'Purchase Orders List | Purchase Orders Management',
-    },
-    NEW: {
-      BASE: 'new',
-      ORDER: 2,
-      TITLE: 'New Purchase Order | Purchase Orders Management',
-    },
-    DETAILS: {
-      BASE: 'details',
-      ORDER: 3,
-      TITLE: 'Purchase Order Details | Purchase Orders Management',
-    },
-  };
   static readonly CARGO_DATA = {
     BASE: 'cargo-data',
     ORDER: 11,
@@ -669,11 +649,6 @@ export class AppRoutes {
   };
 
   // ── Các static không thay đổi ORDER ───────────────────────
-  static readonly PURCHASE_ORDERS = {
-    BASE: 'purchase-orders',
-    ORDER: 10,
-    TITLE: 'Purchase Orders',
-  };
   static readonly SALE_ORDERS = {
     BASE: 'sale-orders',
     ORDER: 8,

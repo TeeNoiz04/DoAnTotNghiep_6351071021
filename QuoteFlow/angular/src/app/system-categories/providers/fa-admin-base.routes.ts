@@ -43,14 +43,5 @@ export const FA_ADMIN_BASE_ROUTES: ABP.Route[] = [
     breadcrumbText: '::FA_Admins',
   },
 
-  {
-    path: `/${AppRoutes.FA_ADMIN.BASE}/${AppRoutes.FA_ADMIN.SPO_DISCOUNT.BASE}`,
-    iconClass: 'fas fa-percent',
-    name: '::Menu:ApplicationSetting:SPODiscountSetting',
-    parentName: '::Menu:FA_Admins',
-    order: AppRoutes.FA_ADMIN.SPO_DISCOUNT.ORDER,
-    layout: eLayoutType.application,
-    requiredPolicy: `${AppPermissions.FAAdmins.ViewCfgDiscountRatio}`,
-    breadcrumbText: '::FA_Admins',
-  },
+  // SPO Discount menu hidden
 ];
