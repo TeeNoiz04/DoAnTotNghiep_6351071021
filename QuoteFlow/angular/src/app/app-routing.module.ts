@@ -9,11 +9,11 @@ const routes: Routes = [
     redirectTo: 'materials/list',
     pathMatch: 'full',
   },
-  // {
-  //   path: 'dashboard',
-  //   loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
-  //   canActivate: [authGuard, permissionGuard],
-  // },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [authGuard, permissionGuard],
+  },
   {
     path: 'account',
     loadChildren: () =>
