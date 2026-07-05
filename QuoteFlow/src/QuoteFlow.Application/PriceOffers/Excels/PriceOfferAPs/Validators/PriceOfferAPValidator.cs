@@ -171,7 +171,6 @@ public class PriceOfferAPValidator : IExcelValidator<PriceOfferImportDto>
             var existingOffer = await _priceOfferRepository.FirstOrDefaultAsync(po =>
                 po.MaterialType == materialType &&
                 po.LocationId == locationId &&
-                po.KeyAccountId == keyAccountId &&
                 po.PriceOfferCode.StartsWith(PriceOfferTypes.PriceOfferAP) &&
                 (
                     po.ApprovalStatus != QuoteFlowStatuses.Cancelled

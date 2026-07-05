@@ -281,7 +281,6 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.CloseDate).HasColumnName(nameof(PriceOffer.CloseDate));
                 b.Property(x => x.TotalMEVNOfferAmount).HasColumnName(nameof(PriceOffer.TotalMEVNOfferAmount)).HasPrecision(18, 2);
                 b.Property(x => x.AccountNo).HasColumnName(nameof(PriceOffer.AccountNo)).HasMaxLength(PriceOfferConsts.AccountNoMaxLength);
-                b.Property(x => x.KeyAccountId).HasColumnName(nameof(PriceOffer.KeyAccountId));
                 b.Property(x => x.ProjectResultStatus).HasColumnName(nameof(PriceOffer.ProjectResultStatus)).HasMaxLength(PriceOfferConsts.ProjectResultStatusMaxLength);
                 b.Property(x => x.ProjectResultNote).HasColumnName(nameof(PriceOffer.ProjectResultNote)).HasMaxLength(PriceOfferConsts.ProjectResultNoteMaxLength);
                 b.Property(x => x.ProjectResultSubmittedAt).HasColumnName(nameof(PriceOffer.ProjectResultSubmittedAt));
@@ -632,8 +631,7 @@ public class QuoteFlowDbContext :
                 b.HasDiscriminator(x => x.EntityType)
                      .HasValue<ApprovalRoute>(EntityTypes.ApprovalRoute)
                      .HasValue<MaterialApprovalRequestRoute>(EntityTypes.MaterialApprovalRequest)
-                     .HasValue<PriceOfferApprovalRoute>(EntityTypes.PriceOffer)          
-                     .HasValue<GKRApprovalRoute>(EntityTypes.GKR);
+                     .HasValue<PriceOfferApprovalRoute>(EntityTypes.PriceOffer);
 
                 builder.Entity<MaterialApprovalRequestRoute>(b =>
                 {
@@ -653,12 +651,6 @@ public class QuoteFlowDbContext :
                     b.Property(x => x.PriceOfferId).HasColumnName(nameof(PriceOfferApprovalRoute.PriceOfferId)).IsRequired();
                 });
             
-                builder.Entity<GKRApprovalRoute>(b =>
-                {
-                    b.HasBaseType<ApprovalRoute>();
-                    b.Property(x => x.GkrId).HasColumnName(nameof(GKRApprovalRoute.GkrId)).IsRequired();
-                });
-             
             });
 
         }
@@ -911,7 +903,6 @@ public class QuoteFlowDbContext :
 
                 b.Property(x => x.DPONo).HasColumnName(nameof(DPO.DPONo)).HasMaxLength(DPOConsts.DPONoMaxLength);
                 b.Property(x => x.DPOType).HasColumnName(nameof(DPO.DPOType)).HasMaxLength(DPOConsts.DPOTypeMaxLength);
-                b.Property(x => x.GICType).HasColumnName(nameof(DPO.GICType)).HasMaxLength(DPOConsts.DPOTypeMaxLength); ;
                 b.Property(x => x.MaterialType).HasColumnName(nameof(DPO.MaterialType)).HasMaxLength(DPOConsts.MaterialTypeMaxLength);
                 b.Property(x => x.CostCenter).HasColumnName(nameof(DPO.CostCenter)).HasMaxLength(DPOConsts.CostCenterMaxLength);
                 b.Property(x => x.Status).HasColumnName(nameof(DPO.Status)).HasMaxLength(DPOConsts.StatusMaxLength);
@@ -924,19 +915,9 @@ public class QuoteFlowDbContext :
                 b.Property(x => x.TotalAmountIncludeExtraFee).HasColumnName(nameof(DPO.TotalAmountIncludeExtraFee)).HasPrecision(18, 2);
                 b.Property(x => x.Remark).HasColumnName(nameof(DPO.Remark)).HasMaxLength(DPOConsts.RemarkMaxLength);
                 b.Property(x => x.FileName).HasColumnName(nameof(DPO.FileName)).HasMaxLength(DPOConsts.FileNameMaxLength);
-                b.Property(x => x.GICProcess).HasColumnName(nameof(DPO.GICProcess)).HasMaxLength(DPOConsts.GICProcessMaxLength);
                 b.Property(x => x.ReferenceDoc).HasColumnName(nameof(DPO.ReferenceDoc)).HasMaxLength(DPOConsts.ReferenceDocMaxLength);
                 b.Property(x => x.ReferenceDocDate).HasColumnName(nameof(DPO.ReferenceDocDate));
-                b.Property(x => x.LinkedDpoNo).HasColumnName("Gkr_LinkedDpoNo").HasMaxLength(DPOConsts.DPONoMaxLength);
-                b.Property(x => x.LinkedDpoId).HasColumnName("Gkr_LinkedDpoId");
-                b.Property(x => x.LinkedNote).HasColumnName("Gkr_LinkedNote").HasMaxLength(QuoteFlowSharedConsts.NoteMaxLength);
                 b.Property(x => x.ExpirationDate).HasColumnName(nameof(DPO.ExpirationDate));
-                b.Property(x => x.Reason).HasColumnName("Gkr_Reason").HasMaxLength(4000);
-                b.Property(x => x.SalePicUsername).HasColumnName("Gkr_SalePicUsername").HasMaxLength(500);
-                b.Property(x => x.SalePicFullName).HasColumnName("Gkr_SalePicFullName").HasMaxLength(500);
-                b.Property(x => x.SalePicTeamId).HasColumnName("Gkr_SalePicTeamId");
-
-                b.HasMany(x => x.ApprovalRoutes).WithOne().HasForeignKey(x => x.GkrId).OnDelete(DeleteBehavior.Cascade);
                 b.HasMany(x => x.Details).WithOne(y => y.DPO).HasForeignKey(y => y.DPOId).OnDelete(DeleteBehavior.Restrict);
             });
         }

@@ -845,7 +845,6 @@ public class PriceOffersAppService : QuoteFlowAppService, IPriceOffersAppService
         priceOffer.BuyerTypeId = input.BuyerTypeId;
         priceOffer.LocationId = input.LocationId;
         priceOffer.ProjectName = input.ProjectName;
-        priceOffer.KeyAccountId = input.KeyAccountId;
         priceOffer.MaterialType = input.MaterialType;
         priceOffer.Note = input.Note;
 

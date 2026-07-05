@@ -89,14 +89,6 @@ public class SubmitOnPriceOfferCreatedEventHandler
         var isRequester = priceOffer.CreatorUsername?.ToLowerInvariant() == _currentUser.Username?.ToLowerInvariant();
         var isSaleTeam = saleTeam.FirstOrDefault(x => x.SaleUserName.ToLowerInvariant() == _currentUser.Username?.ToLowerInvariant()) != null;
         priceOffer = await _priceOfferRepository.UpdateCalculatedFieldsAsync(priceOfferId);
-        var hasLevel5Approval = await _priceOfferRepository.HasLevel5ApprovalAsync(priceOfferId, priceOffer.PriceOfferCode);
-        if (hasLevel5Approval && !forceSubmit)
-        {
-            // return an exception to notify the user that this will go thru level 5 approval,
-            // and they need to force the submission if they want to proceed.
-            throw new BusinessException(QuoteFlowDomainErrorCodes.PriceOffer.ApprovalLevelExceededMessage);
-        }
-
         await _priceOfferRepository.GenerateApprovalRouteAsync(priceOfferId, priceOffer.PriceOfferCode);
 
         var approvalRoutes = await _priceOfferRepository.GetListApprovalRoutesAsync(priceOfferId);

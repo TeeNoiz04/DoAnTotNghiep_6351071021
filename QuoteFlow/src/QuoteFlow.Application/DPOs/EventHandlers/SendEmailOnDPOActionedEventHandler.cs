@@ -111,8 +111,7 @@ public class SendEmailOnDPOActionedEventHandler : ILocalEventHandler<DPOActioned
         else if (action == HistoryActions.Approved)
         {
             // this is GKR Approval, just lazy to split event
-            var approvalRoutes = dpo.ApprovalRoutes;
-            bool isLastRoute = approvalRoutes is null || approvalRoutes.Count == 0;
+            bool isLastRoute = true;
             var approvalUrl = GenerateApprovalUrl(dpo);
             var gkrEmailData = new GKRApprovalEmailModel(
                 new GKREmailInfo(
@@ -143,30 +142,6 @@ public class SendEmailOnDPOActionedEventHandler : ILocalEventHandler<DPOActioned
                     action,
                     "GKR",
                     EmailRecipientRole.Sender,
-                    dpo.DPONo
-                );
-            }
-            else
-            {
-                var currentRoutes = _approvalRouteManager.GetLatestUnapprovedSteps(approvalRoutes!, dpo.Id);
-
-                // send to next approver(s)
-                foreach (var route in approvalRoutes!)
-                {
-                    if (currentRoutes.Exists(x => x.StepSequence == route.StepSequence))
-                    {
-                        if (!string.IsNullOrWhiteSpace(route.Approver))
-                        {
-                            toList.Add(route.Approver.ToLower());
-                        }
-                    }
-                }
-                cc.RemoveAll(x => toList.Contains(x));
-                subject = EmailSubjectHelper.Generate(
-                    actionerUsername,
-                    action,
-                    "GKR",
-                    EmailRecipientRole.Approver,
                     dpo.DPONo
                 );
             }

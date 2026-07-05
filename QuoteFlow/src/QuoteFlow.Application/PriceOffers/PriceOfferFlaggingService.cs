@@ -28,13 +28,13 @@ public class PriceOfferFlaggingService : BaseFlaggingService<PriceOffer, PriceOf
 
         // Check permissions once
         var hasViewStrategicPricePermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.Materials.ViewStrategicPrice);
-        var hasApplySpecialInputPricePermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.ApplySpecialInputPrice);
+     //   var hasApplySpecialInputPricePermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.ApplySpecialInputPrice);
         var hasChangeItemPropertiesPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Uploads.ChangeItemProperties);
         var hasAddMoreItemsPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Uploads.AddMoreItems);
         var hasCancelPriceOfferPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Cancel);
         var hasClosePriceOfferPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Close);
         var hasConfirmProjectResultPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.ConfirmProjectResult);
-        var hasImportNoBuyerPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferNB);
+       // var hasImportNoBuyerPermission = await IsCurrentUserAuthorizedAsync(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferNB);
         foreach (var offer in entities)
         {
             var offerType = offer.GetPriceOfferType();
@@ -57,11 +57,11 @@ public class PriceOfferFlaggingService : BaseFlaggingService<PriceOffer, PriceOf
             bool isAtLevel1 = offer.CurrentApprovalStepSequence is not null && offer.CurrentApprovalStepSequence == 1;
 
             // Special input price and change item properties: Check permission and status
-            bool canApplySpecialInputPrice = hasApplySpecialInputPricePermission && notReachedLevel3;
+        //    bool canApplySpecialInputPrice = hasApplySpecialInputPricePermission && notReachedLevel3;
             bool canChangeItemProperties = hasChangeItemPropertiesPermission && notReachedLevel3;
             bool baseCanAddMoreItem = isInSameSaleTeam && isApproved && !isLost && hasAddMoreItemsPermission;
             bool canAddMoreItem = baseCanAddMoreItem && (!offer.IsBuyerStockPriceOffer() || !offer.HasDPOUsed);
-            bool canAddMoreItemNB = hasAddMoreItemsPermission && isApproved && hasImportNoBuyerPermission && offer.IsNoBuyerPriceOffer();
+        //    bool canAddMoreItemNB = hasAddMoreItemsPermission && isApproved && hasImportNoBuyerPermission && offer.IsNoBuyerPriceOffer();
 
             flags[offer.Id] = new PriceOfferFlagsDto
             {
@@ -70,7 +70,7 @@ public class PriceOfferFlaggingService : BaseFlaggingService<PriceOffer, PriceOf
                 IsRemovable = false,
                 IsGPViewable = hasViewStrategicPricePermission,
                 IsLandedCostViewable = hasViewStrategicPricePermission,
-                IsSpecialInputPriceViewable = hasApplySpecialInputPricePermission,
+         //       IsSpecialInputPriceViewable = hasApplySpecialInputPricePermission,
                 IsApprovable = isCurrentApprover && isInProgress,
                 IsRejectable = isCurrentApprover && isInProgress,
                 IsCancellable = (isCreator || hasCancelPriceOfferPermission) && isInProgress,
@@ -79,8 +79,8 @@ public class PriceOfferFlaggingService : BaseFlaggingService<PriceOffer, PriceOf
                 IsProjectResultSubmittable = (isInSameSaleTeam || hasConfirmProjectResultPermission) && isPendingProjectResult && isApproved,
                 IsPreOrderResultConfirmable = (isInSameSaleTeam || hasConfirmProjectResultPermission) && isPreOrderProjectResult,
                 IsDetailPropertiesChangeable = canChangeItemProperties,
-                CanAddMoreItems = canAddMoreItem || canAddMoreItemNB,
-                IsSpecialInputPriceApplicable = canApplySpecialInputPrice,
+          //      CanAddMoreItems = canAddMoreItem || canAddMoreItemNB,
+         //       IsSpecialInputPriceApplicable = canApplySpecialInputPrice,
                 IsDetailsPropertiesTemplateDownloadable = hasChangeItemPropertiesPermission
             };
         }

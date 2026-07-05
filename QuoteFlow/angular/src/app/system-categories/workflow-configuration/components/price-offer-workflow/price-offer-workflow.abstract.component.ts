@@ -30,10 +30,7 @@ export abstract class AbstractPriceOfferWorkflowComponent implements OnInit {
   protected title = '::Price Offer Workflow Configuration';
   protected isActionButtonVisible: boolean | null = null;
   priceOfferOptions = [
-    { label: 'Key-Account Price Offer', value: 'AP' },
-    { label: 'Distributor Stock Price Offer', value: 'DS' },
     { label: 'Project Price Offer', value: 'PP' },
-    { label: 'No Buyer Price Offer', value: 'NB' },
   ];
   levelOptions: { label: string; value: number }[] = [];
   conditionOptions: { label: string; value: string }[] = [];

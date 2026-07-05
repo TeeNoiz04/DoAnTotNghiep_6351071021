@@ -79,7 +79,6 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var query = await GetQueryableAsync();
         var result = await query
             .Include(x => x.Details.OrderBy(x => x.RowNo))
-            .Include(x => x.ApprovalRoutes)
             .FirstOrDefaultAsync(e => e.Id == id, GetCancellationToken(cancellationToken))
             ?? throw new EntityNotFoundException(typeof(DPO), id);
 
@@ -132,12 +131,11 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var fileName = filterParams.FileName;
 
         query = query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.DPONo!.Contains(filterText!) || e.DPOType!.Contains(filterText!) || e.GICType!.Contains(filterText!) || e.MaterialType!.Contains(filterText!) || e.CostCenter!.Contains(filterText!) || e.Status!.Contains(filterText!) || e.BuyerShortName!.Contains(filterText!) || e.Remark!.Contains(filterText!) || e.FileName!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.DPONo!.Contains(filterText!) || e.DPOType!.Contains(filterText!) || e.MaterialType!.Contains(filterText!) || e.CostCenter!.Contains(filterText!) || e.Status!.Contains(filterText!) || e.BuyerShortName!.Contains(filterText!) || e.Remark!.Contains(filterText!) || e.FileName!.Contains(filterText!))
                 .WhereIf(!string.IsNullOrWhiteSpace(dPONo), QueryFilterHelper.BuildMultiFieldSearch<DPO>(dPONo, e => e.DPONo))
                 .WhereIf(!string.IsNullOrWhiteSpace(customerName), QueryFilterHelper.BuildNestedCollectionSearch<DPO, DPODetail>(customerName, e => e.Details, d => d.CustomerName))
                 .WhereIf(!string.IsNullOrWhiteSpace(taxCode), e => e.Details.Any(d => d.CustomerTaxCode.Contains(taxCode)))
                 .Where(e => e.DPOType == DPOTypes.DPO)
-                .WhereIf(!string.IsNullOrWhiteSpace(dPOSubType), e => e.GICType.Contains(dPOSubType))
                 .WhereIf(!string.IsNullOrWhiteSpace(materialType), e => e.MaterialType.Contains(materialType))
                 .WhereIf(!string.IsNullOrWhiteSpace(costCenter), e => e.CostCenter.Contains(costCenter))
                 .WhereIf(!string.IsNullOrWhiteSpace(status), e => e.Status.Contains(status))
@@ -493,12 +491,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         );
 
         query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? DPOConsts.GetDefaultSorting(false) : sorting);
-        query = query.Where(x =>
-                x.CurrentApprovalRouteInstanceId != null &&
-                x.ApprovalRoutes!
-                    .Where(r => r.StepSequence == x.CurrentApprovalStepSequence && r.IsApproved == false && r.InstanceId == x.CurrentApprovalRouteInstanceId)
-                    .Any(r => r.Approver == approverUsername)
-        );
+        query = query.Where(x => x.CurrentApprovalRouteInstanceId != null);
         return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
     }
 
@@ -662,7 +655,6 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
 
         var dpo = await dbSet
             .Include(x => x.Details)
-            .Include(x => x.ApprovalRoutes)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, GetCancellationToken(cancellationToken));
 
@@ -810,39 +802,10 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         return parameters.Get<string>("@errMsg");
     }
 
-    public virtual async Task GenerateApprovalRouteAsync(Guid gkrId)
-    {
-        var dbContext = await GetDbContextAsync();
-        var connection = dbContext.Database.GetDbConnection();
-        var parameters = new DynamicParameters();
-        parameters.Add("@requestId", gkrId, DbType.Guid);
-        parameters.Add("@note", "Auto generate approval route", DbType.String, size: 4000);
+    public virtual Task GenerateApprovalRouteAsync(Guid gkrId) => Task.CompletedTask;
 
-        await connection.ExecuteAsync(
-            "usp_GKR_WF_CreateApprovalRoute",
-            parameters,
-            commandType: CommandType.StoredProcedure,
-            transaction: await GetDbTransactionAsync()
-        );
-
-
-        var gkr = await GetAsync(gkrId);
-        dbContext.DPOs.Entry(gkr).State = EntityState.Detached;
-        gkr = await GetAsync(gkrId);
-    }
-
-    public async Task<List<GKRApprovalRoute>> GetListApprovalRoutesAsync(Guid gkrId)
-    {
-        var query = await GetQueryableAsync();
-
-        var approvalRoutes = query
-            .Include(gkr => gkr.ApprovalRoutes)
-            .Where(gkr => gkr.Id == gkrId)
-            .SelectMany(gkr => gkr.ApprovalRoutes)
-            .ToList();
-
-        return approvalRoutes;
-    }
+    public Task<List<GKRApprovalRoute>> GetListApprovalRoutesAsync(Guid gkrId)
+        => Task.FromResult(new List<GKRApprovalRoute>());
 
     public virtual async Task<string> GenerateGICNoAsync(
         string materialType,
@@ -882,10 +845,8 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
     {
         var filterText = filterParams.FilterText;
         var gicNo = filterParams.GicNo;
-        var gicType = filterParams.GicType;
         var materialCode = filterParams.MaterialCode;
         var modelName = filterParams.ModelName;
-        var gicProcess = filterParams.GicProcess;
         var materialType = filterParams.MaterialType;
         var costCenter = filterParams.CostCenter;
         var status = filterParams.Status;
@@ -898,15 +859,12 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var totalAmountMax = filterParams.TotalAmountMax;
         var remark = filterParams.Remark;
         var fileName = filterParams.FileName;
-        var restrictedGICTypes = filterParams.RestrictedGICTypes;
 
         return query
-                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.DPONo!.Contains(filterText!) || e.DPOType!.Contains(filterText!) || e.GICType!.Contains(filterText!) || e.MaterialType!.Contains(filterText!) || e.CostCenter!.Contains(filterText!) || e.Status!.Contains(filterText!) || e.BuyerShortName!.Contains(filterText!) || e.Remark!.Contains(filterText!) || e.FileName!.Contains(filterText!))
+                .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.DPONo!.Contains(filterText!) || e.DPOType!.Contains(filterText!) || e.MaterialType!.Contains(filterText!) || e.CostCenter!.Contains(filterText!) || e.Status!.Contains(filterText!) || e.BuyerShortName!.Contains(filterText!) || e.Remark!.Contains(filterText!) || e.FileName!.Contains(filterText!))
                 .WhereIf(!string.IsNullOrWhiteSpace(gicNo), QueryFilterHelper.BuildMultiFieldSearch<DPO>(gicNo, e => e.DPONo))
-                .WhereIf(!string.IsNullOrWhiteSpace(gicType), e => e.GICType.Contains(gicType))
                 .WhereIf(!string.IsNullOrWhiteSpace(materialCode), QueryFilterHelper.BuildNestedCollectionSearch<DPO, DPODetail>(materialCode, e => e.Details, d => d.GolfaCode))
                 .WhereIf(!string.IsNullOrWhiteSpace(modelName), QueryFilterHelper.BuildNestedCollectionSearch<DPO, DPODetail>(modelName, e => e.Details, d => d.Model))
-                .WhereIf(!string.IsNullOrWhiteSpace(gicProcess), e => e.GICProcess.Contains(gicProcess))
                 .WhereIf(!string.IsNullOrWhiteSpace(materialType), e => e.MaterialType.Contains(materialType))
                 .WhereIf(!string.IsNullOrWhiteSpace(costCenter), QueryFilterHelper.BuildMultiFieldSearch<DPO>(costCenter, e => e.CostCenter))
                 .WhereIf(!string.IsNullOrWhiteSpace(status), e => e.Status.Contains(status))
@@ -920,8 +878,7 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
                 .WhereIf(!string.IsNullOrWhiteSpace(remark), e => e.Remark.Contains(remark))
                 .WhereIf(!string.IsNullOrWhiteSpace(fileName), e => e.FileName.Contains(fileName))
                 .Where(x => !string.IsNullOrWhiteSpace(x.DPONo))
-                .Where(x => x.DPOType == DPOTypes.GIC)
-                .WhereIf(restrictedGICTypes.Count > 0, e => restrictedGICTypes.Contains(e.GICType));
+                .Where(x => x.DPOType == DPOTypes.GIC);
     }
 
     protected virtual IQueryable<DPO> ApplyFilterGKR(
@@ -939,9 +896,6 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
         var supplierCode = filterParams.SupplierCode;
         var materialGroup = filterParams.MaterialGroup;
         var specialPriceCode = filterParams.SpecialPriceCode;
-        var gicType = filterParams.GICType;
-        var gicProcess = filterParams.GICProcess;
-        var linkedDPONo = filterParams.LinkedDPONo;
         var materialType = filterParams.MaterialType;
         var costCenter = filterParams.CostCenter;
         var status = filterParams.Status;
@@ -955,9 +909,6 @@ public class EfCoreDPORepository : EfCoreRepository<QuoteFlowDbContext, DPO, Gui
 
         query = query
             .WhereIf(!string.IsNullOrWhiteSpace(gkrNo), QueryFilterHelper.BuildMultiFieldSearch<DPO>(gkrNo, e => e.DPONo))
-            //.WhereIf(!string.IsNullOrWhiteSpace(linkedDPONo), e => e.LinkedDPONo != null && e.LinkedDPONo.Contains(linkedDPONo))
-            .WhereIf(!string.IsNullOrWhiteSpace(gicType), e => e.GICType != null && e.GICType.Contains(gicType))
-            .WhereIf(!string.IsNullOrWhiteSpace(gicProcess), e => e.GICProcess != null && e.GICProcess.Contains(gicProcess))
             .WhereIf(!string.IsNullOrWhiteSpace(materialCode), e => e.Details.Any(d => d.GolfaCode.Contains(materialCode)))
             .WhereIf(!string.IsNullOrWhiteSpace(modelName), QueryFilterHelper.BuildNestedCollectionSearch<DPO, DPODetail>(modelName, e => e.Details, d => d.Model))
             .WhereIf(!string.IsNullOrWhiteSpace(customerName), QueryFilterHelper.BuildNestedCollectionSearch<DPO, DPODetail>(customerName, e => e.Details, d => d.CustomerName))

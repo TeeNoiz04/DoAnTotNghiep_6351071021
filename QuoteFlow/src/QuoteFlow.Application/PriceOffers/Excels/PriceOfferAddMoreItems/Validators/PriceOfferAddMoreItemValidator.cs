@@ -60,23 +60,8 @@ public class PriceOfferAddMoreItemValidator : BaseExcelValidator<PriceOfferDetai
         var getPriceAuto = context.GetData<bool?>(ExcelImportContextKeys.PriceOffer.GetPriceAuto) ?? false;
         if (priceOffer.IsKeyAccountPriceOffer())
         {
-            if (!priceOffer.KeyAccountId.HasValue)
-            {
-                throw new UserFriendlyException(
-                    "This price offer is of type 'AP' but has no key account assigned. " +
-                    "Please verify and contact the admin to update the record."
-                );
-            }
-
             await FillStandardPriceIfNotProvidedAsync(validationResult.ListData);
-            if (getPriceAuto)
-            {
-                await AutoFillOfferPriceAsync(validationResult.ListData, priceOffer.KeyAccountId.Value);
-            }
-            else
-            {
-                ValidateRequiredFields(validationResult.ListData, true);
-            }
+            ValidateRequiredFields(validationResult.ListData, true);
         }
         else
         {

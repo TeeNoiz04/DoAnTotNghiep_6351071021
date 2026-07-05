@@ -12,7 +12,6 @@ public class DPOUpdateParams : IHasConcurrencyStamp
     [StringLength(DPOConsts.DPOTypeMaxLength)]
     public string? DPOType { get; set; }
 
-    public string? GICType { get; set; }
     [StringLength(DPOConsts.MaterialTypeMaxLength)]
     public string? MaterialType { get; set; }
     [StringLength(DPOConsts.CostCenterMaxLength)]
@@ -33,6 +32,5 @@ public class DPOUpdateParams : IHasConcurrencyStamp
 
     public virtual string? ReferenceDoc { get; set; }
 
-    public virtual string? GICProcess { get; set; }
     public string ConcurrencyStamp { get; set; } = null!;
 }

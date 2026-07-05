@@ -1285,12 +1285,9 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
         return ObjectMapper.Map<List<DPOProcessingReport>, List<DPOProcessingReportDto>>(items);
     }
 
-    public async Task<List<DpoGkrAllocationDto>> GetGkrAllocationsAsync(Guid dpoId)
+    public Task<List<DpoGkrAllocationDto>> GetGkrAllocationsAsync(Guid dpoId)
     {
-        var gkrs = await _dPORepository.GetListAsync(x => x.LinkedDpoId == dpoId);
-        var result = ObjectMapper.Map<List<DPO>, List<DpoGkrAllocationDto>>(gkrs);
-
-        return result;
+        return Task.FromResult(new List<DpoGkrAllocationDto>());
     }
 
     public async Task<List<DpoGkrAllocationDto>> GetAvailableGkrsForAllocationAsync(Guid dpoId)
@@ -1355,7 +1352,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
             (x.BuyerId == null || x.BuyerId == dpo.BuyerId)
             && x.MaterialType == dpo.MaterialType
             && !invalidGkrStatuses.Contains(x.Status!)
-            && x.LinkedDpoId == null
             && x.DPOType == DPOTypes.GKR
             && x.ExpirationDate! >= DateTime.Now.Date
         );
@@ -1366,10 +1362,6 @@ public class DPOsAppService : QuoteFlowAppService, IDPOsAppService
     public async Task AllocateGkrToDpoAsync(DPOAllocateGKRDto input)
     {
         var gkr = await _dPORepository.GetAsync(input.GKRId);
-        if (gkr.LinkedDpoId != null)
-        {
-            throw new UserFriendlyException("This GKR is already linked to another DPO.");
-        }
 
         if (gkr.ExpirationDate! < DateTime.Now.Date)
         {

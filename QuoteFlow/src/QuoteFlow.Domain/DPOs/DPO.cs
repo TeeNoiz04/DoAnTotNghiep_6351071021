@@ -19,9 +19,6 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
     public virtual string? DPOType { get; set; }
 
     [CanBeNull]
-    public virtual string? GICType { get; set; }
-
-    [CanBeNull]
     public virtual string? MaterialType { get; set; }
 
     [CanBeNull]
@@ -58,18 +55,6 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
     public virtual DateTime? ReferenceDocDate { get; set; }
 
     [CanBeNull]
-    public virtual string? GICProcess { get; set; }
-
-    [CanBeNull]
-    public virtual string? LinkedDpoNo { get; set; }
-
-    [CanBeNull]
-    public virtual Guid? LinkedDpoId { get; set; }
-
-    [CanBeNull]
-    public virtual string? LinkedNote { get; set; }
-
-    [CanBeNull]
     public virtual DateTime? ExpirationDate { get; set; }
 
     [CanBeNull]
@@ -84,24 +69,9 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
     [CanBeNull]
     public string? CurrentApproverRoleName { get; set; }
 
-    [CanBeNull]
-    public string? Reason { get; set; }
-
-    [CanBeNull]
-    public string? SalePicUsername { get; set; }
-
-    [CanBeNull]
-    public string? SalePicFullName { get; set; }
-
-    [CanBeNull]
-    public Guid? SalePicTeamId { get; set; }
-
     public ICollection<DPODetail> Details { get; set; } = [];
     public virtual ICollection<DPOApprovalHistory> ApprovalHistories { get; set; } = [];
     public virtual ICollection<DPOMessage> Messages { get; set; } = [];
-
-    // GKR only
-    public virtual ICollection<GKRApprovalRoute> ApprovalRoutes { get; set; } = [];
 
 
     public bool IsConfirmed => Status == QuoteFlowStatuses.DPO.Confirmed;
@@ -143,7 +113,6 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
         DPONo = createParams.DPONo;
         TotalAmount = createParams.TotalAmount;
         TotalAmountIncludeExtraFee = createParams.TotalAmount;
-        GICType = createParams.GICType;
         MaterialType = createParams.MaterialType;
         CostCenter = createParams.CostCenter;
         BuyerId = createParams.BuyerId;
@@ -155,7 +124,6 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
         FileName = createParams.FileName;
         ReferenceDoc = createParams.ReferenceDoc;
         ReferenceDocDate = createParams.ReferenceDocDate;
-        GICProcess = createParams.GICProcess;
 
         // On FAP app, default status is 'Confirmed'
         DPOType = DPOTypes.GIC;
@@ -177,10 +145,6 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
         ExpirationDate = createParams.ExpirationDate;
         Remark = createParams.Remark;
         FileName = createParams.FileName;
-        Reason = createParams.Reason;
-        SalePicUsername = createParams.SalePicUsername;
-        SalePicFullName = createParams.SalePicFullName;
-        SalePicTeamId = createParams.SalePicTeamId;
 
         // On FAP app, default status is 'Confirmed'
         DPOType = DPOTypes.GKR;
@@ -274,20 +238,7 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
             throw new BusinessException(QuoteFlowDomainErrorCodes.GKR.OnlySubmittedCanBeApproved);
         }
 
-        if (isLastStep)
-        {
-            Status = QuoteFlowStatuses.GKR.Confirmed;
-        }
-        else
-        {
-            Status = QuoteFlowStatuses.GKR.Submitted;
-        }
-
-        var latestUnapprovedStep = GetLatestUnapprovedStep();
-        foreach (var route in ApprovalRoutes.Where(x => x.StepSequence <= latestUnapprovedStep.StepSequence && !x.IsApproved))
-        {
-            route.Approve(actionDate, note);
-        }
+        Status = isLastStep ? QuoteFlowStatuses.GKR.Confirmed : QuoteFlowStatuses.GKR.Submitted;
     }
 
     public void Reject()
@@ -320,20 +271,4 @@ public class DPO : ExtendedFullAuditedAggregateRoot<Guid>, IApprovable
             : details.Sum(d => d.Amount ?? 0);
     }
 
-    public GKRApprovalRoute GetLatestUnapprovedStep()
-    {
-        if (ApprovalRoutes == null || ApprovalRoutes.Count == 0)
-        {
-            throw new BusinessException(QuoteFlowDomainErrorCodes.NoApprovalRouteFound)
-                .WithData("entityId", Id);
-        }
-
-        var latestUnapproved = ApprovalRoutes
-            .Where(x => !x.IsApproved)
-            .MinBy(x => x.StepSequence)
-            ?? throw new BusinessException(QuoteFlowDomainErrorCodes.NoUnapprovedStepFound)
-                .WithData("entityId", Id);
-
-        return latestUnapproved;
-    }
 }

@@ -34,7 +34,6 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         materialUploads.AddChild(QuoteFlowPermissions.Materials.Uploads.UpdateMaterialWithoutPrice, L("Permission:UpdateMaterialWithoutPrice"));
         materialUploads.AddChild(QuoteFlowPermissions.Materials.Uploads.MaterialStatus, L("Permission:MaterialStatus"));
         materialUploads.AddChild(QuoteFlowPermissions.Materials.Uploads.Leadtime, L("Permission:Leadtime"));
-        materialUploads.AddChild(QuoteFlowPermissions.Materials.Uploads.SapCode, L("Permission:SapCode"));
         materialUploads.AddChild(QuoteFlowPermissions.Materials.Uploads.InventoryPlanning, L("Permission:InventoryPlanning"));
 
         // Stock Management
@@ -50,17 +49,14 @@ public class QuoteFlowPermissionDefinitionProvider : PermissionDefinitionProvide
         var priceOfferPermission = myGroup.AddPermission(QuoteFlowPermissions.PriceOffers.Default, L("Permission:PriceOffers"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.PriceOfferList, L("Permission:PriceOfferList"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.BatchRequest, L("Permission:BatchRequest"));
-        priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.ApplySpecialInputPrice, L("Permission:ApplySpecialInputPrice"));
+
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.Close, L("Permission:Close"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.Cancel, L("Permission:Cancel"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.ExportAllDetails, L("Permission:ExportAllDetails"));
         priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.ConfirmProjectResult, L("Permission:ConfirmProjectResult"));
 
         var priceOfferUploads = priceOfferPermission.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.UploadDefault, L("Permission:Uploads"));
-        priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferAP, L("Permission:PriceOfferAP"));
-        priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferDS, L("Permission:PriceOfferDS"));
         priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferPP, L("Permission:PriceOfferPP"));
-        priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.PriceOfferNB, L("Permission:PriceOfferNB"));
         priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.AddMoreItems, L("Permission:AddMoreItems"));
         priceOfferUploads.AddChild(QuoteFlowPermissions.PriceOffers.Uploads.ChangeItemProperties, L("Permission:ChangeItemProperties"));
 

@@ -162,7 +162,6 @@ public class PriceOfferManager : DomainService
         priceOffer.CloseDate = updateParams.CloseDate;
         priceOffer.TotalMEVNOfferAmount = updateParams.TotalMEVNOfferAmount;
         priceOffer.AccountNo = updateParams.AccountNo;
-        priceOffer.KeyAccountId = updateParams.KeyAccountId;
         priceOffer.BuyerTypeDescription = updateParams.BuyerTypeDescription;
         priceOffer.ProjectTypeDescription = updateParams.ProjectTypeDescription;
         priceOffer.EUIndustryDescription = updateParams.EUIndustryDescription;

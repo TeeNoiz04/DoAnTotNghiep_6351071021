@@ -20,8 +20,6 @@ public class GKRFilterParams
     public string? LinkedDPONo { get; set; }
 
     // Additional filters specific to GKR - GIC
-    public string? GICType { get; set; }
-    public string? GICProcess { get; set; }
     public string? CostCenter { get; set; }
 
     // Details related

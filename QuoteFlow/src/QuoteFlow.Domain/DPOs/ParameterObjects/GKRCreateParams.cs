@@ -41,16 +41,5 @@ public class GKRCreateParams
     [StringLength(DPOConsts.FileNameMaxLength)]
     public string? FileName { get; set; }
 
-    [StringLength(4000)]
-    public string? Reason { get; set; }
-
-    [StringLength(500)]
-    public string? SalePicUsername { get; set; }
-
-    [StringLength(500)]
-    public string? SalePicFullName { get; set; }
-
-    public Guid? SalePicTeamId { get; set; }
-
     public ICollection<DPODetailCreateParams>? Details { get; set; }
 }

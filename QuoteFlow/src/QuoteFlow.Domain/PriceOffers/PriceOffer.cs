@@ -84,8 +84,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
     [CanBeNull]
     public virtual string? ApprovalStatus { get; set; }
 
-    public virtual Guid? KeyAccountId { get; set; }
-
     [CanBeNull]
     public Guid? CurrentApprovalRouteInstanceId { get; set; }
 
@@ -145,9 +143,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
 
     [CanBeNull]
     public virtual string? AccountNo { get; set; }
-
-    [CanBeNull]
-    public virtual Guid? SpecialInputPriceId { get; set; }
 
     [CanBeNull]
     public virtual string? SpecialInputPriceAssignmentNote { get; set; }
@@ -247,7 +242,6 @@ public class PriceOffer : ExtendedAuditedAggregateRoot<Guid>, IHasApprovalRoute,
         CloseDate = createParams.CloseDate;
         TotalMEVNOfferAmount = createParams.TotalMEVNOfferAmount;
         AccountNo = createParams.AccountNo;
-        KeyAccountId = createParams.KeyAccountId;
         ProjectTypeDescription = createParams.ProjectTypeDescription;
         EUIndustryDescription = createParams.EUIndustryDescription;
         LocationDescription = createParams.LocationDescription;

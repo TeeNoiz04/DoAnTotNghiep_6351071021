@@ -150,7 +150,6 @@ public class DPOManager : DomainService
         dPO.DPONo = updateParams.DPONo;
         dPO.TotalAmount = updateParams.TotalAmount;
         dPO.DPOType = updateParams.DPOType;
-        dPO.GICType = updateParams.GICType;
         dPO.MaterialType = updateParams.MaterialType;
         dPO.CostCenter = updateParams.CostCenter;
         dPO.Status = updateParams.Status;
