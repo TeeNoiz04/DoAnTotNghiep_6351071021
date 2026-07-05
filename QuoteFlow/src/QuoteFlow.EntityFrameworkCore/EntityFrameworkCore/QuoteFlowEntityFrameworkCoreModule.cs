@@ -178,7 +178,7 @@ public class QuoteFlowEntityFrameworkCoreModule : AbpModule
             /* The main point to change your DBMS.
              * See also QuoteFlowDbContextFactory for EF Core tooling. */
 
-            options.UseSqlServer();
+            options.UseSqlServer(o => o.CommandTimeout(60));
 
             options.Configure(c =>
             {

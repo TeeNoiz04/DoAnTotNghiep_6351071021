@@ -79,7 +79,7 @@ public class PriceOfferFlaggingService : BaseFlaggingService<PriceOffer, PriceOf
                 IsProjectResultSubmittable = (isInSameSaleTeam || hasConfirmProjectResultPermission) && isPendingProjectResult && isApproved,
                 IsPreOrderResultConfirmable = (isInSameSaleTeam || hasConfirmProjectResultPermission) && isPreOrderProjectResult,
                 IsDetailPropertiesChangeable = canChangeItemProperties,
-          //      CanAddMoreItems = canAddMoreItem || canAddMoreItemNB,
+                CanAddMoreItems = canAddMoreItem ,
          //       IsSpecialInputPriceApplicable = canApplySpecialInputPrice,
                 IsDetailsPropertiesTemplateDownloadable = hasChangeItemPropertiesPermission
             };

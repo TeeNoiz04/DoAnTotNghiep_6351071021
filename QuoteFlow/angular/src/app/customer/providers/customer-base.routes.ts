@@ -9,5 +9,6 @@ export const CUSTOMER_BASE_ROUTES: ABP.Route[] = [
     layout: eLayoutType.application,
     requiredPolicy: `${AppPermissions.MasterDatas.ViewCustomer}`,
     breadcrumbText: '::Customers',
+    invisible: true,
   },
 ];

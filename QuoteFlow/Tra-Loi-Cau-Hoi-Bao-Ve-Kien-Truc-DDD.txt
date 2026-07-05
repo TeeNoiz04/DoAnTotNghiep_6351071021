@@ -1,0 +1,295 @@
+TRẢ LỜI CÂU HỎI BẢO VỆ ĐỒ ÁN - KIẾN TRÚC & DDD TRONG QUOTEFLOW
+================================================================
+
+
+CÂU HỎI 1: TẠI SAO CHỌN MODULAR MONOLITH THAY VÌ MICROSERVICES?
+NẾU MỞ RỘNG THÀNH MICROSERVICES THÌ CẦN THAY ĐỔI NHỮNG GÌ?
+----------------------------------------------------------------
+
+1.1. Kiến trúc hiện tại của QuoteFlow
+
+QuoteFlow được xây dựng trên ABP Framework theo mô hình layered modular
+monolith: toàn bộ hệ thống là một solution, một tiến trình chạy (một
+w3wp.exe/Kestrel host), một cơ sở dữ liệu (QuoteFlowDbContext), nhưng được
+chia thành các project theo tầng:
+
+  - QuoteFlow.Domain.Shared, QuoteFlow.Domain
+    Entities, Aggregate Root, Domain Service (business logic thuần)
+  - QuoteFlow.Application.Contracts, QuoteFlow.Application
+    Application Service, DTO
+  - QuoteFlow.EntityFrameworkCore
+    Repository, migration, cấu hình EF Core
+  - QuoteFlow.HttpApi, QuoteFlow.HttpApi.Client
+    Controller, proxy client
+  - QuoteFlow.HttpApi.Host
+    Điểm khởi chạy duy nhất của toàn hệ thống
+
+Bên trong tầng Domain, nghiệp vụ lại được chia theo module/bounded context
+bằng cách tổ chức thư mục và namespace riêng cho từng nghiệp vụ: Materials,
+PriceOffers, DPOs, SaleOrders, StockManagements, Buyers, Customers,
+Suppliers, ApprovalRoutes, CfgDiscountRatios, WorkflowConfigurations...
+Mỗi module có Aggregate Root, Repository interface và Domain Service
+(Manager) riêng. Đây chính là đặc trưng của Modular Monolith: tách biệt về
+mặt logic/mã nguồn nhưng triển khai và giao tiếp trong cùng một tiến trình
+(gọi hàm C# trực tiếp qua Dependency Injection, không qua network).
+
+
+1.2. Lý do chọn Modular Monolith thay vì Microservices
+
+a) Nghiệp vụ liên kết chặt, cần transaction nhất quán (ACID)
+   Các luồng nghiệp vụ chính của QuoteFlow xuyên suốt nhiều bounded context
+   trong cùng một giao dịch: tạo Price Offer -> phát sinh DPO -> khoá tồn
+   kho (MaterialStockLockStock) -> tạo Sale Order -> cập nhật MaterialStock.
+   Nếu tách thành các service độc lập với database riêng, các thao tác này
+   sẽ trở thành distributed transaction, buộc phải dùng Saga/Outbox pattern
+   phức tạp và chấp nhận eventual consistency - rủi ro sai lệch dữ liệu tồn
+   kho/giá cao hơn nhiều so với một transaction cục bộ trong cùng DB.
+
+b) Nghiệp vụ và ranh giới bounded context còn đang thay đổi liên tục
+   Lịch sử migration của project (hàng trăm migration từ khi khởi tạo đến
+   nay, cập nhật liên tục các bảng PriceOffer, DPO, Material,
+   StockManagement...) cho thấy mô hình dữ liệu vẫn đang tinh chỉnh theo
+   yêu cầu nghiệp vụ thực tế. Tách microservices quá sớm khi ranh giới
+   bounded context chưa ổn định sẽ khiến chi phí thiết kế lại service
+   boundary rất tốn kém.
+
+c) Quy mô đội ngũ và hạ tầng vận hành
+   Đồ án được phát triển bởi một cá nhân/nhóm nhỏ, hạ tầng triển khai là
+   IIS trên server nội bộ công ty. Microservices đòi hỏi hạ tầng đi kèm
+   (container hoá, orchestration, service discovery, API Gateway, message
+   broker, centralized logging/tracing) - chi phí vận hành và độ phức tạp
+   vượt quá quy mô và mục tiêu của đồ án.
+
+d) Hiệu năng và độ đơn giản
+   Giao tiếp giữa các module trong Modular Monolith là lời gọi hàm
+   in-process (ví dụ DPOsAppService gọi trực tiếp IBuyerRepository,
+   IMaterialRepository qua constructor injection), không tốn chi phí
+   serialize/deserialize hay network latency như gọi REST/gRPC giữa các
+   service - phù hợp với một hệ thống quản lý nghiệp vụ nội bộ (B2B) có
+   khối lượng giao dịch vừa phải, ưu tiên đơn giản và dễ bảo trì hơn khả
+   năng scale độc lập từng phần.
+
+e) ABP Framework vốn tối ưu cho mô hình này
+   ABP có sẵn cơ chế Module System (mỗi khối chức năng là một "module" ABP
+   với DependsOn riêng) cho phép tổ chức code tách biệt rõ ràng ngay trong
+   một tiến trình duy nhất, tận dụng được lợi ích tách module của
+   Microservices (độc lập về code, dễ định vị trách nhiệm) mà không phải
+   trả chi phí vận hành phân tán.
+
+
+1.3. Nếu tương lai cần mở rộng thành Microservices - những thành phần
+     cần thay đổi
+
+  Thành phần: Cơ sở dữ liệu
+    Hiện tại: Một QuoteFlowDbContext duy nhất, tất cả bảng (PriceOffers,
+      DPOs, Materials, StockManagements...) trong một DB SQL Server
+    Khi tách Microservices: Tách theo nguyên tắc Database per Service - mỗi
+      bounded context (Materials, PriceOffers, DPOs, Stock...) có DB
+      riêng; phải loại bỏ các JOIN/Include xuyên bảng hiện có giữa các
+      aggregate khác context
+
+  Thành phần: Giao tiếp giữa module
+    Hiện tại: Gọi trực tiếp qua interface + DI (ví dụ MaterialManager
+      inject thẳng IHistoryTrackingRepository, DPOsAppService gọi
+      IBuyerRepository, IMaterialRepository)
+    Khi tách Microservices: Phải chuyển thành giao tiếp qua mạng: đồng bộ
+      qua REST/gRPC hoặc bất đồng bộ qua message broker (RabbitMQ/Kafka)
+      dùng Integration Event (ABP đã hỗ trợ sẵn IDistributedEventBus để
+      nâng cấp từ ILocalEventBus)
+
+  Thành phần: Transaction
+    Hiện tại: IUnitOfWork của ABP đảm bảo ACID trong một DB
+    Khi tách Microservices: Phải áp dụng Saga pattern / Outbox pattern,
+      chấp nhận eventual consistency giữa các service
+
+  Thành phần: Xác thực & phân quyền
+    Hiện tại: OpenIddict + Identity chạy chung trong QuoteFlow.HttpApi.Host
+    Khi tách Microservices: Tách thành Identity/Auth Server độc lập, các
+      service xác thực bằng JWT dùng chung, cần thêm API Gateway
+      (Ocelot/YARP) làm điểm vào duy nhất
+
+  Thành phần: Bounded Context -> Service boundary
+    Hiện tại: Chia theo thư mục/namespace trong cùng 1 project Domain
+    Khi tách Microservices: Mỗi bounded context (Materials, PriceOffers,
+      DPOs, StockManagements, SaleOrders...) tách thành solution/repository
+      độc lập, có Application, Domain, EF Core riêng
+
+  Thành phần: Hạ tầng triển khai
+    Hiện tại: 1 IIS site, 1 App Pool, log ghi file cục bộ (Serilog ->
+      Logs/logs.txt)
+    Khi tách Microservices: Container hoá (Docker), orchestration
+      (Kubernetes/Docker Swarm), centralized logging (ELK/Seq), distributed
+      tracing (OpenTelemetry)
+
+  Thành phần: Front-end Angular
+    Hiện tại: Gọi thẳng một base URL API duy nhất
+    Khi tách Microservices: Cần API Gateway/BFF tổng hợp dữ liệu từ nhiều
+      service để tránh Angular phải biết địa chỉ từng service
+
+  Thành phần: Background job
+    Hiện tại: Quartz.NET chạy trong cùng tiến trình host
+      (AbpBackgroundWorkersModule)
+    Khi tách Microservices: Có thể tách thành worker service độc lập theo
+      từng domain (VD service riêng xử lý job đồng bộ tồn kho)
+
+  Thành phần: CI/CD
+    Hiện tại: Một pipeline build & deploy một host duy nhất
+    Khi tách Microservices: Nhiều pipeline độc lập theo từng service,
+      versioning API riêng cho từng service
+
+Nhờ đã tổ chức theo bounded context ngay từ đầu (dù đang chạy chung một
+tiến trình), ranh giới nghiệp vụ đã rõ ràng - đây là tiền đề quan trọng
+giúp việc tách microservices sau này (nếu cần) đỡ tốn công thiết kế lại
+từ đầu, chỉ cần "vật lý hoá" ranh giới đã có sẵn về mặt logic.
+
+
+CÂU HỎI 2: DOMAIN-DRIVEN DESIGN (DDD) TRONG ĐỀ TÀI
+----------------------------------------------------------------
+
+2.1. Bounded Context
+
+Trong QuoteFlow, mỗi nghiệp vụ lớn được tổ chức thành một Bounded Context
+riêng biệt, có ngôn ngữ chung (Ubiquitous Language) và mô hình dữ liệu
+độc lập, ví dụ:
+
+  - Price Offer context: xoay quanh khái niệm "báo giá" cho khách hàng
+    B2B, có quy trình phê duyệt nhiều cấp (ApprovalRoute), phân loại theo
+    PriceOfferTypes (PP - dự án, DS - tồn kho nhà phân phối, AP - khách
+    hàng trọng điểm, NB - không gắn buyer).
+  - DPO context (Distributor/Delivery Purchase Order): xoay quanh
+    "đơn hàng", dùng thuật ngữ riêng như SPOCode, LockStock,
+    OnOrderStockAvailable.
+  - Material context: vòng đời vật tư, các mức giá (StandardPrice,
+    SellingPrice1/2/3, LandedCost).
+  - Stock/SaleOrder/PurchaseOrder context: quản lý tồn kho và đơn hàng
+    bán/mua.
+
+Dù các bounded context này đang cùng chạy trong một database và một tiến
+trình (Modular Monolith), ranh giới vẫn được duy trì nghiêm ngặt về mặt
+mã nguồn:
+
+  - Mỗi context có Aggregate Root + Repository interface + Domain Service
+    (Manager) riêng theo namespace (QuoteFlow.Materials, QuoteFlow.
+    PriceOffers, QuoteFlow.DPOs...).
+  - Khi một context cần dữ liệu của context khác, nó gọi qua Repository
+    interface (dependency injection) chứ không tự ý truy vấn thẳng bảng
+    ngoài phạm vi mình quản lý - ví dụ DPOsAppService.
+    ValidatePriceMismatchesAsync cần dữ liệu Material để đối chiếu giá thì
+    gọi qua _materialRepository chứ không viết SQL/JOIN trực tiếp vào bảng
+    Materials từ trong domain logic của DPO.
+  - ApprovalRoute đóng vai trò như một "Shared Kernel" nhỏ: các bounded
+    context khác nhau (Material Approval, Price Offer Approval, DPO
+    Approval) đều tái sử dụng chung cấu trúc ApprovalRoute với
+    EntityType/InstanceId generic để biết route đó thuộc về entity nghiệp
+    vụ nào, tránh việc mỗi context tự cài lại logic phê duyệt.
+
+
+2.2. Aggregate Root
+
+Aggregate Root đảm bảo tính toàn vẹn (invariant) của một cụm entity liên
+quan chặt chẽ, và là điểm truy cập duy nhất từ bên ngoài vào cụm đó.
+Trong QuoteFlow:
+
+  - PriceOffer (kế thừa ExtendedAuditedAggregateRoot<Guid>) là Aggregate
+    Root quản lý các entity con: PriceOfferDetail (dòng chi tiết báo giá),
+    PriceOfferCustomer, PriceOfferApprovalHistory, PriceOfferApprovalRoute,
+    PriceOfferAttachment, PriceOfferMessage. Các entity con này không có
+    repository riêng để bị sửa/xoá tuỳ tiện từ bên ngoài - mọi thao tác đi
+    qua PriceOffer như một tổng thể.
+
+  - Aggregate Root không cho set trạng thái tuỳ ý qua public setter mà
+    expose behavior method để đảm bảo invariant nghiệp vụ. Ví dụ hàm
+    Submit() trong PriceOffer.cs:
+
+        public void Submit()
+        {
+            if (!IsDraft() && !IsCancelled() && !IsVerifying() && !IsRejected())
+            {
+                throw new BusinessException(QuoteFlowDomainErrorCodes.InvalidStatusForSubmission);
+            }
+            ...
+        }
+
+    Chỉ cho phép submit khi trạng thái hiện tại hợp lệ (Draft/Cancelled/
+    Verifying/Rejected), nếu không sẽ ném BusinessException - đây chính là
+    cách Aggregate Root tự bảo vệ tính đúng đắn của dữ liệu thay vì để tầng
+    trên (Application/Controller) tự ý đổi trạng thái.
+
+  - Tương tự, các hàm IsApproved(), IsDraft(), IsInProgress(), IsWon(),
+    IsLost(), GetPriceOfferType()... đóng gói toàn bộ logic xác định trạng
+    thái/loại báo giá ngay trong Aggregate, tránh việc logic này bị lặp
+    lại rải rác ở nhiều Application Service.
+
+  - DPO cũng là một Aggregate Root độc lập quản lý DPODetail, DpoGkrUsage,
+    với các thuộc tính trạng thái dạng behavior (IsConfirmed, IsLockedStock,
+    IsInProgress, IsSubmitted).
+
+  - Material là Aggregate Root riêng cho vòng đời và bảng giá vật tư.
+
+
+2.3. Domain Service
+
+Domain Service xử lý logic nghiệp vụ không thuộc tự nhiên về một Aggregate
+cụ thể, hoặc cần phối hợp giữa nhiều Aggregate/Repository khác nhau. Trong
+QuoteFlow, các lớp này kế thừa DomainService của ABP Framework (ví dụ
+MaterialManager, PriceOfferManager, DPOManager, ApprovalRouteManager...).
+Hai ví dụ tiêu biểu:
+
+  - MaterialManager không chỉ inject IMaterialRepository mà còn inject cả
+    IHistoryTrackingRepository:
+
+        public class MaterialManager : DomainService
+        {
+            protected IMaterialRepository _materialRepository;
+            protected IHistoryTrackingRepository _historyTrackingRepository;
+            ...
+        }
+
+    Khi cập nhật giá/thông tin vật tư, ngoài việc sửa Material, nó còn ghi
+    lại lịch sử thay đổi vào HistoryTracking - một aggregate khác. Đây là
+    trách nhiệm phối hợp giữa hai aggregate (Material và HistoryTracking),
+    không thuộc riêng về aggregate nào, nên được đặt ở tầng Domain Service
+    thay vì nhét vào trong entity Material.
+
+  - ApprovalRouteManager là domain service dùng chung cho workflow phê
+    duyệt của nhiều bounded context (Material, Price Offer, DPO) thông qua
+    tham số generic entityType/instanceId, cùng với việc validate ràng
+    buộc dữ liệu (Check.NotNullOrWhiteSpace, Check.Length theo hằng số
+    nghiệp vụ) trước khi tạo/cập nhật route - tránh lặp lại logic phê
+    duyệt ở từng module riêng lẻ.
+
+
+2.4. Lợi ích của việc áp dụng DDD cho bài toán quản lý nghiệp vụ B2B
+
+  - Ngôn ngữ chung (Ubiquitous Language): Code đặt tên sát với thuật ngữ
+    nghiệp vụ thật của công ty (PriceOffer, DPO, SPOCode, LockStock,
+    ApprovalRoute, StandardPrice/SellingPrice1...) giúp giảm khoảng cách
+    hiểu biết giữa người làm nghiệp vụ và lập trình viên - rất quan trọng
+    với nghiệp vụ B2B vốn có nhiều luồng phê duyệt, nhiều loại giá và
+    điều kiện đặc thù theo từng loại khách hàng/buyer.
+
+  - Business logic tập trung, tránh Anemic Domain Model: Nhờ đặt invariant
+    và hành vi vào Aggregate Root (Submit(), IsApproved()...) và Domain
+    Service thay vì rải logic ở Controller/Application Service, hệ thống
+    dễ bảo trì, dễ viết unit test cho riêng phần nghiệp vụ lõi, và giảm
+    rủi ro một luồng nghiệp vụ bị áp dụng không nhất quán ở nhiều nơi.
+
+  - Ranh giới rõ ràng theo Bounded Context giúp thay đổi khoanh vùng:
+    Nghiệp vụ B2B của công ty có chuỗi liên kết dài (Material -> Price
+    Offer -> DPO -> Sale Order -> Stock -> Purchase Order); nếu không có
+    ranh giới Bounded Context rõ ràng, một thay đổi nhỏ (ví dụ thêm loại
+    giá mới, thêm bước phê duyệt) rất dễ gây side-effect sang các module
+    không liên quan. DDD giúp khoanh vùng thay đổi trong đúng module
+    chịu trách nhiệm.
+
+  - Đảm bảo tính nhất quán dữ liệu nhạy cảm: Trong B2B, sai sót về giá
+    hoặc tồn kho ảnh hưởng trực tiếp đến hợp đồng và doanh thu. Việc bọc
+    invariant trong Aggregate Root (chỉ cho thay đổi trạng thái qua
+    behavior method đã kiểm tra điều kiện hợp lệ) giúp ngăn dữ liệu rơi
+    vào trạng thái không hợp lệ.
+
+  - Nền tảng sẵn sàng để mở rộng: Vì đã tách theo Bounded Context ngay từ
+    đầu (trả lời trực tiếp cho Câu hỏi 1), hệ thống có thể mở rộng thành
+    Microservices trong tương lai với chi phí thiết kế lại thấp hơn nhiều
+    so với một hệ thống được viết theo kiến trúc CRUD/Transaction Script
+    thông thường.

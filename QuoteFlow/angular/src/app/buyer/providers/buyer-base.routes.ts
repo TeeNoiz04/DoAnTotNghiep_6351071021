@@ -9,5 +9,6 @@ export const BUYER_BASE_ROUTES: ABP.Route[] = [
     layout: eLayoutType.application,
     requiredPolicy: `${AppPermissions.MasterDatas.ViewBuyer}`,
     breadcrumbText: '::Buyers',
+    invisible: true,
   },
 ];

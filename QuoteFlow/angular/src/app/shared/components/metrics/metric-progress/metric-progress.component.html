@@ -18,7 +18,7 @@
     <div class="d-flex align-items-center mb-1" [ngClass]="labelContainerClass">
       <span class="me-2 fw-bold small" [ngClass]="labelClass">{{ label }}:</span>
       <span class="fw-bold small" [ngClass]="[valueClass, statusClass]">
-        {{ formatAbbreviatedValue(currentValue) }} {{ suffix }} / {{ formatAbbreviatedValue(maxValue) }} {{ suffix }}
+        {{ formatAbbreviatedValue(currentValue) }}{{ suffix }} / {{ formatAbbreviatedValue(maxValue) }}{{ suffix }}
       </span>
     </div>
     <div class="progress" [ngClass]="progressContainerClass">

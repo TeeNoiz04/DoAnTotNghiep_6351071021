@@ -124,9 +124,7 @@ export class DPOComponent extends AbstractDPOComponent implements OnInit {
   activeStatusTab = 'all';
   statusTabs: StatusTab[] = [
     { id: 'all', label: 'All', status: null, count: 0 },
-    { id: 'submitted', label: 'Submitted', status: RequestStatusEnum.SUBMITTED, count: 0 },
     { id: 'confirmed', label: 'Confirmed', status: RequestStatusEnum.CONFIRMED, count: 0 },
-    { id: 'locked_stock', label: 'Locked Stock', status: RequestStatusEnum.LOCKED_STOCK, count: 0 },
     { id: 'in_progress', label: 'In Progress', status: RequestStatusEnum.IN_PROGRESS, count: 0 },
     { id: 'closed', label: 'Closed', status: RequestStatusEnum.CLOSED, count: 0 },
     { id: 'cancelled', label: 'Cancelled', status: RequestStatusEnum.CANCELLED, count: 0 },
